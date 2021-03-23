@@ -4,25 +4,26 @@
 #include <iostream>
 
 #include <array>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <numeric>
-#include <string_view>
 #include <tuple>
+#include <numeric>
+
+#include "string.hpp"
+#include "vector.hpp"
+#include "string_view.hpp"
+#include "scanner.hpp"
 
 #include "format-types.hpp"
 
-namespace clon::fmt
+namespace lib
 {
   template <typename char_t>
-  using view = std::basic_string_view<char_t>;
+  using view = lib::basic_string_view<char_t>;
 
   template <typename char_t, std::size_t n>
   using views = std::array<view<char_t>, n>;
 
   template <typename char_t>
-  using buffer = std::basic_string<char_t>;
+  using buffer = lib::basic_string<char_t>;
 
   template <typename char_t>
   class formatter_context
@@ -39,9 +40,9 @@ namespace clon::fmt
       buff.push_back(c);
     }
 
-    auto end()
+    void reverse(std::size_t b, std::size_t e)
     {
-      return buff.end();
+      // TODO faire la méthode reverse
     }
   };
 
@@ -79,27 +80,25 @@ namespace clon::fmt
   template <typename char_t, std::size_t n>
   struct pattern
   {
+    constexpr static char_t sep = '#';
+
   private:
     view<char_t> fmt;
-    view<char_t> sep;
     std::size_t _parts_size = 0;
     views<char_t, n> _parts;
 
   public:
-    explicit pattern(view<char_t> _fmt, view<char_t> _sep)
-        : fmt(_fmt), sep(_sep)
+    explicit pattern(view<char_t> _fmt)
+        : fmt(_fmt)
     {
-      auto bf = fmt.begin(), ef = fmt.end();
-      auto bs = sep.begin(), es = sep.end();
-
+      basic_scanner<char_t> scan(fmt);
+      
       for (view<char_t> &part : _parts)
       {
-        auto found = std::search(bf, ef, bs, es);
-        part = view<char_t>(bf, found);
-
-        if (found != ef)
-          bf = (found + sep.size());
-
+        scan.until(sep);
+        part = scan.extract();
+        scan.advance();
+        scan.ignore();
         _parts_size += part.size();
       }
     }
@@ -133,13 +132,12 @@ namespace clon::fmt
   template <typename char_t, typename... args_t>
   class partial_formatter
   {
-    constexpr static view<char_t> sep = "{}";
     pattern<char_t, sizeof...(args_t) + 1> p;
     basics<args_t...> bcs;
 
   public:
     explicit partial_formatter(view<char_t> fmt, const args_t &...args)
-        : p(fmt, sep), bcs(make_format(args)...) {}
+        : p(fmt), bcs(make_format(args)...) {}
 
   public:
     const std::size_t length() const
@@ -177,9 +175,7 @@ namespace clon::fmt
   public:
     buffer<char_t> format()
     {
-      buffer<char_t> buff;
-      buff.reserve(partial.length());
-
+      buffer<char_t> buff(partial.length());
       formatter_context<char_t> ctx{buff};
       partial.format(ctx);
 

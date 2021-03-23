@@ -19,8 +19,6 @@ lib_file() {
   
   while [ $# -gt 0  ]
   do 
-    echo "$1"
-
     case "$1" in
     "--path") path="$2"; shift 2;;
     "--group") group="$2"; shift 2;;

@@ -1,11 +1,12 @@
 #ifndef __clon_format_ext_hpp__
 #define __clon_format_ext_hpp__
 
-#include <string_view>
-#include <vector>
+#include "string_view.hpp"
+#include "string.hpp"
+#include "vector.hpp"
 #include <concepts>
 
-namespace clon::fmt
+namespace lib
 {
   template <typename char_t>
   struct formatter_context;
@@ -16,11 +17,11 @@ namespace clon::fmt
       std::same_as<char_t, wchar_t>;
 
   ///////////////////////////////////
-  // std::basic_string_view format //
+  // lib::basic_string_view format //
   ///////////////////////////////////
   template <typename char_t>
   std::size_t length_of(
-      const std::basic_string_view<char_t> &v)
+      const lib::basic_string_view<char_t> &v)
   {
     return v.size();
   }
@@ -28,9 +29,9 @@ namespace clon::fmt
   template <typename char_t>
   void format_of(
       formatter_context<char_t> &ctx,
-      const std::basic_string_view<char_t> &v)
+      lib::basic_string_view<char_t> v)
   {
-    for (const char_t &c : v)
+    for (auto && c : v)
       ctx.append(c);
   }
 
@@ -48,7 +49,7 @@ namespace clon::fmt
       formatter_context<char> &ctx,
       const char (&s)[n])
   {
-    format_of(ctx, std::basic_string_view<char>(s));
+    format_of(ctx, lib::basic_string_view<char>(s));
   }
 
   template <std::size_t n>
@@ -62,7 +63,7 @@ namespace clon::fmt
       formatter_context<wchar_t> &ctx,
       const wchar_t (&s)[n])
   {
-    format_of(ctx, std::basic_string_view<wchar_t>(s));
+    format_of(ctx, lib::basic_string_view<wchar_t>(s));
   }
 
   ///////////////////////////
@@ -106,7 +107,7 @@ namespace clon::fmt
         cnt++;
       }
 
-      std::reverse(ctx.end() - cnt, ctx.end());
+      ctx.reverse(0, 0);
     }
   }
 
@@ -114,35 +115,34 @@ namespace clon::fmt
   // strings types format //
   //////////////////////////
   template <typename char_t>
-  std::size_t length_of(const std::basic_string<char_t> &s)
+  std::size_t length_of(const lib::basic_string<char_t> &s)
   {
-    return length_of(std::basic_string_view<char_t>(s.begin(), s.end()));
+    return length_of(lib::basic_string_view<char_t>(s.begin(), s.end()));
   }
 
   template <typename char_t>
   void format_of(
       formatter_context<char_t> &ctx,
-      const std::basic_string<char_t> &v)
+      const lib::basic_string<char_t> &v)
   {
-    format_of(ctx, std::basic_string_view<char_t>(v.begin(), v.end()));
+    format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 
-
-  //////////////////////////////////
-  // vector of chars types format //
-  //////////////////////////////////
+  // //////////////////////////////////
+  // // vector of chars types format //
+  // //////////////////////////////////
   template <charable char_t>
-  std::size_t length_of(const std::vector<char_t> &v)
+  std::size_t length_of(const lib::vector<char_t> &v)
   {
-    return length_of(std::basic_string_view<char_t>(v.begin(), v.end()));
+    return length_of(lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 
   template <charable char_t>
   void format_of(
       formatter_context<char_t> &ctx,
-      const std::vector<char_t> &v)
+      const lib::vector<char_t> &v)
   {
-    format_of(ctx, std::basic_string_view<char_t>(v.begin(), v.end()));
+    format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 }
 

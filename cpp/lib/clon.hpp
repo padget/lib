@@ -3,7 +3,6 @@
 
 #define CLON_VERSION 1.0.0
 
-#include <string_view>
 #include <variant>
 #include <vector>
 #include <limits>
@@ -11,6 +10,7 @@
 #include <stdexcept>
 
 #include "format.hpp"
+#include "string_view.hpp"
 
 namespace clon::detail
 {
@@ -43,7 +43,7 @@ namespace clon::detail
   };
 
   template <typename char_t>
-  using string = std::basic_string_view<char_t>;
+  using string = lib::basic_string_view<char_t>;
   using none = std::monostate;
   using number = std::int64_t;
   using boolean = bool;
@@ -65,7 +65,7 @@ namespace clon::detail
   constexpr std::size_t no_root = maxof<std::size_t>;
 
   template <typename char_t>
-  number to_number(std::basic_string_view<char_t> v)
+  number to_number(lib::basic_string_view<char_t> v)
   {
     number n = 0;
 
@@ -76,7 +76,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  std::size_t to_integer(std::basic_string_view<char_t> v)
+  std::size_t to_integer(lib::basic_string_view<char_t> v)
   {
     std::size_t n = 0;
 
@@ -89,9 +89,9 @@ namespace clon::detail
   template <typename char_t>
   struct node
   {
-    std::basic_string_view<char_t> name;
+    lib::basic_string_view<char_t> name;
     mutable value<char_t> val;
-    std::basic_string_view<char_t> valv;
+    lib::basic_string_view<char_t> valv;
     std::size_t next = no_next;
     std::size_t child = no_child;
   };
@@ -99,8 +99,8 @@ namespace clon::detail
   template <typename char_t>
   node<char_t> make_node(
       const clon_type &type,
-      const std::basic_string_view<char_t> &name,
-      const std::basic_string_view<char_t> &valv)
+      const lib::basic_string_view<char_t> &name,
+      const lib::basic_string_view<char_t> &valv)
   {
     node<char_t> n;
 
@@ -142,7 +142,7 @@ namespace clon::detail
 
   template <typename char_t>
   root_node<char_t> make_root(
-      const std::basic_string_view<char_t> &data)
+      const lib::basic_string_view<char_t> &data)
   {
     root_node<char_t> root;
     root.buff = std::vector<char_t>(data.begin(), data.end());
@@ -161,7 +161,7 @@ namespace clon::detail
       return clon::fmt::format("{}", *this);
     }
 
-    using view = std::basic_string_view<char_t>;
+    using view = lib::basic_string_view<char_t>;
 
     const view &name() const { return root->nodes[index].name; }
     const std::size_t &child() const { return root->nodes[index].child; }
@@ -351,7 +351,7 @@ namespace clon::detail
   template <typename char_t>
   struct scanner
   {
-    std::basic_string_view<char_t> data;
+    lib::basic_string_view<char_t> data;
     std::size_t index = 0;
     std::size_t prev = 0;
 
@@ -371,9 +371,9 @@ namespace clon::detail
         index += step;
     }
 
-    std::basic_string_view<char_t> extract()
+    lib::basic_string_view<char_t> extract()
     {
-      std::basic_string_view<char_t> tk(&data[prev], index - prev);
+      lib::basic_string_view<char_t> tk(&data[prev], index - prev);
       prev = index;
       return tk;
     }
@@ -383,7 +383,7 @@ namespace clon::detail
       prev = index;
     }
 
-    bool starts_with(const std::basic_string_view<char_t> &sv) const
+    bool starts_with(const lib::basic_string_view<char_t> &sv) const
     {
       return data.substr(index).starts_with(sv);
     }
@@ -410,7 +410,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  std::basic_string_view<char_t> scan_name(
+  lib::basic_string_view<char_t> scan_name(
       scanner<char_t> &scan)
   {
     ignore_blanks(scan);
@@ -434,7 +434,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  std::basic_string_view<char_t> scan_boolean(
+  lib::basic_string_view<char_t> scan_boolean(
       scanner<char_t> &scan)
   {
     ignore_blanks(scan);
@@ -450,7 +450,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  std::basic_string_view<char_t> scan_string(
+  lib::basic_string_view<char_t> scan_string(
       scanner<char_t> &scan)
   {
     ignore_blanks(scan);
@@ -479,7 +479,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  std::basic_string_view<char_t> scan_number(
+  lib::basic_string_view<char_t> scan_number(
       scanner<char_t> &scan)
   {
     ignore_blanks(scan);
@@ -494,7 +494,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  std::basic_string_view<char_t> scan_list(
+  lib::basic_string_view<char_t> scan_list(
       scanner<char_t> &)
   {
     return {};
@@ -580,10 +580,10 @@ namespace clon::detail
   {
     open_node(ctx.scan);
 
-    std::basic_string_view<char_t> &&name(scan_name(ctx.scan));
+    lib::basic_string_view<char_t> &&name(scan_name(ctx.scan));
     ignore_blanks(ctx.scan);
 
-    std::basic_string_view<char_t> scanr;
+    lib::basic_string_view<char_t> scanr;
     clon_type type = predict_clon_type(ctx.scan);
 
     switch (type)
@@ -617,7 +617,7 @@ namespace clon::detail
 
   template <typename char_t>
   const root_node<char_t> parse(
-      const std::basic_string_view<char_t> &data)
+      const lib::basic_string_view<char_t> &data)
   {
     root_node<char_t> &&root = make_root(data);
     parser_context<char_t> ctx{&root.nodes, {data}};
@@ -630,7 +630,7 @@ namespace clon::detail
   template <typename char_t>
   struct path
   {
-    std::basic_string_view<char_t> name;
+    lib::basic_string_view<char_t> name;
     std::size_t min = path_max;
     std::size_t max = path_max;
   };
@@ -664,7 +664,7 @@ namespace clon::detail
   }
 
   template <typename char_t>
-  path<char_t> parse_path(const std::basic_string_view<char_t> &view)
+  path<char_t> parse_path(const lib::basic_string_view<char_t> &view)
   {
     path<char_t> p;
     scanner<char_t> scan(view);
@@ -682,23 +682,23 @@ namespace clon::detail
   struct splits_iterator
   {
     char_t del;
-    std::basic_string_view<char_t> data;
+    lib::basic_string_view<char_t> data;
 
     splits_iterator &operator++()
     {
       if (data.size() != 0)
       {
         auto found = std::find(data.begin(), data.end(), del);
-        data = std::basic_string_view<char_t>(
+        data = lib::basic_string_view<char_t>(
             found == data.end() ? found : found + 1, data.end());
       }
 
       return *this;
     }
 
-    const std::basic_string_view<char_t> operator*()
+    const lib::basic_string_view<char_t> operator*()
     {
-      return std::basic_string_view<char_t>(
+      return lib::basic_string_view<char_t>(
           data.begin(), std::find(data.begin(), data.end(), del));
     }
 
@@ -728,7 +728,7 @@ namespace clon::detail
   struct splits
   {
     char_t del;
-    std::basic_string_view<char_t> data;
+    lib::basic_string_view<char_t> data;
 
     splits_iterator<char_t> begin() const
     {
@@ -743,7 +743,7 @@ namespace clon::detail
 
   template <typename char_t>
   splits<char_t> split(
-      const std::basic_string_view<char_t> &data,
+      const lib::basic_string_view<char_t> &data,
       const char_t &del)
   {
     return splits<char_t>{del, data};
@@ -797,7 +797,7 @@ namespace clon::detail
   };
 
   template <typename char_t>
-  paths<char_t> split_paths(const std::basic_string_view<char_t> &pths)
+  paths<char_t> split_paths(const lib::basic_string_view<char_t> &pths)
   {
     return paths<char_t>{split(pths, '.')};
   }
@@ -824,7 +824,7 @@ namespace clon::detail
 
   template <typename char_t>
   root_view<char_t> getone(
-      const std::basic_string_view<char_t> &pth,
+      const lib::basic_string_view<char_t> &pth,
       const root_view<char_t> &view)
   {
     return getone(parse_path(pth), view);
@@ -832,7 +832,7 @@ namespace clon::detail
 
   template <typename char_t>
   root_view<char_t> get(
-      const std::basic_string_view<char_t> &pths,
+      const lib::basic_string_view<char_t> &pths,
       const root_view<char_t> &view)
   {
     bool should_return = false;
@@ -895,7 +895,7 @@ namespace clon
 
   public:
     basic_clon_view<char_t> operator[](
-        const std::basic_string_view<char_t> &pth) const
+        const lib::basic_string_view<char_t> &pth) const
     {
       return basic_clon_view<char_t>(detail::get(pth, view));
     }
@@ -926,7 +926,7 @@ namespace clon
       }
     }
 
-    const std::basic_string_view<char_t> &name() const
+    const lib::basic_string_view<char_t> &name() const
     {
       return view.name();
     }
@@ -939,24 +939,24 @@ namespace clon
 
     template <typename type_t>
     const type_t &get_(
-        const std::basic_string_view<char_t> &pth) const
+        const lib::basic_string_view<char_t> &pth) const
     {
       return (*this)[pth].template as_<type_t>();
     }
 
     const clon::string<char_t> &string(
-        const std::basic_string_view<char_t> &pth)
+        const lib::basic_string_view<char_t> &pth)
     {
       return get_<clon::string<char_t>>(pth);
     }
 
     const clon::number &number(
-        const std::basic_string_view<char_t> &pth)
+        const lib::basic_string_view<char_t> &pth)
     {
       return get_<clon::number>(pth);
     }
 
-    const clon::boolean &boolean(const std::basic_string_view<char_t> &pth)
+    const clon::boolean &boolean(const lib::basic_string_view<char_t> &pth)
     {
       return get_<clon::boolean>(pth);
     }
@@ -966,13 +966,13 @@ namespace clon
       return view.to_string();
     }
 
-    const std::basic_string_view<char_t>& value()
+    const lib::basic_string_view<char_t>& value()
     {
       return view.valv();
     }
 
     template <typename type_t>
-    void update(const std::basic_string_view<char_t> &valv)
+    void update(const lib::basic_string_view<char_t> &valv)
     {
       if (view.index != detail::no_root)
       {
@@ -981,7 +981,7 @@ namespace clon
 
         detail::node<char> &node = view.root->nodes[view.index];
 
-        node.valv = std::basic_string_view<char_t>(
+        node.valv = lib::basic_string_view<char_t>(
             view.root->updt.back().begin(),
             view.root->updt.back().end());
 
@@ -1017,7 +1017,7 @@ namespace clon
     detail::root_node<char_t> node;
 
   public:
-    explicit basic_clon(const std::basic_string_view<char_t> &_v)
+    explicit basic_clon(const lib::basic_string_view<char_t> &_v)
         : basic_clon_view<char_t>(detail::make_rview(node)), node(detail::parse(_v)) {}
   };
 
