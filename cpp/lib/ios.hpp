@@ -8,106 +8,181 @@
 
 namespace lib
 {
-  inline std::size_t fprint(FILE *out, lib::basic_string_view<char> s)
+  struct file
   {
-    for (const char &c : s)
-      std::fputc(c, out);
+    std::FILE *fd = nullptr;
 
-    return s.size();
+    file(std::FILE *f) : fd(f) {}
+    ~file() = default;
+
+    bool has_error() const
+    {
+      return std::ferror(fd) != 0;
+    }
+
+    bool eof() const
+    {
+      return std::feof(fd) != 0;
+    }
+
+    template <typename char_t>
+    int putc(const char_t &c)
+    {
+      if (fd == nullptr)
+        return EOF;
+
+      return std::fputc(c, fd);
+    }
+
+    template <typename char_t>
+    std::size_t write(basic_string_view<char_t> s)
+    {
+      if (fd == nullptr)
+        return 0;
+
+      return std::fwrite(s.data(), sizeof(char_t), s.size(), fd);
+    }
+  };
+
+  inline file cout(stdout);
+  inline file cin(stdin);
+  inline file cerr(stderr);
+}
+
+namespace lib
+{
+  inline std::size_t fprint(file &out, lib::string_view s)
+  {
+    return out.write(s);
   }
 
   template <typename... args_t>
-  inline std::size_t fprintf(FILE *out, lib::basic_string_view<char> f, const args_t &...args)
+  inline std::size_t fprintf(file &out, lib::string_view f, const args_t &...args)
   {
     return fprint(out, lib::format(f, args...));
   }
 
-  inline std::size_t fprintln(FILE *out, lib::basic_string_view<char> s)
+  inline std::size_t fprintln(file &out, lib::string_view s)
   {
     std::size_t &&res = fprint(out, s);
-    std::fputc('\n', out);
+    out.putc('\n');
     return res + 1;
   }
 
   template <typename... args_t>
-  inline std::size_t fprintfln(FILE *out, lib::basic_string_view<char> f, const args_t &...args)
+  inline std::size_t fprintfln(file &out, lib::string_view f, const args_t &...args)
   {
     return fprintln(out, lib::format(f, args...));
   }
 
-  inline std::size_t print(lib::basic_string_view<char> s)
+  inline std::size_t print(lib::string_view s)
   {
-    return fprint(stdout, s);
+    return fprint(cout, s);
   }
 
   template <typename... args_t>
-  inline std::size_t printf(lib::basic_string_view<char> f, const args_t &...args)
+  inline std::size_t printf(lib::string_view f, const args_t &...args)
   {
-    return fprintf(stdout, f, args...);
+    return fprintf(cout, f, args...);
   }
 
-  inline std::size_t println(lib::basic_string_view<char> s)
+  inline std::size_t println(lib::string_view s)
   {
-    return fprintln(stdout, s);
+    return fprintln(cout, s);
   }
 
   template <typename... args_t>
-  inline std::size_t printfln(lib::basic_string_view<char> f, const args_t &...args)
+  inline std::size_t printfln(lib::string_view f, const args_t &...args)
   {
-    return fprintfln(stdout, f, args...);
+    return fprintfln(cout, f, args...);
   }
 }
 
 namespace lib
 {
-  inline std::size_t fprint(FILE *out, lib::basic_string_view<wchar_t> s)
+  inline std::size_t fprint(file &out, lib::wstring_view s)
   {
-    for (const wchar_t &c : s)
-      std::fputc(c, out);
-
-    return s.size();
+    return out.write(s);
   }
 
   template <typename... args_t>
-  inline std::size_t fprintf(FILE *out, lib::basic_string_view<wchar_t> f, const args_t &...args)
+  inline std::size_t fprintf(file &out, lib::wstring_view f, const args_t &...args)
   {
     return fprint(out, lib::format(f, args...));
   }
 
-  inline std::size_t fprintln(FILE *out, lib::basic_string_view<wchar_t> s)
+  inline std::size_t fprintln(file &out, lib::wstring_view s)
   {
     std::size_t &&res = fprint(out, s);
-    std::fputc('\n', out);
+    out.putc('\n');
     return res + 1;
   }
 
   template <typename... args_t>
-  inline std::size_t fprintfln(FILE *out, lib::basic_string_view<wchar_t> f, const args_t &...args)
+  inline std::size_t fprintfln(file &out, lib::wstring_view f, const args_t &...args)
   {
     return fprintln(out, lib::format(f, args...));
   }
 
-  inline std::size_t print(lib::basic_string_view<wchar_t> s)
+  inline std::size_t print(lib::wstring_view s)
   {
-    return fprint(stdout, s);
+    return fprint(cout, s);
   }
 
   template <typename... args_t>
-  inline std::size_t printf(lib::basic_string_view<wchar_t> f, const args_t &...args)
+  inline std::size_t printf(lib::wstring_view f, const args_t &...args)
   {
-    return fprintf(stdout, f, args...);
+    return fprintf(cout, f, args...);
   }
 
-  inline std::size_t println(lib::basic_string_view<wchar_t> s)
+  inline std::size_t println(lib::wstring_view s)
   {
-    return fprintln(stdout, s);
+    return fprintln(cout, s);
   }
 
   template <typename... args_t>
-  inline std::size_t printfln(lib::basic_string_view<wchar_t> f, const args_t &...args)
+  inline std::size_t printfln(lib::wstring_view f, const args_t &...args)
   {
-    return fprintfln(stdout, f, args...);
+    return fprintfln(cout, f, args...);
   }
+}
+
+namespace lib
+{
+  struct file_opening_failed
+  {
+  };
+
+  file fopen(string_view filename, string_view mode)
+  {
+    file f(std::fopen(filename.data(), mode.data()));
+
+    if (f.fd == nullptr)
+      throw file_opening_failed();
+
+    return f;
+  }
+
+  struct file_closing_failed
+  {
+  };
+
+  void fclose(file &f)
+  {
+    if (std::fclose(f.fd) == EOF)
+      throw file_closing_failed();
+  }
+
+  struct file_fluhshing_failed
+  {
+  };
+
+  void fflush(file &f)
+  {
+    if (std::fflush(f.fd))
+      throw file_fluhshing_failed();
+  }
+
 }
 
 #endif

@@ -119,6 +119,7 @@ namespace lib
     type_t *end() { return e; }
     const type_t *begin() const { return b; }
     const type_t *end() const { return e; }
+    const type_t *data() const { return b; }
 
     const type_t &operator[](const std::size_t &i) const { return *(b + i); }
     type_t &operator[](const std::size_t &i) { return *(b + i); }
