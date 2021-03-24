@@ -1,8 +1,8 @@
-#include <iostream>
+#include "ios.hpp"
 #include "clon.hpp"
 #include "test.hpp"
 
-constexpr std::string_view str = R"(
+constexpr lib::string_view str = R"(
 (bdd 
   (person 
     (name "Morreti")
@@ -28,7 +28,7 @@ constexpr std::string_view str = R"(
       (postal 56468)
       (city "London")))))";
 
-constexpr std::string_view stre = R"()";
+constexpr lib::string_view stre = R"()";
 
 void should_parse()
 {
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 {
   clon::clon a(str);
   a["person.firstname"].update<clon::string<char>>("lol");
-  std::cout << clon::fmt::format("{}", a);
+  lib::printf("#", a);
 
   run_test(should_parse);
   run_test(should_catch_exception);

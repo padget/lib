@@ -1,16 +1,14 @@
 #ifndef __clon_format_hpp__
 #define __clon_format_hpp__
 
-#include <iostream>
-
 #include <array>
 #include <tuple>
-#include <numeric>
 
 #include "string.hpp"
 #include "vector.hpp"
 #include "string_view.hpp"
 #include "scanner.hpp"
+#include "span.hpp"
 
 #include "format-types.hpp"
 
@@ -40,9 +38,11 @@ namespace lib
       buff.push_back(c);
     }
 
-    void reverse(std::size_t b, std::size_t e)
+    void reverse(std::size_t lastn)
     {
-      // TODO faire la méthode reverse
+      char_t *end = buff.end();
+      char_t *begin = buff.end() - lastn;
+      span<char_t>(begin, end).reverse();
     }
   };
 
@@ -92,7 +92,7 @@ namespace lib
         : fmt(_fmt)
     {
       basic_scanner<char_t> scan(fmt);
-      
+
       for (view<char_t> &part : _parts)
       {
         scan.until(sep);
@@ -191,10 +191,10 @@ namespace lib
   }
 
   template <typename char_t>
-  std::basic_string<char_t>
+  lib::basic_string<char_t>
   to_string(buffer<char_t> &&b)
   {
-    return std::basic_string(b.data(), b.size());
+    return lib::basic_string(b.data(), b.size());
   }
 
   template <typename... args_t>
@@ -212,14 +212,14 @@ namespace lib
   }
 
   template <typename... args_t>
-  std::size_t predict_length_of(
+  std::size_t all_length_of(
       view<char> fmt, const args_t &...args)
   {
     return make_partial(fmt, args...).length();
   }
 
   template <typename... args_t>
-  std::size_t predict_length_of(
+  std::size_t all_length_of(
       view<wchar_t> fmt, const args_t &...args)
   {
     return make_partial(fmt, args...).length();

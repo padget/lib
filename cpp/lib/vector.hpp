@@ -2,6 +2,7 @@
 #define __lib_vector_hpp__
 
 #include <cstddef>
+#include "span.hpp"
 
 namespace lib
 {
@@ -145,20 +146,7 @@ namespace lib
     template <std::size_t n>
     bool operator==(const type_t (&o)[n])
     {
-      if (lgth != n)
-        return false;
-
-      auto *b = data;
-      auto *e = data + lgth;
-      auto *bo = o;
-
-      while (b != e and *b == *bo)
-      {
-        ++b;
-        ++bo;
-      }
-
-      return b == e;
+      return span<type_t>(begin(), end()) == span<const type_t>(o);
     }
 
   public:

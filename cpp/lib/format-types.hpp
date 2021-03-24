@@ -31,7 +31,7 @@ namespace lib
       formatter_context<char_t> &ctx,
       lib::basic_string_view<char_t> v)
   {
-    for (auto && c : v)
+    for (auto &&c : v)
       ctx.append(c);
   }
 
@@ -107,7 +107,7 @@ namespace lib
         cnt++;
       }
 
-      ctx.reverse(0, 0);
+      ctx.reverse(cnt);
     }
   }
 
@@ -128,6 +128,23 @@ namespace lib
     format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 
+  ////////////////////////
+  // bools types format //
+  ////////////////////////
+  template <typename char_t>
+  std::size_t length_of(const bool &s)
+  {
+    return s ? 4 : 5;
+  }
+
+  template <typename char_t>
+  void format_of(
+      formatter_context<char_t> &ctx,
+      const bool &v)
+  {
+    format_of(ctx, v ? basic_string_view<char_t>("true")
+                     : basic_string_view<char_t>("false"));
+  }
   // //////////////////////////////////
   // // vector of chars types format //
   // //////////////////////////////////
