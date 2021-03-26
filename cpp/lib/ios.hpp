@@ -12,13 +12,20 @@
   {                                \
   };
 
+#define INHERITED_EXCEPTION(exception, base) \
+  struct exception : public base             \
+  {                                          \
+  };
+
 namespace lib
 {
-  BASIC_EXCEPTION(file_opening_failed)
-  BASIC_EXCEPTION(file_closing_failed)
-  BASIC_EXCEPTION(file_fluhshing_failed)
-  BASIC_EXCEPTION(null_file_descriptor)
-  BASIC_EXCEPTION(file_writing_failed)
+  BASIC_EXCEPTION(ios_exception)
+
+  INHERITED_EXCEPTION(file_opening_failed, ios_exception)
+  INHERITED_EXCEPTION(file_closing_failed, ios_exception)
+  INHERITED_EXCEPTION(file_fluhshing_failed, ios_exception)
+  INHERITED_EXCEPTION(null_file_descriptor, ios_exception)
+  INHERITED_EXCEPTION(file_writing_failed, ios_exception)
 
   struct file
   {
@@ -97,7 +104,7 @@ namespace lib
   template <typename... args_t>
   inline void fprintf(file &out, lib::string_view f, const args_t &...args)
   {
-    return fprint(out, lib::format(f, args...));
+    fprint(out, lib::format(f, args...));
   }
 
   inline void fprintln(file &out, lib::string_view s)
