@@ -1,9 +1,10 @@
 #ifndef __clon_format_hpp__
 #define __clon_format_hpp__
 
-#include <array>
+
 #include <tuple>
 
+#include "array.hpp"
 #include "string.hpp"
 #include "vector.hpp"
 #include "string_view.hpp"
@@ -18,7 +19,7 @@ namespace lib
   using view = lib::basic_string_view<char_t>;
 
   template <typename char_t, std::size_t n>
-  using views = std::array<view<char_t>, n>;
+  using views = lib::array<view<char_t>, n>;
 
   template <typename char_t>
   using buffer = lib::basic_string<char_t>;
@@ -150,8 +151,8 @@ namespace lib
     {
       std::apply([&parts = p.parts(), &ctx](auto &&...args) {
         std::size_t i(0);
-        ((make_format(parts.at(i++)).format_into(ctx), args.format_into(ctx)), ...);
-        make_format(parts.at(i)).format_into(ctx);
+        ((make_format(parts[i++]).format_into(ctx), args.format_into(ctx)), ...);
+        make_format(parts[i]).format_into(ctx);
       },
                  bcs);
     }

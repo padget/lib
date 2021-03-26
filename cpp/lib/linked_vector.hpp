@@ -1,7 +1,6 @@
 #ifndef __lib_linked_vector_hpp__
 #define __lib_linked_vector_hpp__
 
-#include "list.hpp"
 #include "vector.hpp"
 
 namespace lib

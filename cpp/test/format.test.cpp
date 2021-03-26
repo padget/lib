@@ -13,7 +13,6 @@ void should_format()
 
 int main(int argc, char **argv)
 {
-  lib::printfln("j'# # ans", "ai", 10);
-  lib::println("coucou");
+  lib::printf("coucou");
   run_test(should_format);
 }
