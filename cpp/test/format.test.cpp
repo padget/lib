@@ -13,6 +13,5 @@ void should_format()
 
 int main(int argc, char **argv)
 {
-  lib::printf("coucou");
   run_test(should_format);
 }

@@ -10,7 +10,7 @@ if [ "$1" = "clean" ]; then
   lib_file --path build --state absent
 else
   cc="g++-10"
-  flags="-std=c++20 -Wall -pedantic -Werror -O3 -s"
+  flags="-std=c++20 -Wall -pedantic -Werror -O3 -save-temps"
   libs="-Icpp"
 
   lib_file \

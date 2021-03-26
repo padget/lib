@@ -45,7 +45,6 @@ lib_compile_test() {
   fi
 
   if [ "$src" -nt "$out" ]; then
-    "$cc" -c $src $libs $flags -S
     "$cc" -o "$out.o" -c $src $libs $flags
     "$cc" -o "$out" "$out.o" $flags
   fi
