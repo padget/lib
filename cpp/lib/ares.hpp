@@ -6,13 +6,13 @@
 
 namespace ares
 {
-  template <typename char_t>
+  template <charable char_t>
   std::basic_string<char_t> encrypt(std::basic_string_view<char_t> s)
   {
     return std::basic_string<char_t>(s.begin(), s.end());
   }
 
-  template <typename char_t>
+  template <charable char_t>
   std::basic_string<char_t> decrypt(std::basic_string_view<char_t> s)
   {
     return std::basic_string<char_t>(s.begin(), s.end());

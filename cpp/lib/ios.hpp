@@ -5,7 +5,7 @@
 #include "string.hpp"
 #include "format.hpp"
 #include "format-types.hpp"
-#include <pthread.h>
+#include "meta.hpp"
 
 #define BASIC_EXCEPTION(exception) \
   struct exception                 \
@@ -43,7 +43,7 @@ namespace lib
       return std::feof(fd) != 0;
     }
 
-    template <typename char_t>
+    template <charable char_t>
     void putc(const char_t &c)
     {
       if (fd == nullptr)

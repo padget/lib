@@ -42,7 +42,7 @@ namespace clon::detail
   {
   };
 
-  template <typename char_t>
+  template <charable char_t>
   using string = lib::basic_string_view<char_t>;
   using none = std::monostate;
   using number = std::int64_t;
@@ -52,7 +52,7 @@ namespace clon::detail
   using no_string = no_string_tag;
   using no_boolean = no_boolean_tag;
 
-  template <typename char_t>
+  template <charable char_t>
   using value = std::variant<
       none, boolean, number, string<char_t>, list,
       no_boolean, no_number, no_string>;
@@ -64,7 +64,7 @@ namespace clon::detail
   constexpr std::size_t no_child = maxof<std::size_t>;
   constexpr std::size_t no_root = maxof<std::size_t>;
 
-  template <typename char_t>
+  template <charable char_t>
   number to_number(lib::basic_string_view<char_t> v)
   {
     number n = 0;
@@ -75,7 +75,7 @@ namespace clon::detail
     return n;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   std::size_t to_integer(lib::basic_string_view<char_t> v)
   {
     std::size_t n = 0;
@@ -86,7 +86,7 @@ namespace clon::detail
     return n;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct node
   {
     lib::basic_string_view<char_t> name;
@@ -96,7 +96,7 @@ namespace clon::detail
     std::size_t child = no_child;
   };
 
-  template <typename char_t>
+  template <charable char_t>
   node<char_t> make_node(
       const clon_type &type,
       const lib::basic_string_view<char_t> &name,
@@ -132,7 +132,7 @@ namespace clon::detail
     return n;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct root_node
   {
     std::vector<char_t> buff;
@@ -140,7 +140,7 @@ namespace clon::detail
     std::vector<std::basic_string<char_t>> updt;
   };
 
-  template <typename char_t>
+  template <charable char_t>
   root_node<char_t> make_root(
       const lib::basic_string_view<char_t> &data)
   {
@@ -150,7 +150,7 @@ namespace clon::detail
     return root;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct root_view
   {
     root_node<char_t> *root;
@@ -203,7 +203,7 @@ namespace clon::detail
     }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   root_view<char_t> make_rview(
       root_node<char_t> &r,
       const std::size_t &index = 0)
@@ -211,7 +211,7 @@ namespace clon::detail
     return {&r, index};
   }
 
-  template <typename char_t>
+  template <charable char_t>
   root_view<char_t> make_rview(
       const root_view<char_t> &view,
       const std::size_t &index = 0)
@@ -219,7 +219,7 @@ namespace clon::detail
     return make_rview(*view.root, index);
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct childs_iterator
   {
     root_view<char_t> view;
@@ -255,7 +255,7 @@ namespace clon::detail
     }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   struct childs_list
   {
     root_view<char_t> view;
@@ -263,19 +263,19 @@ namespace clon::detail
     childs_iterator<char_t> end() const { return {make_rview(view, no_next)}; }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   childs_list<char_t> childs(const root_view<char_t> &view)
   {
     return {make_rview(view, view.child())};
   }
 
-  template <typename char_t>
+  template <charable char_t>
   std::size_t length_of(const root_view<char_t> &view)
   {
     return view.root->buff.size();
   }
 
-  template <typename char_t>
+  template <charable char_t>
   void format_of(
       fmt::formatter_context<char_t> &ctx,
       const root_view<char_t> &view)
@@ -348,7 +348,7 @@ namespace clon::detail
 
   constexpr std::array<symbol_type, 128> ascii_to_sb = ascii_build();
 
-  template <typename char_t>
+  template <charable char_t>
   struct scanner
   {
     lib::basic_string_view<char_t> data;
@@ -394,13 +394,13 @@ namespace clon::detail
     }
   };
 
-  template <typename char_t, std::size_t n>
+  template <charable char_t, std::size_t n>
   void handle_error_expecting(const char_t (&s)[n])
   {
     throw std::runtime_error(clon::fmt::format("expected character {}", s));
   }
 
-  template <typename char_t>
+  template <charable char_t>
   void ignore_blanks(scanner<char_t> &scan)
   {
     while (scan.symbol() == symbol_type::blank)
@@ -409,7 +409,7 @@ namespace clon::detail
     scan.ignore();
   }
 
-  template <typename char_t>
+  template <charable char_t>
   lib::basic_string_view<char_t> scan_name(
       scanner<char_t> &scan)
   {
@@ -433,7 +433,7 @@ namespace clon::detail
     return scan.extract();
   }
 
-  template <typename char_t>
+  template <charable char_t>
   lib::basic_string_view<char_t> scan_boolean(
       scanner<char_t> &scan)
   {
@@ -449,7 +449,7 @@ namespace clon::detail
     return scan.extract();
   }
 
-  template <typename char_t>
+  template <charable char_t>
   lib::basic_string_view<char_t> scan_string(
       scanner<char_t> &scan)
   {
@@ -478,7 +478,7 @@ namespace clon::detail
     return str;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   lib::basic_string_view<char_t> scan_number(
       scanner<char_t> &scan)
   {
@@ -493,14 +493,14 @@ namespace clon::detail
     return scan.extract();
   }
 
-  template <typename char_t>
+  template <charable char_t>
   lib::basic_string_view<char_t> scan_list(
       scanner<char_t> &)
   {
     return {};
   }
 
-  template <typename char_t>
+  template <charable char_t>
   void open_node(scanner<char_t> &scan)
   {
     ignore_blanks(scan);
@@ -514,7 +514,7 @@ namespace clon::detail
       handle_error_expecting("'('");
   }
 
-  template <typename char_t>
+  template <charable char_t>
   void close_node(scanner<char_t> &scan)
   {
     ignore_blanks(scan);
@@ -528,17 +528,17 @@ namespace clon::detail
       handle_error_expecting("')'");
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct parser_context
   {
     std::vector<node<char_t>> *nodes;
     scanner<char_t> scan;
   };
 
-  template <typename char_t>
+  template <charable char_t>
   void parse_node(parser_context<char_t> &ctx);
 
-  template <typename char_t>
+  template <charable char_t>
   void parse_list(parser_context<char_t> &ctx)
   {
     ignore_blanks(ctx.scan);
@@ -556,7 +556,7 @@ namespace clon::detail
     }
   }
 
-  template <typename char_t>
+  template <charable char_t>
   clon_type predict_clon_type(scanner<char_t> &scan)
   {
     switch (scan.symbol())
@@ -575,7 +575,7 @@ namespace clon::detail
     }
   }
 
-  template <typename char_t>
+  template <charable char_t>
   void parse_node(parser_context<char_t> &ctx)
   {
     open_node(ctx.scan);
@@ -615,7 +615,7 @@ namespace clon::detail
     close_node(ctx.scan);
   }
 
-  template <typename char_t>
+  template <charable char_t>
   const root_node<char_t> parse(
       const lib::basic_string_view<char_t> &data)
   {
@@ -627,7 +627,7 @@ namespace clon::detail
 
   constexpr std::size_t path_max = maxof<std::size_t>;
 
-  template <typename char_t>
+  template <charable char_t>
   struct path
   {
     lib::basic_string_view<char_t> name;
@@ -635,7 +635,7 @@ namespace clon::detail
     std::size_t max = path_max;
   };
 
-  template <typename char_t>
+  template <charable char_t>
   bool scan_colon(scanner<char_t> &scan)
   {
     if (scan.data[scan.index] == ':')
@@ -648,7 +648,7 @@ namespace clon::detail
     return false;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   std::pair<std::size_t, std::size_t> scan_interval(scanner<char_t> &scan)
   {
     if (scan.data[scan.index] == '*')
@@ -663,7 +663,7 @@ namespace clon::detail
     }
   }
 
-  template <typename char_t>
+  template <charable char_t>
   path<char_t> parse_path(const lib::basic_string_view<char_t> &view)
   {
     path<char_t> p;
@@ -678,7 +678,7 @@ namespace clon::detail
     return p;
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct splits_iterator
   {
     char_t del;
@@ -724,7 +724,7 @@ namespace clon::detail
     }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   struct splits
   {
     char_t del;
@@ -741,7 +741,7 @@ namespace clon::detail
     }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   splits<char_t> split(
       const lib::basic_string_view<char_t> &data,
       const char_t &del)
@@ -749,7 +749,7 @@ namespace clon::detail
     return splits<char_t>{del, data};
   }
 
-  template <typename char_t>
+  template <charable char_t>
   struct paths_iterator
   {
     splits_iterator<char_t> sit;
@@ -787,7 +787,7 @@ namespace clon::detail
     }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   struct paths
   {
     splits<char_t> spl;
@@ -796,13 +796,13 @@ namespace clon::detail
     paths_iterator<char_t> end() const { return {spl.end()}; }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   paths<char_t> split_paths(const lib::basic_string_view<char_t> &pths)
   {
     return paths<char_t>{split(pths, '.')};
   }
 
-  template <typename char_t>
+  template <charable char_t>
   root_view<char_t> getone(
       const path<char_t> &pth,
       const root_view<char_t> &view)
@@ -822,7 +822,7 @@ namespace clon::detail
     return make_rview(view, no_root);
   }
 
-  template <typename char_t>
+  template <charable char_t>
   root_view<char_t> getone(
       const lib::basic_string_view<char_t> &pth,
       const root_view<char_t> &view)
@@ -830,7 +830,7 @@ namespace clon::detail
     return getone(parse_path(pth), view);
   }
 
-  template <typename char_t>
+  template <charable char_t>
   root_view<char_t> get(
       const lib::basic_string_view<char_t> &pths,
       const root_view<char_t> &view)
@@ -878,12 +878,12 @@ namespace clon
 {
   using clon_type = detail::clon_type;
   using number = detail::number;
-  template <typename char_t>
+  template <charable char_t>
   using string = detail::string<char_t>;
   using list = detail::list;
   using boolean = detail::boolean;
 
-  template <typename char_t>
+  template <charable char_t>
   class basic_clon_view
   {
     detail::root_view<char_t> view;
@@ -1010,7 +1010,7 @@ namespace clon
     }
   };
 
-  template <typename char_t>
+  template <charable char_t>
   class basic_clon
       : public basic_clon_view<char_t>
   {

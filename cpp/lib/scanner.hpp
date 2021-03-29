@@ -5,7 +5,7 @@
 
 namespace lib
 {
-  template <typename char_t>
+  template <charable char_t>
   class basic_scanner
   {
     lib::basic_string_view<char_t> data;

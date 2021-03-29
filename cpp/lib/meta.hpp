@@ -13,9 +13,6 @@ namespace lib
   concept same_as = same_v<first_t, second_t>;
 
   template <typename char_t>
-  struct formatter_context;
-
-  template <typename char_t>
   concept charable =
       same_as<char_t, char> or
       same_as<char_t, wchar_t>;
