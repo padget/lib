@@ -105,9 +105,7 @@ namespace lib
   public:
     constexpr span() noexcept = default;
     constexpr span(const span &s) noexcept = default;
-    constexpr span(span &&s) noexcept = default;
     span &operator=(const span &s) noexcept = default;
-    span &operator=(span &&s) noexcept = default;
     ~span() = default;
     constexpr explicit span(type_t *_begin, type_t *_end) : b(_begin), e(_end) {}
     constexpr explicit span(type_t *_begin, std::size_t _length) : span(_begin, _begin + _length) {}
@@ -122,12 +120,12 @@ namespace lib
     constexpr const type_t *end() const { return e; }
     constexpr const type_t *data() const { return b; }
 
-    constexpr const type_t &operator[](const std::size_t &i) const { return *(b + i); }
-    constexpr type_t &operator[](const std::size_t &i) { return *(b + i); }
+    constexpr const type_t &operator[](std::size_t i) const { return *(b + i); }
+    constexpr type_t &operator[](std::size_t i) { return *(b + i); }
 
     constexpr std::size_t size() const { return e - b; }
 
-    constexpr bool operator==(const span &o) const
+    constexpr bool operator==(span o) const
     {
       return size() == o.size() and start_with(o);
     }
@@ -198,7 +196,7 @@ namespace lib
       return detail::any_of(begin(), end(), pred);
     }
 
-    bool start_with(const span &o) const
+    bool start_with(span o) const
     {
       return detail::start_with(begin(), end(), o.begin(), o.end());
     }
