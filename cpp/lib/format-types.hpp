@@ -4,17 +4,11 @@
 #include "string_view.hpp"
 #include "string.hpp"
 #include "vector.hpp"
-#include <concepts>
+#include "meta.hpp"
 
 namespace lib
 {
-  template <typename char_t>
-  struct formatter_context;
-
-  template <typename char_t>
-  concept charable =
-      std::same_as<char_t, char> or
-      std::same_as<char_t, wchar_t>;
+  
 
   ///////////////////////////////////
   // lib::basic_string_view format //
@@ -69,7 +63,7 @@ namespace lib
   ///////////////////////////
   // integral types format //
   ///////////////////////////
-  template <std::integral integral_t>
+  template <integer integral_t>
   std::size_t length_of(const integral_t &i)
   {
     if (i == 0)
@@ -88,7 +82,7 @@ namespace lib
     return len;
   }
 
-  template <typename char_t, std::integral integral_t>
+  template <typename char_t, integer integral_t>
   void format_of(
       formatter_context<char_t> &ctx,
       const integral_t &t)

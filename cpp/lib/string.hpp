@@ -45,8 +45,8 @@ namespace lib
     const std::size_t &size() const { return data.size(); }
     char_t &operator[](std::size_t i) { return data[i]; }
     const char_t &operator[](std::size_t i) const { return data[i]; }
-    void push_back(const char_t &c) { data.push_back(c); }
-    void emplace_back(char_t &&c) { data.emplace_back(c); }
+    void push_back(char_t c) { data.push_back(c); }
+    void emplace_back(char_t c) { data.emplace_back(c); }
     char_t *begin() { return data.begin(); }
     char_t *end() { return data.end(); }
     const char_t *begin() const { return data.begin(); }

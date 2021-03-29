@@ -98,15 +98,14 @@ namespace lib
   template <typename type_t, typename end_limit = normal_limit>
   class span
   {
+  public:
     type_t *b = nullptr;
     type_t *e = nullptr;
 
   public:
-    constexpr span() = default;
-    constexpr span(const span &s) = default;
-    constexpr span(span &&s) = default;
-    span &operator=(const span &s) = default;
-    span &operator=(span &&s) = default;
+    constexpr span() noexcept = default;
+    constexpr span(const span &s) noexcept = default;
+    span &operator=(const span &s) noexcept = default;
     ~span() = default;
     constexpr explicit span(type_t *_begin, type_t *_end) : b(_begin), e(_end) {}
     constexpr explicit span(type_t *_begin, std::size_t _length) : span(_begin, _begin + _length) {}
@@ -115,18 +114,18 @@ namespace lib
     constexpr span(const type_t (&_begin)[n]) : span(_begin, end_limit{}(n)) {}
 
   public:
-    type_t *begin() { return b; }
-    type_t *end() { return e; }
-    const type_t *begin() const { return b; }
-    const type_t *end() const { return e; }
-    const type_t *data() const { return b; }
+    constexpr type_t *begin() { return b; }
+    constexpr type_t *end() { return e; }
+    constexpr const type_t *begin() const { return b; }
+    constexpr const type_t *end() const { return e; }
+    constexpr const type_t *data() const { return b; }
 
-    const type_t &operator[](const std::size_t &i) const { return *(b + i); }
-    type_t &operator[](const std::size_t &i) { return *(b + i); }
+    constexpr const type_t &operator[](std::size_t i) const { return *(b + i); }
+    constexpr type_t &operator[](std::size_t i) { return *(b + i); }
 
-    std::size_t size() const { return e - b; }
+    constexpr std::size_t size() const { return e - b; }
 
-    bool operator==(const span &o) const
+    constexpr bool operator==(span o) const
     {
       return size() == o.size() and start_with(o);
     }
@@ -158,12 +157,12 @@ namespace lib
 
     type_t *find(const type_t &t)
     {
-      return find_if(begin(), end(), [&t](const type_t &o) { return t == o; });
+      return find_if([&t](const type_t &o) { return t == o; });
     }
 
     const type_t *find(const type_t &t) const
     {
-      return find_if(begin(), end(), [&t](const type_t &o) { return t == o; });
+      return find_if([&t](const type_t &o) { return t == o; });
     }
 
     span &reverse()
@@ -197,7 +196,7 @@ namespace lib
       return detail::any_of(begin(), end(), pred);
     }
 
-    bool start_with(const span &o) const
+    bool start_with(span o) const
     {
       return detail::start_with(begin(), end(), o.begin(), o.end());
     }

@@ -13,26 +13,26 @@ namespace lib
     std::size_t prev = 0;
 
   public:
-    explicit basic_scanner(
+    constexpr explicit basic_scanner(
         basic_string_view<char_t> sv)
         : data{sv} {}
 
   public:
-    void until(char_t c)
+    constexpr void until(char_t c)
     {
       while (index < data.size() and data[index] != c)
         advance();
     }
 
-    void advance(std::size_t step = 1)
+    constexpr void advance(std::size_t step = 1)
     {
       if (index + step <= data.size())
         index += step;
     }
 
-    void ignore() { prev = index; }
+    constexpr void ignore() { prev = index; }
 
-    basic_string_view<char_t> extract()
+    constexpr basic_string_view<char_t> extract()
     {
       const char_t *b = &data[prev];
       std::size_t l = index - prev;
