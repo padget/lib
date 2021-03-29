@@ -22,10 +22,11 @@ namespace lib
   BASIC_EXCEPTION(ios_exception)
 
   INHERITED_EXCEPTION(file_opening_failed, ios_exception)
-  INHERITED_EXCEPTION(file_closing_failed, ios_exception)
-  INHERITED_EXCEPTION(file_fluhshing_failed, ios_exception)
   INHERITED_EXCEPTION(null_file_descriptor, ios_exception)
-  INHERITED_EXCEPTION(file_writing_failed, ios_exception)
+
+  INHERITED_EXCEPTION(opened_file_flushing_failed, ios_exception)
+  INHERITED_EXCEPTION(opened_file_closing_failed, ios_exception)
+  INHERITED_EXCEPTION(opened_file_writing_failed, ios_exception)
 
   struct file
   {
@@ -50,7 +51,7 @@ namespace lib
         throw null_file_descriptor();
 
       if (std::fputc(c, fd) != c)
-        throw file_writing_failed();
+        throw opened_file_writing_failed();
     }
 
     template <typename type_t, typename limit_t>
@@ -63,7 +64,7 @@ namespace lib
           s.data(), sizeof(type_t), s.size(), fd);
 
       if (res != s.size() and s.size() != 0)
-        throw file_writing_failed();
+        throw opened_file_writing_failed();
     }
   };
 
@@ -79,14 +80,17 @@ namespace lib
 
   inline void fclose(file &f)
   {
+    if (f.fd == nullptr)
+      throw null_file_descriptor();
+
     if (std::fclose(f.fd) == EOF)
-      throw file_closing_failed();
+      throw opened_file_closing_failed();
   }
 
   inline void fflush(file &f)
   {
     if (std::fflush(f.fd))
-      throw file_fluhshing_failed();
+      throw opened_file_flushing_failed();
   }
 
   inline file cout(stdout);
