@@ -1,7 +1,7 @@
 #include <lib/format.hpp>
 #include <lib/test.hpp>
 
-void should_format()
+inline void should_format()
 {
   test_equals(lib::format("#;#;#", 1, 2, 3), "1;2;3");
   test_equals(lib::format("#", 1, 2, 3), "123");

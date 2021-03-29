@@ -33,18 +33,18 @@ namespace lib
 
     file(std::FILE *f) : fd(f) {}
 
-    bool has_error() const
+    inline bool has_error() const
     {
       return std::ferror(fd) != 0;
     }
 
-    bool eof() const
+    inline bool eof() const
     {
       return std::feof(fd) != 0;
     }
 
     template <charable char_t>
-    void putc(const char_t &c)
+    inline void putc(const char_t &c)
     {
       if (fd == nullptr)
         throw null_file_descriptor();
@@ -54,7 +54,7 @@ namespace lib
     }
 
     template <typename type_t, typename limit_t>
-    void write(span<type_t, limit_t> s)
+    inline void write(span<type_t, limit_t> s)
     {
       if (fd == nullptr)
         throw null_file_descriptor();
@@ -67,7 +67,7 @@ namespace lib
     }
   };
 
-  file fopen(string_view filename, string_view mode)
+  inline file fopen(string_view filename, string_view mode)
   {
     file f(std::fopen(filename.data(), mode.data()));
 
@@ -77,13 +77,13 @@ namespace lib
     return f;
   }
 
-  void fclose(file &f)
+  inline void fclose(file &f)
   {
     if (std::fclose(f.fd) == EOF)
       throw file_closing_failed();
   }
 
-  void fflush(file &f)
+  inline void fflush(file &f)
   {
     if (std::fflush(f.fd))
       throw file_fluhshing_failed();
