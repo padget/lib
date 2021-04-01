@@ -19,12 +19,18 @@ namespace lib
     ~basic_string() = default;
 
     template <std::size_t n>
-    basic_string(const char_t (&s)[n])
-        : data(n - 1)
+    basic_string(const char_t (&s)[n]) : data(n - 1)
     {
       for (auto &&c : s)
         if (c != '\0')
-          data.push_back(c);
+          push_back(c);
+    }
+
+    template <typename iterator_t>
+    basic_string(iterator_t b, iterator_t e) : basic_string(e - b)
+    {
+      for (; b != e; ++b)
+        push_back(*b);
     }
 
     basic_string &operator=(const basic_string &) = default;

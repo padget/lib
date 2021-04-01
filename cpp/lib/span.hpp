@@ -5,7 +5,7 @@
 
 namespace lib
 {
-  namespace detail
+  namespace __span
   {
     template <typename iterator>
     iterator find_if(iterator b, iterator e, auto &&pred)
@@ -80,10 +80,10 @@ namespace lib
     template <typename iterator>
     bool start_with(iterator b, iterator e, iterator bo, iterator eo)
     {
-      if (e - b != eo - bo)
+      if (e - b < eo - bo)
         return false;
 
-      for (; b != e and *b == *bo; (++b, ++bo))
+      for (; bo != eo and *b == *bo; (++b, ++bo))
         ;
 
       return bo == eo;
@@ -119,11 +119,10 @@ namespace lib
     constexpr const type_t *begin() const { return b; }
     constexpr const type_t *end() const { return e; }
     constexpr const type_t *data() const { return b; }
-
     constexpr const type_t &operator[](std::size_t i) const { return *(b + i); }
     constexpr type_t &operator[](std::size_t i) { return *(b + i); }
-
     constexpr std::size_t size() const { return e - b; }
+    constexpr bool empty() const { return size() == 0; }
 
     constexpr bool operator==(span o) const
     {
@@ -133,13 +132,13 @@ namespace lib
   public:
     span &for_each(auto &&action)
     {
-      detail::for_each(begin(), end(), action);
+      __span::for_each(begin(), end(), action);
       return *this;
     }
 
     const span &for_each(auto &&action) const
     {
-      detail::for_each(begin(), end(), action);
+      __span::for_each(begin(), end(), action);
       return *this;
     }
 
@@ -147,12 +146,12 @@ namespace lib
 
     type_t *find_if(auto &&pred)
     {
-      return detail::find_if(begin(), end(), pred);
+      return __span::find_if(begin(), end(), pred);
     }
 
     const type_t *find_if(auto &&pred) const
     {
-      return detail::find_if(begin(), end(), pred);
+      return __span::find_if(begin(), end(), pred);
     }
 
     type_t *find(const type_t &t)
@@ -167,13 +166,13 @@ namespace lib
 
     span &reverse()
     {
-      detail::reverse(begin(), end());
+      __span::reverse(begin(), end());
       return *this;
     }
 
     std::size_t count_if(auto &&pred) const
     {
-      return detail::count_if(begin(), end(), pred);
+      return __span::count_if(begin(), end(), pred);
     }
 
     std::size_t count(const type_t &t) const
@@ -183,22 +182,22 @@ namespace lib
 
     bool all_of(auto &&pred) const
     {
-      return detail::all_of(begin(), end(), pred);
+      return __span::all_of(begin(), end(), pred);
     }
 
     bool none_of(auto &&pred) const
     {
-      return detail::none_of(begin(), end(), pred);
+      return __span::none_of(begin(), end(), pred);
     }
 
     bool any_of(auto &&pred) const
     {
-      return detail::any_of(begin(), end(), pred);
+      return __span::any_of(begin(), end(), pred);
     }
 
     bool start_with(span o) const
     {
-      return detail::start_with(begin(), end(), o.begin(), o.end());
+      return __span::start_with(begin(), end(), o.begin(), o.end());
     }
   };
 }

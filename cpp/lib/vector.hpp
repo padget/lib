@@ -33,6 +33,14 @@ namespace lib
       v.data = nullptr;
     }
 
+    template <typename iterator_t>
+    explicit vector(iterator_t b, iterator_t e)
+        : vector(e - b)
+    {
+      for (; b != e; ++b)
+        push_back(*b);
+    }
+
     ~vector()
     {
       delete[] data;
@@ -41,7 +49,7 @@ namespace lib
     }
 
   public:
-    vector<type_t> &operator=(
+    inline vector<type_t> &operator=(
         const vector<type_t> &v)
     {
       if (this != &v)
@@ -57,7 +65,7 @@ namespace lib
       return *this;
     }
 
-    vector<type_t> &operator=(
+    inline vector<type_t> &operator=(
         vector<type_t> &&v)
     {
       if (this != &v)
@@ -74,7 +82,7 @@ namespace lib
     }
 
   public:
-    void reserve(
+    inline void reserve(
         std::size_t ns)
     {
       if (ns > max)
@@ -87,7 +95,7 @@ namespace lib
 
         while (oldb != olde)
         {
-          *newb = static_cast<type_t&&>(*oldb);
+          *newb = static_cast<type_t &&>(*oldb);
           ++newb;
           ++oldb;
         }
@@ -102,29 +110,29 @@ namespace lib
     }
 
   public:
-    type_t &operator[](std::size_t i)
+    inline type_t &operator[](std::size_t i)
     {
       return data[i];
     }
 
-    const type_t &operator[](std::size_t i) const
+    inline const type_t &operator[](std::size_t i) const
     {
       return data[i];
     }
 
   public:
-    const std::size_t &size() const
+    inline const std::size_t &size() const
     {
       return lgth;
     }
 
-    const std::size_t &capacity() const
+    inline const std::size_t &capacity() const
     {
       return max;
     }
 
   public:
-    void push_back(const type_t &t)
+    inline void push_back(const type_t &t)
     {
       if (size() == capacity())
         reserve(capacity() + capacity() / 2);
@@ -133,27 +141,31 @@ namespace lib
       ++lgth;
     }
 
-    void emplace_back(type_t &&t)
+    inline void emplace_back(type_t &&t)
     {
       if (size() == capacity())
         reserve(capacity() + capacity() / 2);
 
       operator[](size()) = static_cast<type_t &&>(t);
-      ++data.lgth;
+      ++lgth;
     }
 
   public:
     template <std::size_t n>
-    bool operator==(const type_t (&o)[n])
+    inline bool operator==(const type_t (&o)[n])
     {
       return span<type_t>(begin(), end()) == span<const type_t>(o);
     }
 
   public:
-    type_t *begin() { return data; }
-    type_t *end() { return data + lgth; }
-    const type_t *begin() const { return data; }
-    const type_t *end() const { return data + lgth; }
+    inline type_t *begin() { return data; }
+    inline type_t *end() { return data + lgth; }
+    inline const type_t *begin() const { return data; }
+    inline const type_t *end() const { return data + lgth; }
+    inline const type_t &front() const { return *begin(); }
+    inline type_t &front() { return *begin(); }
+    inline const type_t &back() const { return *(end() - 1); }
+    inline type_t &back() { return *(end() - 1); }
   };
 }
 
