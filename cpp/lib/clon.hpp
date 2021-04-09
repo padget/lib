@@ -210,35 +210,41 @@ namespace lib
     tree<basic_string_view<char_t>, clon_value<char_t>> nodes;
 
   public:
-    basic_clon(basic_string_view<char_t> s)
+    explicit basic_clon(basic_string_view<char_t> s)
         : buff(s.begin(), s.end()), nodes(__clon::parse_clon(s)) {}
 
     inline std::size_t buffsize() const { return buff.size(); }
     inline std::size_t size() const { return nodes.size(); }
   };
 
-  template <charable char_t>
-  struct basic_clon_view
-  {
-    basic_clon &c;
-    std::size_t index;
-  };
-
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
 
   template <charable char_t>
-  std::size_t length_of(const basic_clon<char_t> &c) { return c.buffsize(); }
+  class basic_clon_view
+  {
+    const basic_clon<char_t> &c;
+    std::size_t index;
+
+  public:
+    explicit basic_clon_view(
+        const basic_clon<char_t> &_c,
+        std::size_t _index)
+        : c(_c), index(_index) {}
+  };
+
+  using clon_view = basic_clon_view<char>;
+  using wclon_view = basic_clon_view<wchar_t>;
+
+  template <charable char_t>
+  std::size_t length_of(const basic_clon_view<char_t> &c) { return c.buffsize(); }
 
   template <charable char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
-      const basic_clon<char_t> &c)
+      const basic_clon_view<char_t> &c)
   {
-    for (std::size_t i = 0; i < c.size(), ++i)
-    {
-      format_into(ctx, "(# ", c[i].key)
-    }
+    
   }
 }
 

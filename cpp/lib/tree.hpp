@@ -25,7 +25,42 @@ namespace lib
   };
 
   template <typename key_t, typename value_t>
-  struct tree
+  class tree;
+
+  template <typename key_t, typename value_t>
+  struct child_iterator
+  {
+    std::size_t index;
+    tree<key_t, value_t> &t;
+    void operator*()
+    {
+      return t[index].
+    }
+  };
+
+  template <typename key_t, typename value_t>
+  inline bool operator!=(
+      const child_iterator<key_t, value_t> l,
+      const child_iterator<key_t, value_t> r)
+  {
+    return true;
+  }
+
+  template <typename key_t, typename value_t>
+  struct tree_childs
+  {
+    std::size_t index;
+    tree<key_t, value_t> &t;
+
+    child_iterator<key_t, value_t> begin();
+    child_iterator<key_t, value_t> end();
+
+    const child_iterator<key_t, value_t> begin() const;
+    const child_iterator<key_t, value_t> end() const;
+  };
+
+  template <typename key_t, typename value_t>
+  class tree
   {
     vector<tree_node<key_t, value_t>> nodes;
 
@@ -55,7 +90,15 @@ namespace lib
     }
 
     const tree_node<key_t, value_t> &operator[](std::size_t i) const { return nodes[i]; }
+    tree_node<key_t, value_t> &operator[](std::size_t i) { return nodes[i]; }
+
+    tree_childs<key_t, value_t> childs(std::size_t index = 0)
+    {
+      if (nodes[index].child)
+      return {index, *this};
+    }
   };
+
 }
 
 #endif

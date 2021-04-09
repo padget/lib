@@ -51,7 +51,7 @@ void should_parse_clon_string()
 
 
   lib::printfln("clon : #", c);
-  // lib::printfln("c name #", c.root_name());
+ 
 }
 
 int main(int argc, char **argv)
