@@ -38,6 +38,9 @@ namespace lib
 
   namespace __clon
   {
+    template <typename char_t>
+    using clon_storage = tree<basic_string_view<char_t>, clon_value<char_t>>;
+
     template <charable char_t>
     class clon_scanner : public basic_scanner<char_t>
     {
@@ -108,25 +111,32 @@ namespace lib
       }
     };
 
+    enum class push_type
+    {
+      root,
+      next_of,
+      child_of
+    };
+
     template <charable char_t>
     void parse_node(
         clon_scanner<char_t> &scan,
-        tree<basic_string_view<char_t>, clon_value<char_t>> &nodes,
-        std::size_t index,
-        index_type ntype);
+        clon_storage<char_t> &nodes,
+        push_type ntype,
+        std::size_t index);
 
     template <charable char_t>
     inline void parse_list(
         std::size_t parent,
         clon_scanner<char_t> &scan,
-        tree<basic_string_view<char_t>, clon_value<char_t>> &nodes)
+        clon_storage<char_t> &nodes)
     {
       std::size_t nb_childs = 0;
 
       while (scan.is('('))
       {
         auto index = nb_childs == 0 ? parent : nodes.size() - 1;
-        auto type = nb_childs == 0 ? index_type::parent : index_type::pred;
+        auto type = nb_childs == 0 ? push_type::child_of : push_type::next_of;
         parse_node(scan, nodes, index, type);
         scan.ignore_blanks();
         ++nb_childs;
@@ -136,9 +146,9 @@ namespace lib
     template <charable char_t>
     inline void parse_node(
         clon_scanner<char_t> &scan,
-        tree<basic_string_view<char_t>, clon_value<char_t>> &nodes,
-        std::size_t index,
-        index_type ntype)
+        clon_storage<char_t> &nodes,
+        push_type ptype,
+        std::size_t index = no_root)
     {
       scan.ignore_blanks();
 
@@ -175,7 +185,20 @@ namespace lib
       else if (scan.is('('))
         ctype = clon_type::list;
 
-      nodes.push(name, clon_value<char_t>{ctype, scanr}, index, ntype);
+      clon_value<char_t> cval{ctype, scanr};
+
+      switch (ptype)
+      {
+      case push_type::root:
+        nodes.push_root(name, cval);
+        break;
+      case push_type::child_of:
+        nodes.push_child(name, cval, index);
+        break;
+      case push_type::next_of:
+        nodes.push_next(name, cval, index);
+        break;
+      }
 
       if (ctype == clon_type::list)
         parse_list(nodes.size() - 1, scan, nodes);
@@ -192,30 +215,54 @@ namespace lib
     }
 
     template <charable char_t>
-    tree<basic_string_view<char_t>, clon_value<char_t>> inline parse_clon(basic_string_view<char_t> s)
+    clon_storage<char_t> inline parse_clon(basic_string_view<char_t> s)
     {
       if (s.empty())
         throw clon_parsing_failed_empty_sview();
 
       clon_scanner<char_t> scan(s);
-      tree<basic_string_view<char_t>, clon_value<char_t>> nodes(s.count('('));
-      parse_node(scan, nodes, no_root, index_type::parent);
+      clon_storage<char_t> nodes(s.count('('));
+      parse_node(scan, nodes, push_type::root);
       return nodes;
     }
   }
 
   template <charable char_t>
+  class basic_clon_view;
+
+  template <charable char_t>
   class basic_clon
   {
     basic_string<char_t> buff;
-    tree<basic_string_view<char_t>, clon_value<char_t>> nodes;
+    __clon::clon_storage<char_t> nodes;
 
   public:
     explicit basic_clon(basic_string_view<char_t> s)
-        : buff(s.begin(), s.end()), nodes(__clon::parse_clon(s)) {}
+        : buff(s.begin(), s.end()),
+          nodes(__clon::parse_clon(s)) {}
 
     inline std::size_t buffsize() const { return buff.size(); }
     inline std::size_t size() const { return nodes.size(); }
+
+    inline basic_clon_view<char_t> view() const
+    {
+      return (*this, 0);
+    }
+
+    inline clon_type type(std::size_t index) const
+    {
+      return nodes[index].value.type;
+    }
+
+    inline basic_string_view<char_t> name(std::size_t index) const
+    {
+      return nodes[index].value.key;
+    }
+
+    inline basic_string_view<char_t> value(std::size_t index) const
+    {
+      return nodes[index].value.val;
+    }
   };
 
   using clon = basic_clon<char>;
@@ -232,6 +279,11 @@ namespace lib
         const basic_clon<char_t> &_c,
         std::size_t _index)
         : c(_c), index(_index) {}
+
+  public:
+    inline clon_type type() const { return c.type(index); }
+    inline basic_string_view<char_t> name() const { return c.name(index); }
+    inline basic_string_view<char_t> value() const { return c.value(index); }
   };
 
   using clon_view = basic_clon_view<char>;
@@ -243,9 +295,29 @@ namespace lib
   template <charable char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
-      const basic_clon_view<char_t> &c)
+      const basic_clon_view<char_t> &view)
   {
-    
+    switch (view.type())
+    {
+    case clon_type::no_boolean:
+    case clon_type::no_number:
+    case clon_type::boolean:
+    case clon_type::number:
+      format_into(ctx, "({} {})", view.name(), view.value());
+      break;
+    case clon_type::no_string:
+    case clon_type::string:
+      format_into(ctx, "({} \"{}\")", view.name(), view.value());
+      break;
+    case clon_type::list:
+      format_into(ctx, "({} ", view.name());
+      for (auto &&child : childs(view)) // FIXME childs of a view
+        format_of(ctx, child);
+      format_into(ctx, ")");
+      break;
+    case clon_type::none:
+      break;
+    }
   }
 }
 

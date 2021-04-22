@@ -10,17 +10,9 @@ namespace lib
   INHERITED_EXCEPTION(parent_index_doesnt_exist, tree_exception)
   INHERITED_EXCEPTION(previous_index_doesnt_exist, tree_exception)
   
-
   constexpr std::size_t no_next = static_cast<std::size_t>(-1);
   constexpr std::size_t no_child = static_cast<std::size_t>(-1);
   constexpr std::size_t no_root = static_cast<std::size_t>(-1);
-
-  enum class push_type
-  {
-    root,
-    next_of,
-    child_of
-  };
 
   template <typename key_t, typename value_t>
   struct tree_node
@@ -122,7 +114,8 @@ namespace lib
     inline size_t size() const { return nodes.size(); }
 
   public:
-    inline std::size_t push_root(const key_t &key, const value_t &val)
+    inline std::size_t push_root(
+      const key_t &key, const value_t &val)
     {
       if (nodes.empty())
         nodes.emplace_back(node_type{key, val});
@@ -188,7 +181,6 @@ namespace lib
       return {nodes[index].child, *this};
     }
   };
-
 }
 
 #endif
