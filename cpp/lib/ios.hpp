@@ -6,24 +6,13 @@
 #include "format.hpp"
 #include "format-types.hpp"
 #include "meta.hpp"
-
-#define BASIC_EXCEPTION(exception) \
-  struct exception                 \
-  {                                \
-  };
-
-#define INHERITED_EXCEPTION(exception, base) \
-  struct exception : public base             \
-  {                                          \
-  };
+#include "exception.hpp"
 
 namespace lib
 {
   BASIC_EXCEPTION(ios_exception)
-
   INHERITED_EXCEPTION(file_opening_failed, ios_exception)
   INHERITED_EXCEPTION(null_file_descriptor, ios_exception)
-
   INHERITED_EXCEPTION(opened_file_flushing_failed, ios_exception)
   INHERITED_EXCEPTION(opened_file_closing_failed, ios_exception)
   INHERITED_EXCEPTION(opened_file_writing_failed, ios_exception)

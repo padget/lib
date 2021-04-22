@@ -2,17 +2,24 @@
 #define __lib_tree_hpp__
 
 #include "vector.hpp"
+#include "exception.hpp"
 
 namespace lib
 {
+  BASIC_EXCEPTION(tree_exception)
+  INHERITED_EXCEPTION(parent_index_doesnt_exist, tree_exception)
+  INHERITED_EXCEPTION(previous_index_doesnt_exist, tree_exception)
+  
+
   constexpr std::size_t no_next = static_cast<std::size_t>(-1);
   constexpr std::size_t no_child = static_cast<std::size_t>(-1);
   constexpr std::size_t no_root = static_cast<std::size_t>(-1);
 
-  enum class index_type
+  enum class push_type
   {
-    parent,
-    pred
+    root,
+    next_of,
+    child_of
   };
 
   template <typename key_t, typename value_t>
@@ -97,7 +104,9 @@ namespace lib
   template <typename key_t, typename value_t>
   class tree
   {
-    vector<tree_node<key_t, value_t>> nodes;
+    using node_type = tree_node<key_t, value_t>;
+
+    vector<node_type> nodes;
 
   public:
     tree() = default;
@@ -113,32 +122,66 @@ namespace lib
     inline size_t size() const { return nodes.size(); }
 
   public:
-    inline std::size_t push(const key_t &key, const value_t &val, std::size_t index, index_type type)
+    inline std::size_t push_root(const key_t &key, const value_t &val)
     {
-      lib::println("insert of");
-      lib::printfln("index : #, next : #, child : #, value : #", index,
-                    (*this)[index].next,
-                    (*this)[index].child,
-                    (*this)[index].value);
+      if (nodes.empty())
+        nodes.emplace_back(node_type{key, val});
 
-      if (type == index_type::parent and index != no_root)
-        nodes[index].child = nodes.size();
-
-      else if (type == index_type::pred and index != no_root)
-        nodes[index].next = nodes.size();
-
-      lib::printfln("index : #, next : #, child : #, value : #", index,
-                    (*this)[index].next,
-                    (*this)[index].child,
-                    (*this)[index].value);
-
-      lib::println("end insert of");
-      nodes.emplace_back(tree_node<key_t, value_t>{key, val});
-      return nodes.size() - 1;
+      return 0;
     }
 
-    inline const tree_node<key_t, value_t> &operator[](std::size_t i) const { return nodes[i]; }
-    inline tree_node<key_t, value_t> &operator[](std::size_t i) { return nodes[i]; }
+    inline std::size_t push_next(
+        const key_t &key,
+        const value_t &value,
+        std::size_t index)
+    {
+      if (index == no_root)
+        throw previous_index_doesnt_exist();
+      
+      if (index > nodes.back_index())
+        throw previous_index_doesnt_exist();
+
+      nodes.emplace_back(node_type{key, value});
+
+      node_type &newnode = nodes.back();
+      std::size_t newnext = nodes.back_index();
+
+      node_type &prev = nodes[index];
+      std::size_t oldnext = prev.next;
+
+      prev.next = newnext;
+      newnode.next = oldnext;
+
+      return newnext;
+    }
+
+    inline std::size_t push_child(
+        const key_t &key,
+        const value_t &value,
+        std::size_t index)
+    {
+      if (index == no_root)
+        throw parent_index_doesnt_exist();
+      
+      if (index > nodes.back_index())
+        throw parent_index_doesnt_exist();
+
+      nodes.emplace_back(node_type{key, value});
+
+      node_type &newnode = nodes.back();
+      std::size_t newchild = nodes.back_index();
+
+      node_type &parent = nodes[index];
+      std::size_t oldchild = parent.child;
+
+      parent.child = newchild;
+      newnode.next = oldchild;
+
+      return newchild;
+    }
+
+    inline const node_type &operator[](std::size_t i) const { return nodes[i]; }
+    inline node_type &operator[](std::size_t i) { return nodes[i]; }
 
     inline tree_childs<key_t, value_t> childs_of(std::size_t index = 0)
     {

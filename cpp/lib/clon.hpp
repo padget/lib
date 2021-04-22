@@ -8,6 +8,7 @@
 #include "string.hpp"
 #include "scanner.hpp"
 #include "tree.hpp"
+#include "exception.hpp"
 
 namespace lib
 {

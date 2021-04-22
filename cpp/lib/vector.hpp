@@ -121,15 +121,9 @@ namespace lib
     }
 
   public:
-    inline const std::size_t &size() const
-    {
-      return lgth;
-    }
-
-    inline const std::size_t &capacity() const
-    {
-      return max;
-    }
+    inline std::size_t size() const { return lgth; }
+    inline bool empty() { return size() == 0; }
+    inline std::size_t capacity() const { return max; }
 
   public:
     inline void push_back(const type_t &t)
@@ -162,8 +156,10 @@ namespace lib
     inline type_t *end() { return data + lgth; }
     inline const type_t *begin() const { return data; }
     inline const type_t *end() const { return data + lgth; }
+    inline std::size_t front_index() const { return 0; }
     inline const type_t &front() const { return *begin(); }
     inline type_t &front() { return *begin(); }
+    inline std::size_t back_index() const { return size() - 1; }
     inline const type_t &back() const { return *(end() - 1); }
     inline type_t &back() { return *(end() - 1); }
   };
