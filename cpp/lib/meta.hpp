@@ -33,7 +33,7 @@ namespace lib
     template <typename type_t>
     struct remove_reference
     {
-      usig type = type_t;
+      using type = type_t;
     };
 
     template <typename type_t>
