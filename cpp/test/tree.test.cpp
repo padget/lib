@@ -1,21 +1,34 @@
 #include <lib/ios.hpp>
 #include <lib/tree.hpp>
 
+template <typename value_t>
+void print_tree(
+    const lib::tree_node<value_t> &n)
+{
+  lib::printfln("# - #", n.id, n.value);
+
+  for (const lib::tree_node<value_t> &sn : n.childs())
+    print_tree(sn);
+}
+
+template <typename value_t>
+void print_tree(
+    const lib::tree<value_t> &t)
+{
+  print_tree(t[0]);
+}
+
 int main()
 {
-  lib::tree<int, int> t;
+  lib::tree<int> t;
 
-  t.push_root(1, 20);
-  t.push_child(1, 22, 0);
-  t.push_child(1, 23, 1);
-  t.push_child(1, 21, 0);
-  t.push_next(1, 24, 1);
+  t.push_root(20);
+  t.push_child(22, 0);
+  t.push_child(23, 1);
+  t.push_child(21, 0);
+  t.push_next(24, 1);
 
-  for (auto &&n : t.childs_of(0))
-    lib::printfln("child of 0 #", n);
-
-  for (auto &&n : t.childs_of(1))
-    lib::printfln("child of 1 #", n);
+  print_tree(t);
 
   return 0;
 }
