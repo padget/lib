@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <lib/span.hpp>
+#include <lib/utility.hpp>
 
 namespace lib
 {
@@ -15,18 +16,24 @@ namespace lib
     type_t *data = nullptr;
 
   public:
-    explicit vector(std::size_t cap = 10)
-        : max(cap), data(new type_t[max]) {}
+    explicit vector(
+        std::size_t cap = 10)
+        : max(cap),
+          data(new type_t[max]) {}
 
-    vector(const vector<type_t> &v)
+    vector(
+        const vector<type_t> &v)
         : vector(v.max)
     {
       for (auto &&i : v)
         push_back(i);
     }
 
-    vector(vector<type_t> &&v)
-        : lgth(v.lgth), max(v.max), data(v.data)
+    vector(
+        vector<type_t> &&v)
+        : lgth(v.lgth),
+          max(v.max),
+          data(v.data)
     {
       v.lgth = 0;
       v.max = 0;
@@ -34,7 +41,9 @@ namespace lib
     }
 
     template <typename iterator_t>
-    explicit vector(iterator_t b, iterator_t e)
+    explicit vector(
+        iterator_t b,
+        iterator_t e)
         : vector(e - b)
     {
       for (; b != e; ++b)
@@ -49,7 +58,8 @@ namespace lib
     }
 
   public:
-    inline vector<type_t> &operator=(
+    inline vector<type_t> &
+    operator=(
         const vector<type_t> &v)
     {
       if (this != &v)
@@ -65,7 +75,8 @@ namespace lib
       return *this;
     }
 
-    inline vector<type_t> &operator=(
+    inline vector<type_t> &
+    operator=(
         vector<type_t> &&v)
     {
       if (this != &v)
@@ -95,7 +106,7 @@ namespace lib
 
         while (oldb != olde)
         {
-          *newb = static_cast<type_t &&>(*oldb);
+          *newb = move(*oldb);
           ++newb;
           ++oldb;
         }
@@ -110,58 +121,133 @@ namespace lib
     }
 
   public:
-    inline type_t &operator[](std::size_t i)
+    inline type_t &
+    operator[](
+        std::size_t i)
     {
       return data[i];
     }
 
-    inline const type_t &operator[](std::size_t i) const
+    inline const type_t &
+    operator[](
+        std::size_t i) const
     {
       return data[i];
     }
 
   public:
-    inline std::size_t size() const { return lgth; }
-    inline bool empty() { return size() == 0; }
-    inline std::size_t capacity() const { return max; }
+    inline std::size_t
+    size() const
+    {
+      return lgth;
+    }
+
+    inline bool
+    empty() const
+    {
+      return size() == 0;
+    }
+
+    inline std::size_t
+    capacity() const
+    {
+      return max;
+    }
 
   public:
-    inline void push_back(const type_t &t)
+    inline void
+    push_back(
+        const type_t &t)
     {
       if (size() == capacity())
-        reserve(capacity() + capacity() / 2);
+        reserve(capacity() +
+                capacity() / 2);
 
       operator[](size()) = t;
       ++lgth;
     }
 
-    inline void emplace_back(type_t &&t)
+    inline void
+    emplace_back(
+        type_t &&t)
     {
       if (size() == capacity())
-        reserve(capacity() + capacity() / 2);
+        reserve(capacity() +
+                capacity() / 2);
 
-      operator[](size()) = static_cast<type_t &&>(t);
+      operator[](size()) = move(t);
       ++lgth;
     }
 
   public:
     template <std::size_t n>
-    inline bool operator==(const type_t (&o)[n])
+    inline bool operator==(
+        const type_t (&o)[n])
     {
-      return span<type_t>(begin(), end()) == span<const type_t>(o);
+      return span<type_t>(begin(), end()) ==
+             span<const type_t>(o);
     }
 
   public:
-    inline type_t *begin() { return data; }
-    inline type_t *end() { return data + lgth; }
-    inline const type_t *begin() const { return data; }
-    inline const type_t *end() const { return data + lgth; }
-    inline std::size_t front_index() const { return 0; }
-    inline const type_t &front() const { return *begin(); }
-    inline type_t &front() { return *begin(); }
-    inline std::size_t back_index() const { return size() - 1; }
-    inline const type_t &back() const { return *(end() - 1); }
-    inline type_t &back() { return *(end() - 1); }
+    inline type_t *
+    begin()
+    {
+      return data;
+    }
+
+    inline type_t *
+    end()
+    {
+      return data + lgth;
+    }
+
+    inline const type_t *
+    begin() const
+    {
+      return data;
+    }
+
+    inline const type_t *
+    end() const
+    {
+      return data + lgth;
+    }
+
+    inline std::size_t
+    front_index() const
+    {
+      return 0;
+    }
+
+    inline const type_t &
+    front() const
+    {
+      return *begin();
+    }
+
+    inline type_t &
+    front()
+    {
+      return *begin();
+    }
+
+    inline std::size_t
+    back_index() const
+    {
+      return size() - 1;
+    }
+
+    inline const type_t &
+    back() const
+    {
+      return *(end() - 1);
+    }
+
+    inline type_t &
+    back()
+    {
+      return *(end() - 1);
+    }
   };
 }
 

@@ -26,7 +26,32 @@ namespace lib
       same_as<type_t, long> or same_as<type_t, unsigned long> or
       same_as<type_t, const long> or same_as<type_t, const unsigned long> or
       same_as<type_t, long long> or same_as<type_t, unsigned long long> or
-      same_as<type_t, const long long> or same_as<type_t, const unsigned long long>; 
+      same_as<type_t, const long long> or same_as<type_t, const unsigned long long>;
+
+  namespace __meta
+  {
+    template <typename type_t>
+    struct remove_reference
+    {
+      usig type = type_t;
+    };
+
+    template <typename type_t>
+    struct remove_reference<type_t &>
+    {
+      using type = type_t;
+    };
+
+    template <typename type_t>
+    struct remove_reference<type_t &&>
+    {
+      using type = type_t;
+    };
+  }
+
+  template <typename type_t>
+  using remove_reference = typename __meta::remove_reference<type_t>::type;
+
 }
 
 #endif
