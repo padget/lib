@@ -1,8 +1,8 @@
 #ifndef __clon_test_hpp__
 #define __clon_test_hpp__
 
-#include "format.hpp"
-#include "ios.hpp"
+#include <lib/format.hpp>
+#include <lib/ios.hpp>
 
 #define test_equals(actual, expected)             \
   lib::printfln("===== at l.# test # == # : #",   \

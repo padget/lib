@@ -2,7 +2,7 @@
 #define __lib_vector_hpp__
 
 #include <cstddef>
-#include "span.hpp"
+#include <lib/span.hpp>
 
 namespace lib
 {

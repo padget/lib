@@ -2,11 +2,11 @@
 #define __lib_ios_hpp__
 
 #include <cstdio>
-#include "string.hpp"
-#include "format.hpp"
-#include "format-types.hpp"
-#include "meta.hpp"
-#include "exception.hpp"
+#include <lib/string.hpp>
+#include <lib/format.hpp>
+#include <lib/format-types.hpp>
+#include <lib/meta.hpp>
+#include <lib/exception.hpp>
 
 namespace lib
 {

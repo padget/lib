@@ -1,8 +1,8 @@
 #ifndef __lib_string_view_hpp__
 #define __lib_string_view_hpp__
 
-#include "span.hpp"
-#include "meta.hpp"
+#include <lib/span.hpp>
+#include <lib/meta.hpp>
 
 namespace lib
 {

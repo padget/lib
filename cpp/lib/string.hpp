@@ -1,8 +1,8 @@
 #ifndef __lib_string_hpp__
 #define __lib_string_hpp__
 
-#include "vector.hpp"
-#include "string_view.hpp"
+#include <lib/vector.hpp>
+#include <lib/string_view.hpp>
 
 namespace lib
 {

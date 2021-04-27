@@ -3,12 +3,12 @@
 
 #define CLON_VERSION 1.0.0
 
-#include "meta.hpp"
-#include "string_view.hpp"
-#include "string.hpp"
-#include "scanner.hpp"
-#include "tree.hpp"
-#include "exception.hpp"
+#include <lib/meta.hpp>
+#include <lib/string_view.hpp>
+#include <lib/string.hpp>
+#include <lib/scanner.hpp>
+#include <lib/tree.hpp>
+#include <lib/exception.hpp>
 
 namespace lib
 {

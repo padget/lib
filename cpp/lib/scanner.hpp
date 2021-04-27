@@ -1,7 +1,7 @@
 #ifndef __lib_scanner_hpp__
 #define __lib_scanner_hpp__
 
-#include "string_view.hpp"
+#include <lib/string_view.hpp>
 
 namespace lib
 {

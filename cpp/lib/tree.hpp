@@ -1,8 +1,8 @@
 #ifndef __lib_tree_hpp__
 #define __lib_tree_hpp__
 
-#include "vector.hpp"
-#include "exception.hpp"
+#include <lib/vector.hpp>
+#include <lib/exception.hpp>
 
 namespace lib
 {
