@@ -44,18 +44,18 @@ else
 
   # ./build/array.test.out
 
-  # lib_compile_test \
-  #   --out build/clon.test.out \
-  #   --src cpp/test/clon.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/clon.test.out \
+    --src cpp/test/clon.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/clon.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/clon.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/clon.test.out
+  ./build/clon.test.out
 
   lib_compile_test \
     --out build/tree.test.out \

@@ -25,6 +25,7 @@ namespace lib
   struct clon_value
   {
     clon_type type;
+    basic_string_view<char_t> name;
     basic_string_view<char_t> val;
   };
 
@@ -39,7 +40,7 @@ namespace lib
   namespace __clon
   {
     template <typename char_t>
-    using clon_storage = tree<basic_string_view<char_t>, clon_value<char_t>>;
+    using clon_storage = tree<clon_value<char_t>>;
 
     template <charable char_t>
     class clon_scanner : public basic_scanner<char_t>
@@ -185,18 +186,18 @@ namespace lib
       else if (scan.is('('))
         ctype = clon_type::list;
 
-      clon_value<char_t> cval{ctype, scanr};
+      clon_value<char_t> cval{ctype, name, scanr};
 
       switch (ptype)
       {
       case push_type::root:
-        nodes.push_root(name, cval);
+        nodes.push_root(cval);
         break;
       case push_type::child_of:
-        nodes.push_child(name, cval, index);
+        nodes.push_child(cval, index);
         break;
       case push_type::next_of:
-        nodes.push_next(name, cval, index);
+        nodes.push_next(cval, index);
         break;
       }
 
@@ -256,7 +257,7 @@ namespace lib
 
     inline basic_string_view<char_t> name(std::size_t index) const
     {
-      return nodes[index].value.key;
+      return nodes[index].value.name;
     }
 
     inline basic_string_view<char_t> value(std::size_t index) const
@@ -299,8 +300,6 @@ namespace lib
   {
     switch (view.type())
     {
-    case clon_type::no_boolean:
-    case clon_type::no_number:
     case clon_type::boolean:
     case clon_type::number:
       format_into(ctx, "({} {})", view.name(), view.value());
@@ -311,7 +310,7 @@ namespace lib
       break;
     case clon_type::list:
       format_into(ctx, "({} ", view.name());
-      for (auto &&child : childs(view)) // FIXME childs of a view
+      for (auto &&child : ) // FIXME childs of a view
         format_of(ctx, child);
       format_into(ctx, ")");
       break;
