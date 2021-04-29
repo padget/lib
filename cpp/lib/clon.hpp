@@ -29,6 +29,9 @@ namespace lib
     basic_string_view<char_t> val;
   };
 
+  template<charable char_t>
+  using clon_node = tree_node<clon_value<char_t>>;
+
   BASIC_EXCEPTION(clon_parsing_failed_empty_sview)
   BASIC_EXCEPTION(clon_parsing_failed_lbracket_expected)
   BASIC_EXCEPTION(clon_parsing_failed_rbracket_expected)
@@ -138,7 +141,7 @@ namespace lib
       {
         auto index = nb_childs == 0 ? parent : nodes.size() - 1;
         auto type = nb_childs == 0 ? push_type::child_of : push_type::next_of;
-        parse_node(scan, nodes, index, type);
+        parse_node(scan, nodes, type, index);
         scan.ignore_blanks();
         ++nb_childs;
       }
@@ -149,7 +152,7 @@ namespace lib
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
         push_type ptype,
-        std::size_t index = no_root)
+        std::size_t index)
     {
       scan.ignore_blanks();
 
@@ -223,7 +226,7 @@ namespace lib
 
       clon_scanner<char_t> scan(s);
       clon_storage<char_t> nodes(s.count('('));
-      parse_node(scan, nodes, push_type::root);
+      parse_node(scan, nodes, push_type::root, no_root);
       return nodes;
     }
   }
@@ -242,27 +245,46 @@ namespace lib
         : buff(s.begin(), s.end()),
           nodes(__clon::parse_clon(s)) {}
 
-    inline std::size_t buffsize() const { return buff.size(); }
-    inline std::size_t size() const { return nodes.size(); }
-
-    inline basic_clon_view<char_t> view() const
+    inline std::size_t
+    buffsize() const
     {
-      return (*this, 0);
+      return buff.size();
     }
 
-    inline clon_type type(std::size_t index) const
+    inline std::size_t
+    size() const
+    {
+      return nodes.size();
+    }
+
+    inline clon_type
+    type(std::size_t index) const
     {
       return nodes[index].value.type;
     }
 
-    inline basic_string_view<char_t> name(std::size_t index) const
+    inline basic_string_view<char_t>
+    name(std::size_t index) const
     {
       return nodes[index].value.name;
     }
 
-    inline basic_string_view<char_t> value(std::size_t index) const
+    inline basic_string_view<char_t>
+    value(std::size_t index) const
     {
       return nodes[index].value.val;
+    }
+
+    inline const clon_node<char_t> &
+    root() const
+    {
+      return nodes[0];
+    }
+
+    inline clon_node<char_t> &
+    root()
+    {
+      return nodes[0];
     }
   };
 
@@ -270,53 +292,46 @@ namespace lib
   using wclon = basic_clon<wchar_t>;
 
   template <charable char_t>
-  class basic_clon_view
+  std::size_t length_of(
+      const basic_clon<char_t> &c)
   {
-    const basic_clon<char_t> &c;
-    std::size_t index;
-
-  public:
-    explicit basic_clon_view(
-        const basic_clon<char_t> &_c,
-        std::size_t _index)
-        : c(_c), index(_index) {}
-
-  public:
-    inline clon_type type() const { return c.type(index); }
-    inline basic_string_view<char_t> name() const { return c.name(index); }
-    inline basic_string_view<char_t> value() const { return c.value(index); }
-  };
-
-  using clon_view = basic_clon_view<char>;
-  using wclon_view = basic_clon_view<wchar_t>;
-
-  template <charable char_t>
-  std::size_t length_of(const basic_clon_view<char_t> &c) { return c.buffsize(); }
+    return c.buffsize();
+  }
 
   template <charable char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
-      const basic_clon_view<char_t> &view)
+      const basic_clon<char_t> &c)
   {
-    switch (view.type())
+    format_of(ctx, c.root());
+  }
+
+  template <charable char_t>
+  inline void format_of(
+      formatter_context<char_t> &ctx,
+      const clon_node<char_t> &nc)
+  {
+    lib::printfln("je rentre dans la fonction");
+    lib::printfln("# # #", (int)nc.id, (int)nc.value.type, nc.value.name);
+    switch (nc.value.type)
     {
     case clon_type::boolean:
     case clon_type::number:
-      format_into(ctx, "({} {})", view.name(), view.value());
+      format_into(ctx, "(# #)", nc.value.name, nc.value.val);
       break;
-    case clon_type::no_string:
     case clon_type::string:
-      format_into(ctx, "({} \"{}\")", view.name(), view.value());
+      format_into(ctx, "(# \"#\")", nc.value.name, nc.value.val);
       break;
     case clon_type::list:
-      format_into(ctx, "({} ", view.name());
-      for (auto &&child : ) // FIXME childs of a view
+      format_into(ctx, "(# ", nc.value.name);
+      for (const clon_node<char_t> &child : nc.childs())
         format_of(ctx, child);
       format_into(ctx, ")");
       break;
     case clon_type::none:
       break;
     }
+    lib::printfln("je sort dans la fonction");
   }
 }
 

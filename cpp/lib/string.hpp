@@ -19,7 +19,9 @@ namespace lib
     ~basic_string() = default;
 
     template <std::size_t n>
-    basic_string(const char_t (&s)[n]) : data(n - 1)
+    basic_string(
+        const char_t (&s)[n])
+        : data(n - 1)
     {
       for (auto &&c : s)
         if (c != '\0')
@@ -27,17 +29,24 @@ namespace lib
     }
 
     template <typename iterator_t>
-    basic_string(iterator_t b, iterator_t e) : basic_string(e - b)
+    basic_string(
+        iterator_t b,
+        iterator_t e)
+        : basic_string(e - b)
     {
       for (; b != e; ++b)
         push_back(*b);
     }
 
-    basic_string &operator=(const basic_string &) = default;
-    basic_string &operator=(basic_string &&) = default;
+    basic_string &operator=(
+        const basic_string &) = default;
+
+    basic_string &operator=(
+        basic_string &&) = default;
 
   public:
-    bool operator==(basic_string_view<char_t> s) const
+    bool operator==(
+        basic_string_view<char_t> s) const
     {
       return basic_string_view<char_t>(*this) == s;
     }
@@ -48,15 +57,55 @@ namespace lib
     }
 
   public:
-    const std::size_t &size() const { return data.size(); }
-    char_t &operator[](std::size_t i) { return data[i]; }
-    const char_t &operator[](std::size_t i) const { return data[i]; }
-    void push_back(char_t c) { data.push_back(c); }
-    void emplace_back(char_t c) { data.emplace_back(c); }
-    char_t *begin() { return data.begin(); }
-    char_t *end() { return data.end(); }
-    const char_t *begin() const { return data.begin(); }
-    const char_t *end() const { return data.end(); }
+    const std::size_t
+    size() const
+    {
+      return data.size();
+    }
+
+    char_t &operator[](
+        std::size_t i)
+    {
+      return data[i];
+    }
+
+    const char_t &operator[](
+        std::size_t i) const
+    {
+      return data[i];
+    }
+
+    void push_back(
+        char_t c)
+    {
+      data.push_back(c);
+    }
+
+    void emplace_back(
+        char_t c)
+    {
+      data.emplace_back(c);
+    }
+
+    char_t *begin()
+    {
+      return data.begin();
+    }
+
+    char_t *end()
+    {
+      return data.end();
+    }
+
+    const char_t *begin() const
+    {
+      return data.begin();
+    }
+
+    const char_t *end() const
+    {
+      return data.end();
+    }
   };
 
   using string = basic_string<char>;

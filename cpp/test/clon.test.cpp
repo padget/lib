@@ -9,44 +9,8 @@ void should_parse_clon_string()
       (name "coucou")
       (firstname "cocuou")
       (address 
-        (city "san fransisco")
-        (street 
-          (number "doudou")
-          (libelle "goo")
-        )
-      )(name "coucou")
-      (firstname "cocuou")
-      (address 
-        (city "san fransisco")
-        (street 
-          (number "doudou")
-          (libelle "goo")
-        )
-      )(name "coucou")
-      (firstname "cocuou")
-      (address 
-        (city "san fransisco")
-        (street 
-          (number "doudou")
-          (libelle "goo")
-        )
-      )(name "coucou")
-      (firstname "cocuou")
-      (address 
-        (city "san fransisco")
-        (street 
-          (number "doudou")
-          (libelle "goo")
-        )
-      )(name "coucou")
-      (firstname "cocuou")
-      (address 
-        (city "san fransisco")
-        (street 
-          (number "doudou")
-          (libelle "goo")
-        )
-      )))";
+        (city "san fransisco"))
+      (name "coco")))";
   lib::clon c(cstr);
 
 
