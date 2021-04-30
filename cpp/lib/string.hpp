@@ -6,7 +6,7 @@
 
 namespace lib
 {
-  template <charable char_t>
+  template <character char_t>
   class basic_string
   {
     vector<char_t> data;

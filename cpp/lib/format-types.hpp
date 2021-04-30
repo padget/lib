@@ -8,20 +8,20 @@
 
 namespace lib
 {
-  template <charable char_t>
+  template <character char_t>
   class formatter_context;
 
   ///////////////////////////////////
   // lib::basic_string_view format //
   ///////////////////////////////////
-  template <charable char_t>
+  template <character char_t>
   inline std::size_t length_of(
       const lib::basic_string_view<char_t> &v)
   {
     return v.size();
   }
 
-  template <charable char_t>
+  template <character char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       lib::basic_string_view<char_t> v)
@@ -83,7 +83,7 @@ namespace lib
     return len;
   }
 
-  template <charable char_t, integer integral_t>
+  template <character char_t, integer integral_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       const integral_t &t)
@@ -109,13 +109,13 @@ namespace lib
   //////////////////////////
   // strings types format //
   //////////////////////////
-  template <charable char_t>
+  template <character char_t>
   inline std::size_t length_of(const lib::basic_string<char_t> &s)
   {
     return length_of(lib::basic_string_view<char_t>(s.begin(), s.end()));
   }
 
-  template <charable char_t>
+  template <character char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       const lib::basic_string<char_t> &v)
@@ -131,7 +131,7 @@ namespace lib
     return s ? 4 : 5;
   }
 
-  template <charable char_t>
+  template <character char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       const bool &v)
@@ -142,13 +142,13 @@ namespace lib
   // //////////////////////////////////
   // // vector of chars types format //
   // //////////////////////////////////
-  template <charable char_t>
+  template <character char_t>
   inline std::size_t length_of(const lib::vector<char_t> &v)
   {
     return length_of(lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 
-  template <charable char_t>
+  template <character char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       const lib::vector<char_t> &v)

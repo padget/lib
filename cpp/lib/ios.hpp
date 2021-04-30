@@ -33,7 +33,7 @@ namespace lib
       return std::feof(fd) != 0;
     }
 
-    template <charable char_t>
+    template <character char_t>
     inline void putc(const char_t &c)
     {
       if (fd == nullptr)

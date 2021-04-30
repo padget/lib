@@ -10,13 +10,13 @@
 
 namespace lib
 {
-  template <charable char_t>
+  template <character char_t>
   using view = lib::basic_string_view<char_t>;
 
-  template <charable char_t>
+  template <character char_t>
   using buffer = lib::basic_string<char_t>;
 
-  template <charable char_t>
+  template <character char_t>
   class formatter_context
   {
   private:
@@ -39,7 +39,7 @@ namespace lib
     }
   };
 
-  template <charable char_t>
+  template <character char_t>
   class tokenizer
   {
     basic_string_view<char_t> data;
@@ -60,7 +60,7 @@ namespace lib
     inline basic_string_view<char_t> tail() { return data; }
   };
 
-  template <charable char_t, typename... args_t>
+  template <character char_t, typename... args_t>
   inline void __format_into(
       formatter_context<char_t> &ctx,
       view<char_t> fmt, const args_t &...args)
@@ -70,13 +70,13 @@ namespace lib
     format_of(ctx, tk.tail());
   }
 
-  template <charable char_t, typename... args_t>
+  template <character char_t, typename... args_t>
   inline std::size_t __all_length_of(view<char_t> fmt, const args_t &...args)
   {
     return (fmt.count_if([](const char_t &c) { return c != '#'; }) + ... + length_of(args));
   }
 
-  template <charable char_t, typename... args_t>
+  template <character char_t, typename... args_t>
   inline lib::basic_string<char_t> __format(view<char_t> fmt, const args_t &...args)
   {
     buffer<char_t> buff(__all_length_of(fmt, args...));

@@ -5,7 +5,7 @@
 
 namespace lib
 {
-  template <charable char_t>
+  template <character char_t>
   class basic_scanner
   {
     lib::basic_string_view<char_t> data;
@@ -44,7 +44,7 @@ namespace lib
       return data[index] == c;
     }
 
-    template <charable... chars_t>
+    template <character... chars_t>
     constexpr bool in(chars_t... c) const
     {
       return ((data[index] == c) || ... || false);

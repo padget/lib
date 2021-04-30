@@ -21,7 +21,7 @@ namespace lib
     list = 4
   };
 
-  template <charable char_t>
+  template <character char_t>
   struct clon_value
   {
     clon_type type;
@@ -29,7 +29,7 @@ namespace lib
     basic_string_view<char_t> val;
   };
 
-  template <charable char_t>
+  template <character char_t>
   using clon_node = tree_node<clon_value<char_t>>;
 
   BASIC_EXCEPTION(clon_parsing_failed_empty_sview)
@@ -45,22 +45,25 @@ namespace lib
     template <typename char_t>
     using clon_storage = tree<clon_value<char_t>>;
 
-    template <charable char_t>
-    class clon_scanner : public basic_scanner<char_t>
+    template <character char_t>
+    class clon_scanner
+        : public basic_scanner<char_t>
     {
-      using base = basic_scanner<char_t>;
-
     public:
-      explicit clon_scanner(basic_string_view<char_t> s) : basic_scanner<char_t>(s) {}
+      explicit clon_scanner(
+          basic_string_view<char_t> s)
+          : basic_scanner<char_t>(s) {}
 
-      inline void ignore_blanks()
+      inline void
+      ignore_blanks()
       {
         while (this->in(' ', '\n', '\t', '\r'))
           this->advance();
         this->ignore();
       }
 
-      inline basic_string_view<char_t> scan_name()
+      inline basic_string_view<char_t>
+      scan_name()
       {
         if (not this->between('a', 'z'))
           throw clon_parsing_failed_lower_expected();
@@ -71,7 +74,8 @@ namespace lib
         return this->extract();
       }
 
-      inline basic_string_view<char_t> scan_boolean()
+      inline basic_string_view<char_t>
+      scan_boolean()
       {
         if (this->starts_with("true"))
           this->advance(4);
@@ -83,7 +87,8 @@ namespace lib
         return this->extract();
       }
 
-      inline basic_string_view<char_t> scan_string()
+      inline basic_string_view<char_t>
+      scan_string()
       {
         if (not this->is('"'))
           throw clon_parsing_failed_quote_expected();
@@ -91,7 +96,8 @@ namespace lib
         this->advance();
         this->ignore();
 
-        while (not this->is('"') and not this->finished())
+        while (not this->is('"') and
+               not this->finished())
           this->advance();
 
         if (not this->is('"'))
@@ -103,7 +109,8 @@ namespace lib
         return str;
       }
 
-      inline basic_string_view<char_t> scan_number()
+      inline basic_string_view<char_t>
+      scan_number()
       {
         if (this->between('0', '9'))
           throw clon_parsing_failed_digit_expected();
@@ -115,20 +122,14 @@ namespace lib
       }
     };
 
-    enum class push_type
-    {
-      root,
-      child_of
-    };
-
-    template <charable char_t>
+    template <character char_t>
     void parse_node(
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
-        push_type ntype,
-        std::size_t index);
+        bool is_root,
+        std::size_t parent_id);
 
-    template <charable char_t>
+    template <character char_t>
     inline void parse_list(
         std::size_t parent_id,
         clon_scanner<char_t> &scan,
@@ -136,17 +137,17 @@ namespace lib
     {
       while (scan.is('('))
       {
-        parse_node(scan, nodes, push_type::child_of, parent_id);
+        parse_node(scan, nodes, false, parent_id);
         scan.ignore_blanks();
       }
     }
 
-    template <charable char_t>
+    template <character char_t>
     inline void parse_node(
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
-        push_type ptype,
-        std::size_t index)
+        bool is_root,
+        std::size_t parent_id)
     {
       scan.ignore_blanks();
 
@@ -184,15 +185,10 @@ namespace lib
 
       clon_value<char_t> cval{ctype, name, scanr};
 
-      switch (ptype)
-      {
-      case push_type::root:
+      if (is_root)
         nodes.push_root(cval);
-        break;
-      case push_type::child_of:
-        nodes.push_back_child(cval, index);
-        break;
-      }
+      else
+        nodes.push_back_child(cval, parent_id);
 
       if (ctype == clon_type::list)
         parse_list(nodes.size() - 1, scan, nodes);
@@ -208,23 +204,25 @@ namespace lib
         throw clon_parsing_failed_rbracket_expected();
     }
 
-    template <charable char_t>
-    clon_storage<char_t> inline parse_clon(basic_string_view<char_t> s)
+    template <character char_t>
+    inline clon_storage<char_t>
+    parse_clon(
+        basic_string_view<char_t> s)
     {
       if (s.empty())
         throw clon_parsing_failed_empty_sview();
 
       clon_scanner<char_t> scan(s);
       clon_storage<char_t> nodes(s.count('('));
-      parse_node(scan, nodes, push_type::root, no_root);
+      parse_node(scan, nodes, true, no_root);
       return nodes;
     }
   }
 
-  template <charable char_t>
+  template <character char_t>
   class basic_clon_view;
 
-  template <charable char_t>
+  template <character char_t>
   class basic_clon
   {
     basic_string<char_t> buff;
@@ -232,7 +230,8 @@ namespace lib
   public:
     __clon::clon_storage<char_t> nodes;
 
-    explicit basic_clon(basic_string_view<char_t> s)
+    explicit basic_clon(
+        basic_string_view<char_t> s)
         : buff(s.begin(), s.end()),
           nodes(__clon::parse_clon(s)) {}
 
@@ -282,14 +281,14 @@ namespace lib
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
 
-  template <charable char_t>
+  template <character char_t>
   std::size_t length_of(
       const basic_clon<char_t> &c)
   {
     return c.buffsize();
   }
 
-  template <charable char_t>
+  template <character char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       const basic_clon<char_t> &c)
@@ -297,24 +296,28 @@ namespace lib
     format_of(ctx, c.root());
   }
 
-  template <charable char_t>
+  template <character char_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
       const clon_node<char_t> &nc)
   {
-    switch (nc.value.type)
+    auto &&name = nc.value.name;
+    auto &&val = nc.value.val;
+    auto &&type = nc.value.type;
+
+    switch (type)
     {
     case clon_type::boolean:
     case clon_type::number:
-      format_into(ctx, "(# #)", nc.value.name, nc.value.val);
+      format_into(ctx, "(# #)", name, val);
       break;
     case clon_type::string:
-      format_into(ctx, "(# \"#\")", nc.value.name, nc.value.val);
+      format_into(ctx, "(# \"#\")", name, val);
       break;
     case clon_type::list:
-      format_into(ctx, "(# ", nc.value.name);
-      for (const clon_node<char_t> &child : nc.childs())
-        format_of(ctx, child);
+      format_into(ctx, "(# ", name);
+      for (const auto &c : nc.childs())
+        format_of(ctx, c);
       format_into(ctx, ")");
       break;
     case clon_type::none:

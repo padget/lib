@@ -14,7 +14,7 @@ namespace lib
     }
   };
 
-  template <charable char_t>
+  template <character char_t>
   using basic_string_view = span<const char_t, cstring_limit>;
 
   using string_view = basic_string_view<char>;
