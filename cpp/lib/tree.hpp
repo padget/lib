@@ -60,7 +60,7 @@ namespace lib
 
     inline bool
     operator!=(
-        const child_iterator o)
+        const child_iterator o) const
     {
       return index != o.index;
     }
@@ -163,40 +163,9 @@ namespace lib
         const value_t &val)
     {
       if (nodes.empty())
-        nodes.emplace_back(
-            tree_node<value_t>{val, this});
+        nodes.emplace_back(tree_node<value_t>{val, this});
 
       return nodes.back().id;
-    }
-
-    inline std::size_t
-    push_front_child(
-        const value_t &value,
-        std::size_t index)
-    {
-      if (index == no_root)
-        throw parent_index_doesnt_exist();
-
-      if (index > nodes.back_index())
-        throw parent_index_doesnt_exist();
-
-      nodes.emplace_back(
-          tree_node<value_t>{value, this});
-
-      tree_node<value_t> &newnode = nodes.back();
-      std::size_t newchild = nodes.back_index();
-      newnode.id = newchild;
-
-      tree_node<value_t> &parent = nodes[index];
-      std::size_t oldchild = parent.child;
-
-      parent.child = newchild;
-      newnode.next = oldchild;
-
-      if (parent.child == no_child)
-        parent.last_child = oldchild;
-
-      return newchild;
     }
 
     inline std::size_t

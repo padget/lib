@@ -93,7 +93,8 @@ namespace lib
     }
 
   public:
-    inline void reserve(
+    inline void 
+    reserve(
         std::size_t ns)
     {
       if (ns > max)

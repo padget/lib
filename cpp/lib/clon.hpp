@@ -217,19 +217,74 @@ namespace lib
       parse_node(scan, nodes, true, no_root);
       return nodes;
     }
+
+    template <character char_t>
+    class basic_search_path_step
+    {
+      basic_string_view<char_t> name;
+      std::size_t min = 0;
+      std::size_t  max = 0;
+    };
+
+    template <character char_t>
+    class basic_search_path_iterator
+    {
+      bool operator!=(
+          basic_search_path_iterator o) const;
+
+      basic_search_path_step<char_t>
+      operator*() const;
+
+      basic_search_path_step<char_t>
+      operator*();
+
+      inline basic_search_path_iterator &
+      operator++();
+
+      inline basic_search_path_iterator
+      operator++(int)
+      {
+        basic_search_path_iterator tmp(*this);
+        ++(*this);
+        return tmp;
+      }
+    };
+
+    template <character char_t>
+    struct basic_search_path
+    {
+      basic_string_view<char_t> pths;
+
+      using iterator = basic_search_path_iterator<char_t>;
+
+      iterator begin();
+      iterator end();
+      const iterator begin() const;
+      const iterator end() const;
+    };
+
+    template <character char_t>
+    std::size_t search(
+        const basic_search_path<char_t> &pth,
+        const clon_storage<char_t> &nodes)
+    {
+      for ()
+    }
   }
 
   template <character char_t>
-  class basic_clon_view;
+  using basic_search_path = __clon::basic_search_path<char_t>;
+
+  using search_path = basic_search_path<char>;
+  using wsearch_path = basic_search_path<wchar_t>;
 
   template <character char_t>
   class basic_clon
   {
     basic_string<char_t> buff;
-
-  public:
     __clon::clon_storage<char_t> nodes;
 
+  public:
     explicit basic_clon(
         basic_string_view<char_t> s)
         : buff(s.begin(), s.end()),
@@ -247,10 +302,23 @@ namespace lib
       return nodes.size();
     }
 
+    inline std::size_t
+    get(search_path<char_t> pth) const
+    {
+      return __clon::search(pth, nodes);
+    }
+
     inline clon_type
     type(std::size_t index) const
     {
       return nodes[index].value.type;
+    }
+
+    template <clon_type type>
+    inline bool
+    is_(std::size_t id) const
+    {
+      return type(id) == type;
     }
 
     inline basic_string_view<char_t>
