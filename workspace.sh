@@ -44,6 +44,20 @@ else
 
   # ./build/array.test.out
 
+  # lib_compile_test \
+  #   --out build/tree.test.out \
+  #   --src cpp/test/tree.test.cpp \
+  #   --flags "$flags" \
+  #   --libs "$libs"
+
+  # lib_file \
+  #   --path build/tree.test.out \
+  #   --mode +x \
+  #   --state file
+
+  # ./build/tree.test.out
+
+
   lib_compile_test \
     --out build/clon.test.out \
     --src cpp/test/clon.test.cpp \
@@ -57,16 +71,5 @@ else
 
   ./build/clon.test.out
 
-  lib_compile_test \
-    --out build/tree.test.out \
-    --src cpp/test/tree.test.cpp \
-    --flags "$flags" \
-    --libs "$libs"
 
-  lib_file \
-    --path build/tree.test.out \
-    --mode +x \
-    --state file
-
-  ./build/tree.test.out
 fi

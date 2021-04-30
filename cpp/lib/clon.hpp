@@ -29,7 +29,7 @@ namespace lib
     basic_string_view<char_t> val;
   };
 
-  template<charable char_t>
+  template <charable char_t>
   using clon_node = tree_node<clon_value<char_t>>;
 
   BASIC_EXCEPTION(clon_parsing_failed_empty_sview)
@@ -118,7 +118,6 @@ namespace lib
     enum class push_type
     {
       root,
-      next_of,
       child_of
     };
 
@@ -131,19 +130,14 @@ namespace lib
 
     template <charable char_t>
     inline void parse_list(
-        std::size_t parent,
+        std::size_t parent_id,
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes)
     {
-      std::size_t nb_childs = 0;
-
       while (scan.is('('))
       {
-        auto index = nb_childs == 0 ? parent : nodes.size() - 1;
-        auto type = nb_childs == 0 ? push_type::child_of : push_type::next_of;
-        parse_node(scan, nodes, type, index);
+        parse_node(scan, nodes, push_type::child_of, parent_id);
         scan.ignore_blanks();
-        ++nb_childs;
       }
     }
 
@@ -168,7 +162,6 @@ namespace lib
       scan.ignore_blanks();
 
       basic_string_view<char_t> scanr;
-
       clon_type ctype = clon_type::none;
 
       if (scan.in('f', 't'))
@@ -197,10 +190,7 @@ namespace lib
         nodes.push_root(cval);
         break;
       case push_type::child_of:
-        nodes.push_child(cval, index);
-        break;
-      case push_type::next_of:
-        nodes.push_next(cval, index);
+        nodes.push_back_child(cval, index);
         break;
       }
 
@@ -238,9 +228,10 @@ namespace lib
   class basic_clon
   {
     basic_string<char_t> buff;
-    __clon::clon_storage<char_t> nodes;
 
   public:
+    __clon::clon_storage<char_t> nodes;
+
     explicit basic_clon(basic_string_view<char_t> s)
         : buff(s.begin(), s.end()),
           nodes(__clon::parse_clon(s)) {}
@@ -311,8 +302,6 @@ namespace lib
       formatter_context<char_t> &ctx,
       const clon_node<char_t> &nc)
   {
-    lib::printfln("je rentre dans la fonction");
-    lib::printfln("# # #", (int)nc.id, (int)nc.value.type, nc.value.name);
     switch (nc.value.type)
     {
     case clon_type::boolean:
@@ -331,7 +320,6 @@ namespace lib
     case clon_type::none:
       break;
     }
-    lib::printfln("je sort dans la fonction");
   }
 }
 

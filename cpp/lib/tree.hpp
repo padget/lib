@@ -109,6 +109,7 @@ namespace lib
     std::size_t id = 0;
     std::size_t child = no_child;
     std::size_t next = no_next;
+    std::size_t last_child = no_child;
 
     bool has_child() const
     {
@@ -120,13 +121,13 @@ namespace lib
       return next != no_next;
     }
 
-    tree_childs<value_t> 
+    tree_childs<value_t>
     childs()
     {
       return {child, *tr};
     }
 
-    const tree_childs<value_t> 
+    const tree_childs<value_t>
     childs() const
     {
       return {child, *tr};
@@ -163,40 +164,13 @@ namespace lib
     {
       if (nodes.empty())
         nodes.emplace_back(
-          tree_node<value_t>{val, this});
+            tree_node<value_t>{val, this});
 
       return nodes.back().id;
     }
 
     inline std::size_t
-    push_next(
-        const value_t &value,
-        std::size_t index)
-    {
-      if (index == no_root)
-        throw previous_index_doesnt_exist();
-
-      if (index > nodes.back_index())
-        throw previous_index_doesnt_exist();
-
-      nodes.emplace_back(
-        tree_node<value_t>{value, this});
-
-      tree_node<value_t> &newnode = nodes.back();
-      std::size_t newnext = nodes.back_index();
-      newnode.id = newnext;
-
-      tree_node<value_t> &prev = nodes[index];
-      std::size_t oldnext = prev.next;
-
-      prev.next = newnext;
-      newnode.next = oldnext;
-
-      return newnext;
-    }
-
-    inline std::size_t
-    push_child(
+    push_front_child(
         const value_t &value,
         std::size_t index)
     {
@@ -207,7 +181,7 @@ namespace lib
         throw parent_index_doesnt_exist();
 
       nodes.emplace_back(
-        tree_node<value_t>{value, this});
+          tree_node<value_t>{value, this});
 
       tree_node<value_t> &newnode = nodes.back();
       std::size_t newchild = nodes.back_index();
@@ -219,7 +193,41 @@ namespace lib
       parent.child = newchild;
       newnode.next = oldchild;
 
+      if (parent.child == no_child)
+        parent.last_child = oldchild;
+
       return newchild;
+    }
+
+    inline std::size_t
+    push_back_child(
+        const value_t &value,
+        std::size_t parent_id)
+    {
+      if (parent_id == no_root)
+        throw parent_index_doesnt_exist();
+
+      if (parent_id > nodes.back_index())
+        throw parent_index_doesnt_exist();
+
+      tree_node<value_t> &parent = nodes[parent_id];
+      nodes.emplace_back(tree_node<value_t>{value, this});
+
+      tree_node<value_t> &nn = nodes.back();
+      std::size_t nnid = nodes.back_index();
+      nn.id = nnid;
+
+      if (parent.child == no_child)
+        parent.child = nnid;
+      else
+      {
+        tree_node<value_t> &lcn = nodes[parent.last_child];
+        lcn.next = nnid;
+      }
+
+      parent.last_child = nnid;
+
+      return nnid;
     }
 
     inline const tree_node<value_t> &

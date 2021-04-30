@@ -5,7 +5,7 @@ template <typename value_t>
 void print_tree(
     const lib::tree_node<value_t> &n)
 {
-  lib::printfln("# - #", n.id, n.value);
+  lib::printfln("i # - v # - n # - c #", n.id, n.value, n.next, n.child);
 
   for (const lib::tree_node<value_t> &sn : n.childs())
     print_tree(sn);
@@ -22,11 +22,17 @@ int main()
 {
   lib::tree<int> t;
 
-  t.push_root(20);
-  t.push_child(22, 0);
-  t.push_child(23, 1);
-  t.push_child(21, 0);
-  t.push_next(24, 1);
+  auto parent = t.push_root(0);
+  t.push_back_child(1, parent);
+  t.push_back_child(2, parent);
+  t.push_back_child(3, parent);
+  t.push_back_child(3, parent);
+  t.push_back_child(3, parent);
+  t.push_back_child(3, parent);
+  t.push_back_child(3, parent);
+  t.push_back_child(3, parent);
+  t.push_back_child(3, parent);
+  
 
   print_tree(t);
 
