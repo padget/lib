@@ -223,7 +223,7 @@ namespace lib
     {
       basic_string_view<char_t> name;
       std::size_t min = 0;
-      std::size_t  max = 0;
+      std::size_t max = 0;
     };
 
     template <character char_t>
@@ -264,12 +264,30 @@ namespace lib
     };
 
     template <character char_t>
-    std::size_t search(
-        const basic_search_path<char_t> &pth,
-        const clon_storage<char_t> &nodes)
+    struct search_id
     {
-      for ()
-    }
+      clon_storage<char_t> &nodes;
+      basic_string_view<char_t> name;
+      std::size_t min;
+      std::size_t max;
+    };
+
+    template <character char_t>
+    struct search_name
+    {
+      clon_storage<char_t> &nodes;
+      basic_string_view<char_t> name;
+
+      search_id<char_t>
+      operator()(
+          std::size_t min,
+          std::size_t max);
+
+      search_id<char_t>
+      operator()(
+          std::size_t nth);
+    };
+
   }
 
   template <character char_t>
@@ -343,6 +361,12 @@ namespace lib
     root()
     {
       return nodes[0];
+    }
+
+    __clon::search_name<char_t>
+    operator[](basic_string_view<char_t> name) const
+    {
+      return __clon::search_name<char_t>{nodes, name};
     }
   };
 
