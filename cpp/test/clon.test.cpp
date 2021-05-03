@@ -13,11 +13,8 @@ void should_parse_clon_string()
       (name "coco")))";
   lib::clon c(cstr);
 
-
-
   lib::printfln("clon : #", c);
-
-  c.as_<>
+  lib::printfln("name #", c["address"]["city"].get_first()->value.name);
  
 }
 

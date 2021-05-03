@@ -4,6 +4,7 @@
 #define CLON_VERSION 1.0.0
 
 #include <lib/meta.hpp>
+#include <lib/array.hpp>
 #include <lib/string_view.hpp>
 #include <lib/string.hpp>
 #include <lib/scanner.hpp>
@@ -219,82 +220,75 @@ namespace lib
     }
 
     template <character char_t>
-    class basic_search_path_step
+    struct search_path_step
     {
       basic_string_view<char_t> name;
       std::size_t min = 0;
       std::size_t max = 0;
     };
 
-    template <character char_t>
-    class basic_search_path_iterator
+    template <std::size_t n, character char_t>
+    struct search_path
     {
-      bool operator!=(
-          basic_search_path_iterator o) const;
+      clon_storage<char_t> &nodes;
+      array<search_path_step<char_t>, n> steps;
 
-      basic_search_path_step<char_t>
-      operator*() const;
-
-      basic_search_path_step<char_t>
-      operator*();
-
-      inline basic_search_path_iterator &
-      operator++();
-
-      inline basic_search_path_iterator
-      operator++(int)
+      search_path<n + 1, char_t>
+      operator[](
+          basic_string_view<char_t> name)
       {
-        basic_search_path_iterator tmp(*this);
-        ++(*this);
-        return tmp;
+        search_path<n + 1, char_t> nsp{nodes};
+        span<search_path_step<char_t>>(
+            steps.begin(), steps.end())
+            .copy(span<search_path_step<char_t>>(
+                nsp.steps.begin(), nsp.steps.end()));
+        nsp.steps[n].name = name;
+        return nsp;
       }
+
+      search_path
+      operator()(std::size_t num)
+      {
+        steps[n - 1].min = num;
+        steps[n - 1].max = num;
+        return *this;
+      }
+
+      clon_node<char_t> *get_first()
+      {
+        const clon_node<char_t> *current_root = nullptr;
+        const clon_node<char_t> *current_found = nullptr;
+        std::size_t cnt = 0;
+        for (const auto &step : steps)
+        {
+          if (current_root == nullptr)
+            current_root = &nodes[0];
+
+          for (const auto &node : current_root->childs())
+            if (node.value.name == step.name && cnt == step.min)
+            {
+              current_found = &node;
+              break;
+            }
+            else
+              ++cnt;
+
+          if (current_found == nullptr)
+            return nullptr;
+          else
+          {
+            current_root = current_found;
+            current_found = nullptr;
+          }
+        }
+
+        return current_root;
+      }
+
+      vector<clon_node<char_t> *> get_first_n(std::size_t nb);
+      vector<clon_node<char_t> *> get_all();
     };
-
-    template <character char_t>
-    struct basic_search_path
-    {
-      basic_string_view<char_t> pths;
-
-      using iterator = basic_search_path_iterator<char_t>;
-
-      iterator begin();
-      iterator end();
-      const iterator begin() const;
-      const iterator end() const;
-    };
-
-    template <character char_t>
-    struct search_id
-    {
-      clon_storage<char_t> &nodes;
-      basic_string_view<char_t> name;
-      std::size_t min;
-      std::size_t max;
-    };
-
-    template <character char_t>
-    struct search_name
-    {
-      clon_storage<char_t> &nodes;
-      basic_string_view<char_t> name;
-
-      search_id<char_t>
-      operator()(
-          std::size_t min,
-          std::size_t max);
-
-      search_id<char_t>
-      operator()(
-          std::size_t nth);
-    };
-
   }
-
-  template <character char_t>
-  using basic_search_path = __clon::basic_search_path<char_t>;
-
-  using search_path = basic_search_path<char>;
-  using wsearch_path = basic_search_path<wchar_t>;
 
   template <character char_t>
   class basic_clon
@@ -320,23 +314,17 @@ namespace lib
       return nodes.size();
     }
 
-    inline std::size_t
-    get(search_path<char_t> pth) const
-    {
-      return __clon::search(pth, nodes);
-    }
-
     inline clon_type
     type(std::size_t index) const
     {
       return nodes[index].value.type;
     }
 
-    template <clon_type type>
+    template <clon_type ctype>
     inline bool
     is_(std::size_t id) const
     {
-      return type(id) == type;
+      return type(id) == ctype;
     }
 
     inline basic_string_view<char_t>
@@ -363,10 +351,11 @@ namespace lib
       return nodes[0];
     }
 
-    __clon::search_name<char_t>
-    operator[](basic_string_view<char_t> name) const
+    __clon::search_path<1, char_t>
+    operator[](basic_string_view<char_t> name)
     {
-      return __clon::search_name<char_t>{nodes, name};
+      return __clon::search_path<1, char_t>{
+          nodes, {__clon::search_path_step<char_t>{name}}};
     }
   };
 

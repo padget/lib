@@ -42,6 +42,13 @@ namespace lib
     }
 
     template <typename iterator>
+    void copy(iterator b, iterator e, iterator bc)
+    {
+      for(;b!=e;++b,++bc)
+        *bc = *b;
+    }
+
+    template <typename iterator>
     std::size_t count_if(iterator b, iterator e, auto &&pred)
     {
       std::size_t cnt = 0;
@@ -198,6 +205,11 @@ namespace lib
     bool start_with(span o) const
     {
       return __span::start_with(begin(), end(), o.begin(), o.end());
+    }
+
+    void copy(span o)
+    {
+      return __span::copy(begin(), end(), o.begin());
     }
   };
 }
