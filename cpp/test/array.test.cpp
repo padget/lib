@@ -17,16 +17,8 @@ void should_build_initialized_array()
   test_equals(arr[1], 2);
 }
 
-void should_be_equals_arrays()
-{
-  lib::array<int, 2> arr = {1, 2};
-  lib::array<int, 2> arr2 = {1, 2};
-  test_equals(arr, arr2);
-}
-
 int main()
 {
   run_test(should_build_empty_array);
   run_test(should_build_initialized_array);
-  run_test(should_be_equals_arrays);
 }

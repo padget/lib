@@ -14,8 +14,7 @@ void should_parse_clon_string()
   lib::clon c(cstr);
 
   lib::printfln("clon : #", c);
-  lib::printfln("name #", c["address"]["city"].get_first()->value.name);
- 
+  lib::printfln("name '#'", c.get_first(lib::pth["address"]["city"]));
 }
 
 int main(int argc, char **argv)

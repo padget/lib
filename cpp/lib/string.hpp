@@ -3,6 +3,7 @@
 
 #include <lib/vector.hpp>
 #include <lib/string_view.hpp>
+#include <lib/algorithm.hpp>
 
 namespace lib
 {
@@ -48,7 +49,7 @@ namespace lib
     bool operator==(
         basic_string_view<char_t> s) const
     {
-      return basic_string_view<char_t>(*this) == s;
+      return lib::equals(begin(), end(), s.begin(), s.end());
     }
 
     operator basic_string_view<char_t>() const

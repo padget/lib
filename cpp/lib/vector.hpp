@@ -2,7 +2,6 @@
 #define __lib_vector_hpp__
 
 #include <cstddef>
-#include <lib/span.hpp>
 #include <lib/utility.hpp>
 
 namespace lib
@@ -93,7 +92,7 @@ namespace lib
     }
 
   public:
-    inline void 
+    inline void
     reserve(
         std::size_t ns)
     {
@@ -178,15 +177,6 @@ namespace lib
 
       operator[](size()) = move(t);
       ++lgth;
-    }
-
-  public:
-    template <std::size_t n>
-    inline bool operator==(
-        const type_t (&o)[n])
-    {
-      return span<type_t>(begin(), end()) ==
-             span<const type_t>(o);
     }
 
   public:

@@ -2,7 +2,6 @@
 #define __lib_array_hpp__
 
 #include <cstddef>
-#include <lib/span.hpp>
 
 namespace lib
 {
@@ -25,11 +24,6 @@ namespace lib
     constexpr const type_t &back() const { return *(end() - 1); }
     constexpr type_t &operator[](std::size_t i) { return _data[i]; }
     constexpr const type_t &operator[](std::size_t i) const { return _data[i]; }
-    constexpr bool operator==(const array o) const
-    {
-      return span<const type_t>(begin(), end()) ==
-             span<const type_t>(o.begin(), o.end());
-    }
   };
 }
 

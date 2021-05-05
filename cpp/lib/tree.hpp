@@ -27,25 +27,25 @@ namespace lib
   struct child_iterator
   {
     std::size_t index;
-    tree<value_t> &t;
+    tree<value_t> *t = nullptr;
 
     inline tree_node<value_t> &
     operator*()
     {
-      return t[index];
+      return (*t)[index];
     }
 
     inline const tree_node<value_t> &
     operator*() const
     {
-      return t[index];
+      return (*t)[index];
     }
 
     inline child_iterator &
     operator++()
     {
       if (index != no_next)
-        index = t[index].next;
+        index = (*t)[index].next;
 
       return *this;
     }
@@ -59,10 +59,17 @@ namespace lib
     }
 
     inline bool
+    operator==(
+        const child_iterator o) const
+    {
+      return index == o.index;
+    }
+
+    inline bool
     operator!=(
         const child_iterator o) const
     {
-      return index != o.index;
+      return not operator==(o);
     }
   };
 
@@ -73,7 +80,7 @@ namespace lib
     using iterator = child_iterator<value_t>;
 
     std::size_t index;
-    tree<value_t> &t;
+    tree<value_t> *t = nullptr;
 
     iterator
     begin()
@@ -124,13 +131,13 @@ namespace lib
     tree_childs<value_t>
     childs()
     {
-      return {child, *tr};
+      return {child, tr};
     }
 
     const tree_childs<value_t>
     childs() const
     {
-      return {child, *tr};
+      return {child, tr};
     }
   };
 
@@ -214,17 +221,17 @@ namespace lib
     }
 
     inline tree_childs<value_t>
-    childs_of(
+    childs(
         std::size_t index = 0)
     {
-      return {nodes[index].child, *this};
+      return {nodes[index].child, this};
     }
 
     inline const tree_childs<value_t>
-    childs_of(
+    childs(
         std::size_t index = 0) const
     {
-      return {nodes[index].child, *this};
+      return {nodes[index].child, this};
     }
   };
 }

@@ -2,6 +2,7 @@
 #define __lib_scanner_hpp__
 
 #include <lib/string_view.hpp>
+#include <lib/algorithm.hpp>
 
 namespace lib
 {
@@ -20,7 +21,9 @@ namespace lib
   public:
     constexpr bool starts_with(basic_string_view<char_t> sv) const
     {
-      return basic_string_view<char_t>(data.begin() + index, data.end()).start_with(sv);
+      return lib::starts_with(
+          data.begin(), data.end(),
+          sv.begin(), sv.end());
     }
 
     constexpr void until(char_t c)
