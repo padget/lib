@@ -11,10 +11,13 @@ void should_parse_clon_string()
       (name "coucou")
       (firstname "cocuou")
       (name "coco")))";
+      
   lib::clon c(cstr);
 
   lib::printfln("clon : #", c);
-  lib::printfln("name '#'", c.get_first(lib::pth["address"]["city"]));
+  lib::printfln("name '#'", c.get_first(lib::pth["address"]["city"])->value.val);
+
+
 }
 
 int main(int argc, char **argv)
