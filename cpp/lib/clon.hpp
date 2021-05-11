@@ -234,6 +234,7 @@ namespace lib
     template <std::size_t n, character char_t>
     const clon_node<char_t> *
     search(
+        const clon_storage<char_t> &nodes,
         const search_path<n, char_t> &pth)
     {
       const clon_node<char_t> *root = nullptr;
@@ -241,13 +242,14 @@ namespace lib
       for (auto &&step : pth.steps)
       {
         if (root == nullptr)
-          root = &(*pth.nodes)[0];
+          root = &nodes[0];
 
         auto cs = root->childs();
 
         auto found = lib::find_nth_if(
             step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c) {
+            [&name = step.name](auto &&c)
+            {
               return lib::equals(
                   c.value.name.begin(),
                   c.value.name.end(),
@@ -272,7 +274,7 @@ namespace lib
       operator[](
           basic_string_view<char_t> name) const
       {
-        search_path<n + 1, char_t> nsp{nodes};
+        search_path<n + 1, char_t> nsp;
         copy(steps.begin(), steps.end(), nsp.steps.begin());
         nsp.steps[n].name = name;
         return nsp;
@@ -288,31 +290,27 @@ namespace lib
       }
     };
 
-    template <std::size_t n, character char_t>
-    struct search_path
+    struct path_builder
     {
-      array<search_path_step<char_t>, n> steps;
-
-      const search_path<n + 1, char_t>
-      operator[](
-          basic_string_view<char_t> name) const
+      template <character char_t>
+      __clon::search_path<1, char_t>
+      operator[](basic_string_view<char_t> name) const
       {
-        search_path<n + 1, char_t> nsp{nodes};
-        copy(steps.begin(), steps.end(), nsp.steps.begin());
-        nsp.steps[n].name = name;
-        return nsp;
+        return __clon::search_path<1, char_t>{
+            {__clon::search_path_step<char_t>{name}}};
       }
 
-      const search_path
-      operator()(std::size_t num) const
+
+      template <character char_t, std::size_t n>
+      __clon::search_path<1, char_t>
+      operator[](const char_t(&name)[n]) const
       {
-        search_path tmp(*this);
-        tmp.steps[n - 1].min = num;
-        tmp.steps[n - 1].max = num;
-        return tmp;
+        return (*this)[basic_string_view<char_t>(name)];
       }
     };
   }
+
+  inline __clon::path_builder pth;
 
   template <character char_t>
   class basic_clon
@@ -380,22 +378,15 @@ namespace lib
     {
       return __clon::search_path<1, char_t>{&nodes, {__clon::search_path_step<char_t>{name}}};
     }
-  };
 
-
-
-  struct path_builder
-  {
-    template <character char_t>
-    __clon::search_path<1, char_t>
-    operator[](basic_string_view<char_t> name)
+    template <std::size_t n>
+    const clon_node<char_t> *
+    get_first(
+        const __clon::search_path<n, char_t> &pth)
     {
-      return __clon::search_path<1, char_t>{
-          &nodes, {__clon::search_path_step<char_t>{name}}};
+      return __clon::search(nodes, pth);
     }
   };
-
-  inline path_builder pth;
 
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
