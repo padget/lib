@@ -4,20 +4,19 @@
 
 void should_parse_clon_string()
 {
-  constexpr lib::string_view cstr = R"(
+
+  using namespace lib::literals;
+
+  lib::clon c =  R"(
     (person 
       (address 
         (city "san fransisco"))
       (name "coucou")
       (firstname "cocuou")
-      (name "coco")))";
-      
-  lib::clon c(cstr);
+      (name "coco")))"_clon;
 
   lib::printfln("clon : #", c);
-  lib::printfln("name '#'", c.get_first(lib::pth["address"]["city"])->value.val);
-
-
+  lib::printfln("name '#'", c.get_first(lib::pth["address"]["city"]).value());
 }
 
 int main(int argc, char **argv)

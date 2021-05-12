@@ -2,9 +2,7 @@
 #define __clon_format_hpp__
 
 #include <lib/string.hpp>
-#include <lib/vector.hpp>
 #include <lib/string_view.hpp>
-#include <lib/span.hpp>
 #include <lib/meta.hpp>
 #include <lib/format-types.hpp>
 #include <lib/algorithm.hpp>

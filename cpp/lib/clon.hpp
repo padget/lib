@@ -36,6 +36,35 @@ namespace lib
       character char_t>
   using clon_node = tree_node<clon_value<char_t>>;
 
+  template <
+      character char_t>
+  class clon_node_wrapper
+  {
+    clon_node<char_t> *node = nullptr;
+
+  public:
+    clon_node_wrapper() = default;
+
+    explicit clon_node_wrapper(
+        clon_node<char_t> *_node)
+        : node(_node) {}
+
+    inline bool empty() const
+    {
+      return node == nullptr;
+    }
+
+    inline basic_string_view<char_t> &value()
+    {
+      return node->value.val;
+    }
+
+    inline const basic_string_view<char_t> &value() const
+    {
+      return node->value.val;
+    }
+  };
+
   BASIC_EXCEPTION(clon_parsing_failed_empty_sview)
   BASIC_EXCEPTION(clon_parsing_failed_lbracket_expected)
   BASIC_EXCEPTION(clon_parsing_failed_rbracket_expected)
@@ -231,73 +260,6 @@ namespace lib
       std::size_t max = 0;
     };
 
-    template <std::size_t n, character char_t>
-    struct search_path;
-
-    template <std::size_t n, character char_t>
-    const clon_node<char_t> *
-    search(
-        const clon_storage<char_t> &nodes,
-        const search_path<n, char_t> &pth)
-    {
-      const clon_node<char_t> *root = nullptr;
-
-      for (auto &&step : pth.steps)
-      {
-        if (root == nullptr)
-          root = &nodes[0];
-
-        auto cs = root->childs();
-
-        auto found = lib::find_nth_if(
-            step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c)
-            {
-              return lib::equals(
-                  c.value.name, name);
-            });
-
-        if (found == cs.end())
-          return nullptr;
-        else
-          root = &*found;
-      }
-
-      return root;
-    }
-
-    template <std::size_t n, character char_t>
-    clon_node<char_t> *
-    search(
-        clon_storage<char_t> &nodes,
-        const search_path<n, char_t> &pth)
-    {
-      clon_node<char_t> *root = nullptr;
-
-      for (auto &&step : pth.steps)
-      {
-        if (root == nullptr)
-          root = &nodes[0];
-
-        auto cs = root->childs();
-
-        auto found = lib::find_nth_if(
-            step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c)
-            {
-              return lib::equals(
-                  c.value.name, name);
-            });
-
-        if (found == cs.end())
-          return nullptr;
-        else
-          root = &*found;
-      }
-
-      return root;
-    }
-
     template <
         std::size_t n,
         character char_t>
@@ -325,6 +287,79 @@ namespace lib
         return tmp;
       }
     };
+
+    // template <
+    //   std::size_t n, character char_t>
+    // const clon_node<char_t> *
+    // search(
+    //      &nodes,
+    //     const search_path<n, char_t> &pth)
+    // {
+    // }
+
+    template <std::size_t n, character char_t>
+    const clon_node_wrapper<char_t>
+    search(
+        const clon_storage<char_t> &nodes,
+        const search_path<n, char_t> &pth)
+    {
+      const clon_node<char_t> *root = nullptr;
+
+      for (auto &&step : pth.steps)
+      {
+        if (root == nullptr)
+          root = &nodes[0];
+
+        auto cs = root->childs();
+
+        auto found = lib::find_nth_if(
+            step.min, cs.begin(), cs.end(),
+            [&name = step.name](auto &&c)
+            {
+              return lib::equals(
+                  c.value.name, name);
+            });
+
+        if (found == cs.end())
+          return clon_node_wrapper<char_t>(nullptr);
+        else
+          root = &*found;
+      }
+
+      return clon_node_wrapper<char_t>(root);
+    }
+
+    template <std::size_t n, character char_t>
+    clon_node_wrapper<char_t>
+    search(
+        clon_storage<char_t> &nodes,
+        const search_path<n, char_t> &pth)
+    {
+      clon_node<char_t> *root = nullptr;
+
+      for (auto &&step : pth.steps)
+      {
+        if (root == nullptr)
+          root = &nodes[0];
+
+        auto cs = root->childs();
+
+        auto found = lib::find_nth_if(
+            step.min, cs.begin(), cs.end(),
+            [&name = step.name](auto &&c)
+            {
+              return lib::equals(
+                  c.value.name, name);
+            });
+
+        if (found == cs.end())
+          return clon_node_wrapper<char_t>(nullptr);
+        else
+          root = &*found;
+      }
+
+      return clon_node_wrapper<char_t>(root);
+    }
 
     struct path_builder
     {
@@ -411,11 +446,11 @@ namespace lib
     const __clon::search_path<1, char_t>
     operator[](basic_string_view<char_t> name) const
     {
-      return __clon::search_path<1, char_t>{&nodes, {__clon::search_path_step<char_t>{name}}};
+      return __clon::search_path<1, char_t>{{__clon::search_path_step<char_t>{name}}};
     }
 
     template <std::size_t n>
-    const clon_node<char_t> *
+    const clon_node_wrapper<char_t>
     get_first(
         const __clon::search_path<n, char_t> &pth)
     {
@@ -425,6 +460,11 @@ namespace lib
 
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
+
+  // wclon operator"" _clon(const wchar_t *str, std::size_t len) noexcept
+  // {
+  //   return wclon(wstring_view(str, len));
+  // }
 
   template <character char_t>
   std::size_t length_of(
@@ -468,6 +508,14 @@ namespace lib
     case clon_type::none:
       break;
     }
+  }
+
+}
+namespace lib::literals
+{
+  clon operator"" _clon(const char *str, std::size_t len) noexcept
+  {
+    return clon(string_view(str, len));
   }
 }
 
