@@ -146,7 +146,7 @@ namespace lib
       inline basic_string_view<char_t>
       scan_number()
       {
-        if (this->between('0', '9'))
+        if (not this->between('0', '9'))
           throw clon_parsing_failed_digit_expected();
 
         while (this->between('0', '9'))
@@ -378,6 +378,8 @@ namespace lib
         return (*this)[basic_string_view<char_t>(name)];
       }
     };
+
+    struct to_clon_tag {};
   }
 
   inline __clon::path_builder pth;
@@ -461,10 +463,7 @@ namespace lib
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
 
-  // wclon operator"" _clon(const wchar_t *str, std::size_t len) noexcept
-  // {
-  //   return wclon(wstring_view(str, len));
-  // }
+  using to_clon = __clon::to_clon_tag;
 
   template <character char_t>
   std::size_t length_of(
