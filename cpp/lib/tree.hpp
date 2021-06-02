@@ -148,13 +148,6 @@ namespace lib
     vector<tree_node<value_t>> nodes;
 
   public:
-    tree() = default;
-    tree(const tree &) = default;
-    tree(tree &&) = default;
-    tree &operator=(const tree &) = default;
-    tree &operator=(tree &&) = default;
-
-  public:
     tree(std::size_t _max)
         : nodes(_max) {}
 

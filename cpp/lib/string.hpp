@@ -52,10 +52,16 @@ namespace lib
       return lib::equals(begin(), end(), s.begin(), s.end());
     }
 
-    operator basic_string_view<char_t>() const
+    basic_string_view<char_t> view() const
     {
       return basic_string_view<char_t>(begin(), end());
     }
+
+    operator basic_string_view<char_t>() const
+    {
+      return view();
+    }
+
 
   public:
     const std::size_t

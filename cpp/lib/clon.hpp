@@ -314,8 +314,7 @@ namespace lib
 
         auto found = lib::find_nth_if(
             step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c)
-            {
+            [&name = step.name](auto &&c) {
               return lib::equals(
                   c.value.name, name);
             });
@@ -346,8 +345,7 @@ namespace lib
 
         auto found = lib::find_nth_if(
             step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c)
-            {
+            [&name = step.name](auto &&c) {
               return lib::equals(
                   c.value.name, name);
             });
@@ -379,7 +377,9 @@ namespace lib
       }
     };
 
-    struct to_clon_tag {};
+    struct to_clon_tag
+    {
+    };
   }
 
   inline __clon::path_builder pth;
@@ -394,7 +394,27 @@ namespace lib
     explicit basic_clon(
         basic_string_view<char_t> s)
         : buff(s.begin(), s.end()),
-          nodes(__clon::parse_clon(s)) {}
+          nodes(__clon::parse_clon(buff.view())) {}
+
+    basic_clon(const basic_clon &o)
+        : buff(o.buff.begin(), o.buff.end()),
+          nodes(__clon::parse_clon(buff.view())) {}
+
+    basic_clon(basic_clon &&) = default;
+    ~basic_clon() = default;
+
+    basic_clon &operator=(const basic_clon &o)
+    {
+      if (this != &o)
+      {
+        buff = o.buff;
+        nodes = __clon::parse_clon(buff.view());
+      }
+
+      return *this;
+    }
+
+    basic_clon &operator=(basic_clon &&) = default;
 
     inline std::size_t
     buffsize() const

@@ -13,8 +13,9 @@ namespace lib
 {
   clon ser(const person &s)
   {
-    return clon(format(R"((person (name "#")(firstname "#")(age #)))",
-           s.name, s.firstname, s.age));
+    return clon(format(
+      R"((person (name "#")(firstname "#")(age #)))", 
+      s.name, s.firstname, s.age));
   }
 }
 
@@ -24,7 +25,7 @@ void should_convert_to_clon()
   lib::clon cp = lib::ser(ben);
   lib::printfln(format(R"((person (name "#")(firstname "#")(age #)))",
            ben.name, ben.firstname, ben.age));
-  //lib::printfln("#", cp);
+  lib::printfln("#", cp);
   //lib::person = lib::des(cp, lib::to_person);
 }
 
