@@ -1,11 +1,8 @@
 #ifndef __base64_base64_hpp__
 #define __base64_base64_hpp__
 
-#include <string_view>
-#include <array>
-#include <concepts>
-
-#define BASE64_VERSION 1.0.0
+#include <lib/array.hpp>
+#include <lib/string_view.hpp>
 
 namespace std
 {
@@ -18,7 +15,7 @@ namespace std
 
     while (b != e and stp < nb)
     {
-      std::advance(b, 1);
+      lib::advance(b, 1);
       stp++;
     }
   }
@@ -29,7 +26,7 @@ namespace std
     if (b == e)
       return b;
     else
-      return std::next(b);
+      return lib::next(b);
   }
 }
 
@@ -37,8 +34,8 @@ namespace base64::model
 {
   using uchar_t = unsigned char;
   using uint_t = unsigned int;
-  using uchar3_t = std::array<uchar_t, 3>;
-  using uchar4_t = std::array<uchar_t, 4>;
+  using uchar3_t = lib::array<uchar_t, 3>;
+  using uchar4_t = lib::array<uchar_t, 4>;
 }
 
 namespace base64::constraint
@@ -57,7 +54,7 @@ namespace base64::constraint
 
 namespace base64::encoding
 {
-  constexpr std::string_view b64table =
+  constexpr lib::string_view b64table =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789+/";
@@ -116,8 +113,8 @@ namespace base64::encoding
     if (b != e)
     {
       auto b0 = b;
-      auto b1 = std::next_if_valid(b0, e);
-      auto b2 = std::next_if_valid(b1, e);
+      auto b1 = lib::next_if_valid(b0, e);
+      auto b2 = lib::next_if_valid(b1, e);
 
       return
       {
@@ -146,12 +143,12 @@ namespace base64::encoding
       encoded.push_back(b64[1]);
       encoded.push_back(b64[2]);
       encoded.push_back(b64[3]);
-      std::advance_if_valid(b, e, 3);
+      lib::advance_if_valid(b, e, 3);
     }
   }
 
   template<base64::constraint::reservable_container container>
-  container reserve_from_source(std::string_view bytes)
+  container reserve_from_source(lib::string_view bytes)
   {
     container encoded;
     encoded.reserve((bytes.size() + 2) / 3 * 4);
@@ -159,7 +156,7 @@ namespace base64::encoding
   }
 
   template<base64::constraint::reservable_container container>
-  container encode(std::string_view bytes)
+  container encode(lib::string_view bytes)
   {
     auto&& encoded = reserve_from_source<container>(bytes);
     encode(bytes.begin(), bytes.end(), encoded);
@@ -251,9 +248,9 @@ namespace base64::decoding
     if (b != e)
     {
       auto b0 = b;
-      auto b1 = std::next_if_valid(b0, e);
-      auto b2 = std::next_if_valid(b1, e);
-      auto b3 = std::next_if_valid(b2, e);
+      auto b1 = lib::next_if_valid(b0, e);
+      auto b2 = lib::next_if_valid(b1, e);
+      auto b3 = lib::next_if_valid(b2, e);
 
       return
       {
@@ -289,12 +286,12 @@ namespace base64::decoding
       if (bts[2] != '\0')
         decoded.push_back(bts[2]);
 
-      std::advance_if_valid(b, e, 4);
+      lib::advance_if_valid(b, e, 4);
     }
   }
 
   template<reservable_container container>
-  container reserve_from_source(std::string_view enc)
+  container reserve_from_source(lib::string_view enc)
   {
     container decoded;
     decoded.reserve(enc.size() / 4 * 3);
@@ -302,7 +299,7 @@ namespace base64::decoding
   }
 
   template<reservable_container container>
-  container decode(std::string_view enc)
+  container decode(lib::string_view enc)
   {
     if (enc.empty())
       return {};
@@ -319,13 +316,13 @@ namespace base64
   concept reservable_container = base64::constraint::reservable_container<C>;
 
   template<reservable_container container>
-  container encode(std::string_view s)
+  container encode(lib::string_view s)
   {
     return base64::encoding::encode<container>(s);
   }
 
   template<reservable_container container>
-  container decode(std::string_view s)
+  container decode(lib::string_view s)
   {
     return base64::decoding::decode<container>(s);
   }

@@ -111,13 +111,24 @@ namespace lib
       inline basic_string_view<char_t>
       scan_boolean()
       {
-        if (this->starts_with("true"))
-          this->advance(4);
-        else if (this->starts_with("false"))
-          this->advance(5);
+        if constexpr (same_v<char_t, char>)
+        {
+          if (this->starts_with("true"))
+            this->advance(4);
+          else if (this->starts_with("false"))
+            this->advance(5);
+          else
+            throw clon_parsing_failed_boolean_expected();
+        }
         else
-          throw clon_parsing_failed_boolean_expected();
-
+        {
+          if (this->starts_with(L"true"))
+            this->advance(4);
+          else if (this->starts_with(L"false"))
+            this->advance(5);
+          else
+            throw clon_parsing_failed_boolean_expected();
+        }
         return this->extract();
       }
 
@@ -314,7 +325,8 @@ namespace lib
 
         auto found = lib::find_nth_if(
             step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c) {
+            [&name = step.name](auto &&c)
+            {
               return lib::equals(
                   c.value.name, name);
             });
@@ -345,7 +357,8 @@ namespace lib
 
         auto found = lib::find_nth_if(
             step.min, cs.begin(), cs.end(),
-            [&name = step.name](auto &&c) {
+            [&name = step.name](auto &&c)
+            {
               return lib::equals(
                   c.value.name, name);
             });
@@ -532,9 +545,18 @@ namespace lib
 }
 namespace lib::literals
 {
-  clon operator"" _clon(const char *str, std::size_t len) noexcept
+  clon operator""_clon(
+      const char *str,
+      std::size_t len) noexcept
   {
     return clon(string_view(str, len));
+  }
+
+  wclon operator""_wclon(
+      const wchar_t *str,
+      std::size_t len) noexcept
+  {
+    return wclon(wstring_view(str, len));
   }
 }
 
