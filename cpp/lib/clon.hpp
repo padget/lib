@@ -495,7 +495,6 @@ namespace lib
 
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
-
   using to_clon = __clon::to_clon_tag;
 
   template <character char_t>
@@ -541,8 +540,8 @@ namespace lib
       break;
     }
   }
-
 }
+
 namespace lib::literals
 {
   clon operator""_clon(

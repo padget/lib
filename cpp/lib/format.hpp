@@ -41,20 +41,18 @@ namespace lib
       lib::reverse(begin, end);
     }
   };
+
   namespace __fmt
   {
-    template <character char_t>
+    template <character char_t, char_t sep>
     class tokenizer
     {
       basic_string_view<char_t> data;
-      char_t sep;
 
     public:
       tokenizer(
-          basic_string_view<char_t> _data,
-          char_t _sep)
-          : data(_data),
-            sep(_sep) {}
+          basic_string_view<char_t> _data)
+          : data(_data) {}
 
     public:
       inline basic_string_view<char_t>
@@ -80,7 +78,7 @@ namespace lib
         formatter_context<char_t> &ctx,
         view<char_t> fmt, const args_t &...args)
     {
-      tokenizer<char_t> tk(fmt, '#');
+      tokenizer<char_t, '#'> tk(fmt);
       ((format_of(ctx, tk.next()), format_of(ctx, args)), ...);
       format_of(ctx, tk.tail());
     }
@@ -93,10 +91,7 @@ namespace lib
         view<char_t> fmt,
         const args_t &...args)
     {
-      std::size_t smallsz = lib::count_if(
-          fmt.begin(), fmt.end(),
-          [](const char_t &c) { return c != '#'; });
-      return (smallsz + ... + length_of(args));
+      return (fmt.size() + ... + length_of(args));
     }
 
     template <

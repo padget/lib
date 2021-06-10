@@ -1,16 +1,7 @@
 #include <lib/format.hpp>
-#include <lib/test.hpp>
+#include <lib/ios.hpp>
 
-inline void should_format()
+int main()
 {
-  test_equals(lib::format("#;#;#", 1, 2, 3), "1;2;3");
-  test_equals(lib::format("#", 1, 2, 3), "123");
-  test_equals(lib::format("###-#", 1, 2, 3), "123-#");
-  test_equals(lib::format("####", 1, 2, 25553), "1225553#");
-  test_equals(lib::format("#_#", lib::string("co"), lib::string("co")), "co_co");
-}
-
-int main(int argc, char **argv)
-{
-  run_test(should_format);
+  lib::printf("The answer is #.", 42);
 }

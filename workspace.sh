@@ -18,18 +18,31 @@ else
     --path build \
     --state directory
 
-  # lib_compile_test \
-  #   --out build/format.test.out \
-  #   --src cpp/test/format.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/format.test.out \
+    --src cpp/test/format.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/format.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/format.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/format.test.out
+  ./build/format.test.out
+
+  lib_compile_test \
+    --out build/fmt-format.test.out \
+    --src cpp/test/fmt-format.test.cpp \
+    --flags "$flags" \
+    --libs "$libs -lfmt"
+
+  lib_file \
+    --path build/fmt-format.test.out \
+    --mode +x \
+    --state file
+
+  ./build/fmt-format.test.out
 
   # lib_compile_test \
   #   --out build/array.test.out \
@@ -57,19 +70,17 @@ else
 
   # ./build/tree.test.out
 
+  # lib_compile_test \
+  #   --out build/clon.test.out \
+  #   --src cpp/test/clon.test.cpp \
+  #   --flags "$flags" \
+  #   --libs "$libs"
 
-  lib_compile_test \
-    --out build/clon.test.out \
-    --src cpp/test/clon.test.cpp \
-    --flags "$flags" \
-    --libs "$libs"
+  # lib_file \
+  #   --path build/clon.test.out \
+  #   --mode +x \
+  #   --state file
 
-  lib_file \
-    --path build/clon.test.out \
-    --mode +x \
-    --state file
-
-  ./build/clon.test.out
-
+  # ./build/clon.test.out
 
 fi

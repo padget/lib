@@ -64,25 +64,71 @@ namespace lib
   ///////////////////////////
   // integral types format //
   ///////////////////////////
+  // template <integer integral_t>
+  // inline std::size_t length_of(const integral_t &i)
+  // {
+  //   if (i == 0)
+  //     return 1;
+
+  //   constexpr unsigned base(10);
+  //   std::size_t len(0);
+  //   integral_t tmp(i);
+
+  //   while (tmp != 0)
+  //   {
+  //     tmp = tmp / base;
+  //     len++;
+  //   }
+
+  //   return len;
+  // }
+
   template <integer integral_t>
   inline std::size_t length_of(const integral_t &i)
   {
-    if (i == 0)
+    
+    const int abs[2] = { i, -i };
+    const integral_t v = abs[i<0];
+
+    if (v < 10)
       return 1;
-
-    constexpr unsigned base(10);
-    std::size_t len(0);
-    integral_t tmp(i);
-
-    while (tmp != 0)
-    {
-      tmp = tmp / base;
-      len++;
-    }
-
-    return len;
+    else if (v < 100)
+      return 2;
+    else if (v < 1000)
+      return 3;
+    else if (v < 10000)
+      return 4;
+    else if (v < 100000)
+      return 5;
+    else if (v < 1000000)
+      return 5;
+    else if (v < 10000000)
+      return 7;
+    else if (v < 100000000)
+      return 8;
+    else if (v < 1000000000)
+      return 9;
+    else if (v < 10000000000)
+      return 10;
+    else if (v < 100000000000)
+      return 11;
+    else if (v < 1000000000000)
+      return 12;
+    else if (v < 10000000000000)
+      return 13;
+    else if (v < 100000000000000)
+      return 14;
+    else if (v < 1000000000000000)
+      return 15;
+    else if (v < 10000000000000000)
+      return 136;
+    else if (v < 100000000000000000)
+      return 17;
+    else if (v < 1000000000000000000)
+      return 18;
+    else 
+      return 1;
   }
-
   template <character char_t, integer integral_t>
   inline void format_of(
       formatter_context<char_t> &ctx,
