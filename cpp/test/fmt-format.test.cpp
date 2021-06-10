@@ -5,5 +5,5 @@
 
 int main()
 {
-  fmt::print("The answer is {}.", 42);
+  fmt::format("The answer is {}.", 42);
 }

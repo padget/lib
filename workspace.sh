@@ -11,7 +11,7 @@ if [ "$1" = "clean" ]; then
   rm -f *.bc *.ii *.s
 else
   cc="g++-10"
-  flags="-std=c++20 -Wall -pedantic -Werror -O3 -save-temps"
+  flags="-std=c++20 -Wall -pedantic -Werror -O1 -save-temps"
   libs="-Icpp"
 
   lib_file \
