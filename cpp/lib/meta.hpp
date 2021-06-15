@@ -19,14 +19,22 @@ namespace lib
 
   template <typename type_t>
   concept integer =
-      same_as<type_t, short> or same_as<type_t, unsigned short> or
-      same_as<type_t, const short> or same_as<type_t, const unsigned short> or
-      same_as<type_t, int> or same_as<type_t, unsigned int> or
-      same_as<type_t, const int> or same_as<type_t, const unsigned int> or
-      same_as<type_t, long> or same_as<type_t, unsigned long> or
-      same_as<type_t, const long> or same_as<type_t, const unsigned long> or
-      same_as<type_t, long long> or same_as<type_t, unsigned long long> or
-      same_as<type_t, const long long> or same_as<type_t, const unsigned long long>;
+      same_as<type_t, short> or 
+      same_as<type_t, unsigned short> or
+      same_as<type_t, const short> or 
+      same_as<type_t, const unsigned short> or
+      same_as<type_t, int> or 
+      same_as<type_t, unsigned int> or
+      same_as<type_t, const int> or 
+      same_as<type_t, const unsigned int> or
+      same_as<type_t, long> or 
+      same_as<type_t, unsigned long> or
+      same_as<type_t, const long> or 
+      same_as<type_t, const unsigned long> or
+      same_as<type_t, long long> or 
+      same_as<type_t, unsigned long long> or
+      same_as<type_t, const long long> or 
+      same_as<type_t, const unsigned long long>;
 
   namespace __meta
   {

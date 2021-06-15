@@ -25,7 +25,8 @@ namespace lib
   {
     return find_if(
         b, e,
-        [&t](auto &&o) { return o == t; });
+        [&t](auto &&o)
+        { return o == t; });
   }
 
   template <typename iterator>
@@ -36,7 +37,8 @@ namespace lib
   {
     return find_if(
         b, e,
-        [&pred](const auto &item) { return not pred(item); });
+        [&pred](const auto &item)
+        { return not pred(item); });
   }
 
   template <
@@ -116,7 +118,8 @@ namespace lib
   {
     return count_if(
         b, e,
-        [&o](const type_t &t) { return t == o; });
+        [&o](const type_t &t)
+        { return t == o; });
   }
 
   template <typename iterator>

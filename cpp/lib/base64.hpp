@@ -1,35 +1,32 @@
 #ifndef __base64_base64_hpp__
 #define __base64_base64_hpp__
 
-#include <string_view>
-#include <array>
-#include <concepts>
-
-#define BASE64_VERSION 1.0.0
+#include <lib/array.hpp>
+#include <lib/string_view.hpp>
 
 namespace std
 {
-  template<typename iterator>
+  template <typename iterator>
   void advance_if_valid(
-    iterator& b, const iterator& e,
-    std::size_t nb)
+      iterator &b, const iterator &e,
+      std::size_t nb)
   {
     std::size_t stp = 0;
 
     while (b != e and stp < nb)
     {
-      std::advance(b, 1);
+      lib::advance(b, 1);
       stp++;
     }
   }
 
-  template<typename iterator>
-  iterator next_if_valid(iterator b, const iterator& e)
+  template <typename iterator>
+  iterator next_if_valid(iterator b, const iterator &e)
   {
     if (b == e)
       return b;
     else
-      return std::next(b);
+      return lib::next(b);
   }
 }
 
@@ -37,18 +34,18 @@ namespace base64::model
 {
   using uchar_t = unsigned char;
   using uint_t = unsigned int;
-  using uchar3_t = std::array<uchar_t, 3>;
-  using uchar4_t = std::array<uchar_t, 4>;
+  using uchar3_t = lib::array<uchar_t, 3>;
+  using uchar4_t = lib::array<uchar_t, 4>;
 }
 
 namespace base64::constraint
 {
-  template<typename type_t>
+  template <typename type_t>
   concept reservable_container =
-    requires (
-      type_t && c,
-      std::size_t size,
-      base64::model::uchar_t uc)
+      requires(
+          type_t &&c,
+          std::size_t size,
+          base64::model::uchar_t uc)
   {
     c.reserve(size);
     c.push_back(uc);
@@ -57,75 +54,69 @@ namespace base64::constraint
 
 namespace base64::encoding
 {
-  constexpr std::string_view b64table =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz"
-    "0123456789+/";
+  constexpr lib::string_view b64table =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      "abcdefghijklmnopqrstuvwxyz"
+      "0123456789+/";
 
   using uchar_t = base64::model::uchar_t;
 
-  template<typename iterator>
+  template <typename iterator>
   const uchar_t encode0(
-    const iterator& b0,
-    const iterator& e)
+      const iterator &b0,
+      const iterator &e)
   {
-    auto&& c0 = b0 == e ? '\0' : *b0;
+    auto &&c0 = b0 == e ? '\0' : *b0;
     return b64table[c0 >> 2];
   }
 
-  template<typename iterator>
+  template <typename iterator>
   const uchar_t encode1(
-    const iterator& b0,
-    const iterator& b1,
-    const iterator& e)
+      const iterator &b0,
+      const iterator &b1,
+      const iterator &e)
   {
-    auto&& c0 = b0 == e ? '\0' : *b0;
-    auto&& c1 = b1 == e ? '\0' : *b1;
-    return b64table[
-      ((c0 & 0b00000011) << 4) +
-        ((c1 >> 4) & 0b00001111)];
+    auto &&c0 = b0 == e ? '\0' : *b0;
+    auto &&c1 = b1 == e ? '\0' : *b1;
+    return b64table[((c0 & 0b00000011) << 4) +
+                    ((c1 >> 4) & 0b00001111)];
   }
 
-
-  template<typename iterator>
+  template <typename iterator>
   const uchar_t encode2(
-    const iterator& b1,
-    const iterator& b2,
-    const iterator& e)
+      const iterator &b1,
+      const iterator &b2,
+      const iterator &e)
   {
-    auto&& c1 = b1 == e ? '\0' : *b1;
-    auto&& c2 = b2 == e ? '\0' : *b2;
-    return b64table[
-      ((c1 & 0b00001111) << 2) +
-        ((c2 & 0b11000000) >> 6)];
+    auto &&c1 = b1 == e ? '\0' : *b1;
+    auto &&c2 = b2 == e ? '\0' : *b2;
+    return b64table[((c1 & 0b00001111) << 2) +
+                    ((c2 & 0b11000000) >> 6)];
   }
 
-
-  template<typename iterator>
+  template <typename iterator>
   const uchar_t encode3(
-    const iterator& b2,
-    const iterator& e)
+      const iterator &b2,
+      const iterator &e)
   {
-    auto&& c2 = b2 == e ? '\0' : *b2;
+    auto &&c2 = b2 == e ? '\0' : *b2;
     return b64table[c2 & 0b00111111];
   }
 
-  template<typename iterator>
+  template <typename iterator>
   const base64::model::uchar4_t to_b64(iterator b, iterator e)
   {
     if (b != e)
     {
       auto b0 = b;
-      auto b1 = std::next_if_valid(b0, e);
-      auto b2 = std::next_if_valid(b1, e);
+      auto b1 = lib::next_if_valid(b0, e);
+      auto b2 = lib::next_if_valid(b1, e);
 
-      return
-      {
-        (uchar_t)encode0(b0, e),
-        (uchar_t)encode1(b0, b1, e),
-        (uchar_t)(b1 == e ? '=' : encode2(b1, b2, e)),
-        (uchar_t)(b2 == e ? '=' : encode3(b2, e))
-      };
+      return {
+          (uchar_t)encode0(b0, e),
+          (uchar_t)encode1(b0, b1, e),
+          (uchar_t)(b1 == e ? '=' : encode2(b1, b2, e)),
+          (uchar_t)(b2 == e ? '=' : encode3(b2, e))};
     }
     else
     {
@@ -133,35 +124,35 @@ namespace base64::encoding
     }
   }
 
-  template<
-    typename iterator,
-    base64::constraint::reservable_container container>
-    void encode(iterator b, iterator e, container& encoded)
+  template <
+      typename iterator,
+      base64::constraint::reservable_container container>
+  void encode(iterator b, iterator e, container &encoded)
   {
 
     while (b != e)
     {
-      auto&& b64 = to_b64(b, e);
+      auto &&b64 = to_b64(b, e);
       encoded.push_back(b64[0]);
       encoded.push_back(b64[1]);
       encoded.push_back(b64[2]);
       encoded.push_back(b64[3]);
-      std::advance_if_valid(b, e, 3);
+      lib::advance_if_valid(b, e, 3);
     }
   }
 
-  template<base64::constraint::reservable_container container>
-  container reserve_from_source(std::string_view bytes)
+  template <base64::constraint::reservable_container container>
+  container reserve_from_source(lib::string_view bytes)
   {
     container encoded;
     encoded.reserve((bytes.size() + 2) / 3 * 4);
     return encoded;
   }
 
-  template<base64::constraint::reservable_container container>
-  container encode(std::string_view bytes)
+  template <base64::constraint::reservable_container container>
+  container encode(lib::string_view bytes)
   {
-    auto&& encoded = reserve_from_source<container>(bytes);
+    auto &&encoded = reserve_from_source<container>(bytes);
     encode(bytes.begin(), bytes.end(), encoded);
     return encoded;
   }
@@ -173,24 +164,24 @@ namespace base64::decoding
   using uint_t = base64::model::uint_t;
 
   const bool between(
-    const uchar_t mn,
-    const uchar_t c,
-    const uchar_t mx)
+      const uchar_t mn,
+      const uchar_t c,
+      const uchar_t mx)
   {
     return mn <= c and c <= mx;
   }
 
-  const uint_t shift_upper(const uchar_t& c)
+  const uint_t shift_upper(const uchar_t &c)
   {
     return c - 'A';
   }
 
-  const uint_t shift_lower(const uchar_t& c)
+  const uint_t shift_lower(const uchar_t &c)
   {
     return c - 'a' + ('Z' - 'A') + 1;
   }
 
-  const uint_t shift_digit(const uchar_t& c)
+  const uint_t shift_digit(const uchar_t &c)
   {
     return c - '0' + ('Z' - 'A') + ('z' - 'a') + 2;
   }
@@ -209,58 +200,54 @@ namespace base64::decoding
       return 63;
     throw "If input is correct, this line should never be reached.";
   }
-  
-  template<typename iterator>
+
+  template <typename iterator>
   const uchar_t decode0(
-    iterator b0, iterator b1, iterator e)
+      iterator b0, iterator b1, iterator e)
   {
-    auto&& c0 = b0 == e ? u8'\0' : *b0;
-    auto&& c1 = b1 == e ? u8'\0' : *b1;
-    return
-      ((rtable(c0)) << 2) +
-      ((rtable(c1) & 0x30) >> 4);
+    auto &&c0 = b0 == e ? u8'\0' : *b0;
+    auto &&c1 = b1 == e ? u8'\0' : *b1;
+    return ((rtable(c0)) << 2) +
+           ((rtable(c1) & 0x30) >> 4);
   }
 
-  template<typename iterator>
+  template <typename iterator>
   const base64::model::uchar_t decode1(
-    iterator b1, iterator b2, iterator e)
+      iterator b1, iterator b2, iterator e)
   {
-    auto&& c1 = b1 == e ? '\0' : *b1;
-    auto&& c2 = b2 == e ? '\0' : *b2;
+    auto &&c1 = b1 == e ? '\0' : *b1;
+    auto &&c2 = b2 == e ? '\0' : *b2;
     return c2 != '='
-      ? (((rtable(c1) & 0x0f) << 4) +
-        ((rtable(c2) & 0x3c) >> 2))
-      : '\0';
+               ? (((rtable(c1) & 0x0f) << 4) +
+                  ((rtable(c2) & 0x3c) >> 2))
+               : '\0';
   }
 
-  template<typename iterator>
+  template <typename iterator>
   const base64::model::uchar_t decode2(
-    iterator b2, iterator b3, iterator e)
+      iterator b2, iterator b3, iterator e)
   {
-    auto&& c2 = b2 == e ? '\0' : *b2;
-    auto&& c3 = b3 == e ? '\0' : *b3;
+    auto &&c2 = b2 == e ? '\0' : *b2;
+    auto &&c3 = b3 == e ? '\0' : *b3;
     return c3 != '='
-      ? (((rtable(c2) & 0x03) << 6) + rtable(c3))
-      : '\0';
+               ? (((rtable(c2) & 0x03) << 6) + rtable(c3))
+               : '\0';
   }
 
-
-  template<typename iterator>
+  template <typename iterator>
   const base64::model::uchar3_t from_b64(iterator b, iterator e)
   {
     if (b != e)
     {
       auto b0 = b;
-      auto b1 = std::next_if_valid(b0, e);
-      auto b2 = std::next_if_valid(b1, e);
-      auto b3 = std::next_if_valid(b2, e);
+      auto b1 = lib::next_if_valid(b0, e);
+      auto b2 = lib::next_if_valid(b1, e);
+      auto b3 = lib::next_if_valid(b2, e);
 
-      return
-      {
-        (uchar_t)decode0(b0, b1, e),
-        (uchar_t)decode1(b1, b2, e),
-        (uchar_t)decode2(b2, b3, e)
-      };
+      return {
+          (uchar_t)decode0(b0, b1, e),
+          (uchar_t)decode1(b1, b2, e),
+          (uchar_t)decode2(b2, b3, e)};
     }
     else
     {
@@ -268,19 +255,19 @@ namespace base64::decoding
     }
   }
 
-  template<typename C>
+  template <typename C>
   concept reservable_container = base64::constraint::reservable_container<C>;
 
-  template<
-    typename iterator,
-    reservable_container container>
-    void decode(
+  template <
+      typename iterator,
+      reservable_container container>
+  void decode(
       iterator b, iterator e,
-      container& decoded)
+      container &decoded)
   {
     while (b != e)
     {
-      auto&& bts = from_b64(b, e);
+      auto &&bts = from_b64(b, e);
 
       if (bts[0] != '\0')
         decoded.push_back(bts[0]);
@@ -289,20 +276,20 @@ namespace base64::decoding
       if (bts[2] != '\0')
         decoded.push_back(bts[2]);
 
-      std::advance_if_valid(b, e, 4);
+      lib::advance_if_valid(b, e, 4);
     }
   }
 
-  template<reservable_container container>
-  container reserve_from_source(std::string_view enc)
+  template <reservable_container container>
+  container reserve_from_source(lib::string_view enc)
   {
     container decoded;
     decoded.reserve(enc.size() / 4 * 3);
     return decoded;
   }
 
-  template<reservable_container container>
-  container decode(std::string_view enc)
+  template <reservable_container container>
+  container decode(lib::string_view enc)
   {
     if (enc.empty())
       return {};
@@ -315,19 +302,20 @@ namespace base64::decoding
 
 namespace base64
 {
-  template<typename C>
+  template <typename C>
   concept reservable_container = base64::constraint::reservable_container<C>;
 
-  template<reservable_container container>
-  container encode(std::string_view s)
+  template <reservable_container container>
+  container encode(lib::string_view s)
   {
     return base64::encoding::encode<container>(s);
   }
 
-  template<reservable_container container>
-  container decode(std::string_view s)
+  template <reservable_container container>
+  container decode(lib::string_view s)
   {
     return base64::decoding::decode<container>(s);
   }
-} // namespace 
+}
+
 #endif

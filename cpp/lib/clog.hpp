@@ -1,52 +1,61 @@
 #ifndef __clog_hpp__
 #define __clog_hpp__
 
-//#include <clon/format.hpp>
-#include <string_view>
-#include <iostream>
+#include <lib/string_view.hpp>
+#include <lib/ios.hpp>
 
-namespace log
+namespace lib
 {
   struct configuration
   {
-    std::ostream &out;
-    std::ostream &err;
+    file &out;
+    file &err;
   };
 
   configuration &config()
   {
-    static configuration c{std::cout, std::cerr};
+    static configuration c{cout, cerr};
     return c;
   }
 
   template <typename... args_t>
-  bool debug(std::string_view fmt, const args_t &...args)
+  void debug(
+      string_view fmt,
+      const args_t &...args)
   {
-    config().out << clon::fmt::format(fmt, args...);
+    config().out.write(format(fmt, args...));
   }
 
   template <typename... args_t>
-  bool info(std::string_view fmt, const args_t &...args)
+  void info(
+      string_view fmt,
+      const args_t &...args)
   {
-    config().out << clon::fmt::format(fmt, args...);
+    config().out.write(format(fmt, args...));
   }
 
   template <typename... args_t>
-  bool warn(std::string_view fmt, const args_t &...args)
+  void warn(
+      string_view fmt,
+      const args_t &...args)
   {
-    config().out << clon::fmt::format(fmt, args...);
+    config().out.write(format(fmt, args...));
   }
 
   template <typename... args_t>
-  bool error(std::string_view fmt, const args_t &...args)
+  void error(
+      string_view fmt,
+      const args_t &...args)
   {
-    config().err << clon::fmt::format(fmt, args...);
+    config().err.write(format(fmt, args...));
   }
 
   template <typename... args_t>
-  bool fatal(std::string_view fmt, const args_t &...args)
+  void fatal(
+      string_view fmt,
+      const args_t &...args)
   {
-    config().err << clon::fmt::format(fmt, args...);
+    config().err.write(format(fmt, args...));
   }
 
 }
