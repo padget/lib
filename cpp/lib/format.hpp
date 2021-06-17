@@ -12,33 +12,24 @@ namespace lib
   template <character char_t>
   using view = lib::basic_string_view<char_t>;
 
-  template <character char_t>
-  using buffer = lib::basic_string<char_t>;
-
-  template <character char_t>
+  template <
+      character char_t,
+      typename buffer_t>
   class formatter_context
   {
   private:
-    buffer<char_t> &buff;
+    buffer_t &buff;
 
   public:
     explicit formatter_context(
-        buffer<char_t> &_buff)
+        buffer_t &_buff)
         : buff(_buff) {}
 
   public:
     inline void
-    append(char_t c)
+    push_back(char_t c)
     {
       buff.push_back(c);
-    }
-
-    inline void
-    reverse(std::size_t lastn)
-    {
-      char_t *end = buff.end();
-      char_t *begin = buff.end() - lastn;
-      lib::reverse(begin, end);
     }
   };
 
@@ -72,10 +63,11 @@ namespace lib
 
     template <
         character char_t,
+        typename buffer_t,
         typename... args_t>
     inline void
     __format_into(
-        formatter_context<char_t> &ctx,
+        formatter_context<char_t, buffer_t> &ctx,
         view<char_t> fmt, const args_t &...args)
     {
       tokenizer<char_t, '#'> tk(fmt);
@@ -101,8 +93,8 @@ namespace lib
     __format(view<char_t> fmt,
              const args_t &...args)
     {
-      buffer<char_t> buff(__all_length_of(fmt, args...));
-      formatter_context<char_t> ctx{buff};
+      basic_string<char_t> buff(__all_length_of(fmt, args...));
+      formatter_context<char_t, basic_string<char_t>> ctx{buff};
       __format_into(ctx, fmt, args...);
       return buff;
     }
@@ -144,18 +136,18 @@ namespace lib
     return __fmt::__all_length_of(fmt, args...);
   }
 
-  template <typename... args_t>
+  template <typename buffer_t, typename... args_t>
   inline void
   format_into(
-      formatter_context<char> &ctx,
+      formatter_context<char, buffer_t> &ctx,
       view<char> fmt, const args_t &...args)
   {
     __fmt::__format_into(ctx, fmt, args...);
   }
 
-  template <typename... args_t>
+  template <typename buffer_t, typename... args_t>
   inline void format_into(
-      formatter_context<wchar_t> &ctx,
+      formatter_context<wchar_t, buffer_t> &ctx,
       view<wchar_t> fmt, const args_t &...args)
   {
     __fmt::__format_into(ctx, fmt, args...);

@@ -8,7 +8,7 @@
 
 namespace lib
 {
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   class formatter_context;
 
   ///////////////////////////////////
@@ -21,13 +21,13 @@ namespace lib
     return v.size();
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       lib::basic_string_view<char_t> v)
   {
     for (auto &&c : v)
-      ctx.append(c);
+      ctx.push_back(c);
   }
 
   ///////////////////////////
@@ -39,9 +39,9 @@ namespace lib
     return n - 1;
   }
 
-  template <std::size_t n>
+  template <std::size_t n, typename buffer_t>
   inline void format_of(
-      formatter_context<char> &ctx,
+      formatter_context<char, buffer_t> &ctx,
       const char (&s)[n])
   {
     format_of(ctx, lib::basic_string_view<char>(s));
@@ -53,9 +53,9 @@ namespace lib
     return n - 1;
   }
 
-  template <std::size_t n>
+  template <std::size_t n, typename buffer_t>
   inline void format_of(
-      formatter_context<wchar_t> &ctx,
+      formatter_context<wchar_t, buffer_t> &ctx,
       const wchar_t (&s)[n])
   {
     format_of(ctx, lib::basic_string_view<wchar_t>(s));
@@ -68,9 +68,9 @@ namespace lib
   template <integer integral_t>
   inline std::size_t length_of(const integral_t &i)
   {
-    
-    const int abs[2] = { i, -i };
-    const integral_t v = abs[i<0];
+    const integral_t v = i;
+    // const int abs[2] = {i, -i};
+    // const integral_t v = abs[i < 0];
 
     if (v < 10)
       return 1;
@@ -108,16 +108,16 @@ namespace lib
       return 17;
     else if (v < 1000000000000000000)
       return 18;
-    else 
+    else
       return 1;
   }
-  template <character char_t, integer integral_t>
+  template <character char_t, integer integral_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const integral_t &t)
   {
     if (t == 0)
-      ctx.append('0');
+      ctx.push_back('0');
     else
     {
       integral_t tmp(t);
@@ -125,7 +125,7 @@ namespace lib
 
       while (tmp != 0)
       {
-        ctx.append("0123456789"[tmp % 10]);
+        ctx.push_back("0123456789"[tmp % 10]);
         tmp = tmp / 10;
         cnt++;
       }
@@ -143,9 +143,9 @@ namespace lib
     return length_of(lib::basic_string_view<char_t>(s.begin(), s.end()));
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const lib::basic_string<char_t> &v)
   {
     format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));
@@ -159,9 +159,9 @@ namespace lib
     return s ? 4 : 5;
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const bool &v)
   {
     format_of(ctx, v ? basic_string_view<char_t>("true")
@@ -176,9 +176,9 @@ namespace lib
     return length_of(lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const lib::vector<char_t> &v)
   {
     format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));

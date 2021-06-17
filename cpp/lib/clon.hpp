@@ -504,17 +504,17 @@ namespace lib
     return c.buffsize();
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const basic_clon<char_t> &c)
   {
     format_of(ctx, c.root());
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const clon_node<char_t> &nc)
   {
     auto &&name = nc.value.name;
