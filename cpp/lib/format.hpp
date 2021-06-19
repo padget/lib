@@ -6,55 +6,45 @@
 #include <lib/meta.hpp>
 #include <lib/format-types.hpp>
 #include <lib/algorithm.hpp>
+#include <lib/file.hpp>
 
 namespace lib
 {
   template <character char_t>
   using view = lib::basic_string_view<char_t>;
 
-  template <character char_t>
-  using buffer = lib::basic_string<char_t>;
-
-  template <character char_t>
+  template <
+      character char_t,
+      typename buffer_t>
   class formatter_context
   {
   private:
-    buffer<char_t> &buff;
+    buffer_t &buff;
 
   public:
     explicit formatter_context(
-        buffer<char_t> &_buff)
+        buffer_t &_buff)
         : buff(_buff) {}
 
   public:
     inline void
-    append(char_t c)
+    push_back(char_t c)
     {
       buff.push_back(c);
     }
-
-    inline void
-    reverse(std::size_t lastn)
-    {
-      char_t *end = buff.end();
-      char_t *begin = buff.end() - lastn;
-      lib::reverse(begin, end);
-    }
   };
+
   namespace __fmt
   {
-    template <character char_t>
+    template <character char_t, char_t sep>
     class tokenizer
     {
       basic_string_view<char_t> data;
-      char_t sep;
 
     public:
       tokenizer(
-          basic_string_view<char_t> _data,
-          char_t _sep)
-          : data(_data),
-            sep(_sep) {}
+          basic_string_view<char_t> _data)
+          : data(_data) {}
 
     public:
       inline basic_string_view<char_t>
@@ -74,13 +64,14 @@ namespace lib
 
     template <
         character char_t,
+        typename buffer_t,
         typename... args_t>
     inline void
-    __format_into(
-        formatter_context<char_t> &ctx,
+    format_into(
+        formatter_context<char_t, buffer_t> &ctx,
         view<char_t> fmt, const args_t &...args)
     {
-      tokenizer<char_t> tk(fmt, '#');
+      tokenizer<char_t, '#'> tk(fmt);
       ((format_of(ctx, tk.next()), format_of(ctx, args)), ...);
       format_of(ctx, tk.tail());
     }
@@ -89,26 +80,23 @@ namespace lib
         character char_t,
         typename... args_t>
     inline std::size_t
-    __all_length_of(
+    all_length_of(
         view<char_t> fmt,
         const args_t &...args)
     {
-      std::size_t smallsz = lib::count_if(
-          fmt.begin(), fmt.end(),
-          [](const char_t &c) { return c != '#'; });
-      return (smallsz + ... + length_of(args));
+      return (fmt.size() + ... + length_of(args));
     }
 
     template <
         character char_t,
         typename... args_t>
     inline lib::basic_string<char_t>
-    __format(view<char_t> fmt,
+    format(view<char_t> fmt,
              const args_t &...args)
     {
-      buffer<char_t> buff(__all_length_of(fmt, args...));
-      formatter_context<char_t> ctx{buff};
-      __format_into(ctx, fmt, args...);
+      basic_string<char_t> buff(all_length_of(fmt, args...));
+      formatter_context<char_t, basic_string<char_t>> ctx{buff};
+      format_into(ctx, fmt, args...);
       return buff;
     }
   }
@@ -119,7 +107,7 @@ namespace lib
       view<char> fmt,
       const args_t &...args)
   {
-    return __fmt::__format(fmt, args...);
+    return __fmt::format(fmt, args...);
   }
 
   template <typename... args_t>
@@ -128,7 +116,7 @@ namespace lib
       view<wchar_t> fmt,
       const args_t &...args)
   {
-    return __fmt::__format(fmt, args...);
+    return __fmt::format(fmt, args...);
   }
 
   template <typename... args_t>
@@ -137,7 +125,7 @@ namespace lib
       view<char> fmt,
       const args_t &...args)
   {
-    return __fmt::__all_length_of(fmt, args...);
+    return __fmt::all_length_of(fmt, args...);
   }
 
   template <typename... args_t>
@@ -146,24 +134,38 @@ namespace lib
       view<wchar_t> fmt,
       const args_t &...args)
   {
-    return __fmt::__all_length_of(fmt, args...);
+    return __fmt::all_length_of(fmt, args...);
   }
 
-  template <typename... args_t>
+  template <typename buffer_t, typename... args_t>
   inline void
   format_into(
-      formatter_context<char> &ctx,
+      formatter_context<char, buffer_t> &ctx,
       view<char> fmt, const args_t &...args)
   {
-    __fmt::__format_into(ctx, fmt, args...);
+    __fmt::format_into(ctx, fmt, args...);
+  }
+
+  template <typename buffer_t, typename... args_t>
+  inline void format_into(
+      formatter_context<wchar_t, buffer_t> &ctx,
+      view<wchar_t> fmt, const args_t &...args)
+  {
+    __fmt::format_into(ctx, fmt, args...);
   }
 
   template <typename... args_t>
-  inline void format_into(
-      formatter_context<wchar_t> &ctx,
-      view<wchar_t> fmt, const args_t &...args)
+  void format(file &out, string_view fmt, const args_t &...args)
   {
-    __fmt::__format_into(ctx, fmt, args...);
+    formatter_context<char, file> ctx(out);
+    format_into(ctx, fmt, args...);
+  }
+  
+  template <typename... args_t>
+  void format(file &out, wstring_view fmt, const args_t &...args)
+  {
+    formatter_context<wchar_t, file> ctx(out);
+    format_into(ctx, fmt, args...);
   }
 } // namespace lib
 

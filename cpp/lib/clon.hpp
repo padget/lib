@@ -11,6 +11,7 @@
 #include <lib/tree.hpp>
 #include <lib/exception.hpp>
 #include <lib/algorithm.hpp>
+#include <lib/format.hpp>
 
 namespace lib
 {
@@ -495,7 +496,6 @@ namespace lib
 
   using clon = basic_clon<char>;
   using wclon = basic_clon<wchar_t>;
-
   using to_clon = __clon::to_clon_tag;
 
   template <character char_t>
@@ -505,17 +505,17 @@ namespace lib
     return c.buffsize();
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const basic_clon<char_t> &c)
   {
     format_of(ctx, c.root());
   }
 
-  template <character char_t>
+  template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t> &ctx,
+      formatter_context<char_t, buffer_t> &ctx,
       const clon_node<char_t> &nc)
   {
     auto &&name = nc.value.name;
@@ -541,8 +541,8 @@ namespace lib
       break;
     }
   }
-
 }
+
 namespace lib::literals
 {
   clon operator""_clon(
