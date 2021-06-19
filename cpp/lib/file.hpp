@@ -33,7 +33,7 @@ namespace lib
     }
 
     template <character char_t>
-    inline void putc(const char_t &c)
+    inline void push_back(const char_t &c)
     {
       if (fd == nullptr)
         throw null_file_descriptor();

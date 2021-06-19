@@ -3,5 +3,5 @@
 
 int main()
 {
-  lib::printf("The answer is #.", 42);
+  lib::printfln("this answer is #.", 42);
 }

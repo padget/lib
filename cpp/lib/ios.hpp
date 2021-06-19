@@ -3,7 +3,6 @@
 
 #include <lib/file.hpp>
 #include <lib/string_view.hpp>
-#include <lib/format-file.hpp>
 #include <lib/format-types.hpp>
 
 namespace lib
@@ -16,7 +15,7 @@ namespace lib
   inline void fprintln(file &out, lib::string_view s)
   {
     fprint(out, s);
-    out.putc('\n');
+    out.push_back('\n');
   }
 
   template <typename... args_t>
@@ -65,7 +64,7 @@ namespace lib
   inline void fprintln(file &out, lib::wstring_view s)
   {
     fprint(out, s);
-    out.putc('\n');
+    out.push_back('\n');
   }
 
   template <typename... args_t>

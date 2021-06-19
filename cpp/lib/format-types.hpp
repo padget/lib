@@ -4,6 +4,7 @@
 #include <lib/string_view.hpp>
 #include <lib/string.hpp>
 #include <lib/vector.hpp>
+#include <lib/array.hpp>
 #include <lib/meta.hpp>
 
 namespace lib
@@ -120,17 +121,22 @@ namespace lib
       ctx.push_back('0');
     else
     {
+      array<char_t, 100> buff;
+      auto b = buff.begin();
+      auto s = b;
       integral_t tmp(t);
-      std::size_t cnt(0);
 
       while (tmp != 0)
       {
-        ctx.push_back("0123456789"[tmp % 10]);
+        *b = "0123456789"[tmp % 10];
+        b = b + 1;
         tmp = tmp / 10;
-        cnt++;
       }
 
-      ctx.reverse(cnt);
+      lib::reverse(s, b);
+      lib::for_each(
+          s, b, [&ctx](char_t c)
+          { ctx.push_back(c); });
     }
   }
 

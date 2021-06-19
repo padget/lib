@@ -11,6 +11,7 @@
 #include <lib/tree.hpp>
 #include <lib/exception.hpp>
 #include <lib/algorithm.hpp>
+#include <lib/format.hpp>
 
 namespace lib
 {
