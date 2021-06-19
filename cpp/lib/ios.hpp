@@ -3,7 +3,6 @@
 
 #include <lib/file.hpp>
 #include <lib/string_view.hpp>
-#include <lib/format-types.hpp>
 
 namespace lib
 {
