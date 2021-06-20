@@ -105,29 +105,17 @@ namespace lib
             typename buffer_t>
   inline void format_of(
       buffer_t &buff,
-      const integral_t &t)
+      integral_t t)
   {
-    if (t == 0)
-      buff.push_back('0');
-    else
-    {
-      array<char, 100> tbuff;
-      auto b = tbuff.begin();
-      auto s = b;
-      integral_t tmp(t);
+    array<char, 50> tbuff;
+    auto e = tbuff.end();
+    auto i = e - 1;
 
-      while (tmp != 0)
-      {
-        *b = "0123456789"[tmp % 10];
-        b = b + 1;
-        tmp = tmp / 10;
-      }
+    for (; t; --i, t /= 10)
+      *i = "0123456789"[t % 10];
 
-      reverse(s, b);
-      for_each(
-          s, b, [&buff](char c)
-          { buff.push_back(c); });
-    }
+    for (; i != e; ++i)
+      buff.push_back(*i);
   }
 
   template <character char_t>

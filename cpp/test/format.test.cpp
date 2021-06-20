@@ -3,7 +3,7 @@
 
 int main()
 {
-  lib::printf(lib::string_view("this is the answer #"), 42);
+  lib::printf(lib::string_view("this is the answer  d#"), 42);
 }
 
 // #include <algorithm>
