@@ -6,13 +6,13 @@
 
 namespace lib
 {
-  struct cstring_limit
-  {
-    constexpr std::size_t operator()(std::size_t n)
+    struct cstring_limit
     {
-      return n - 1;
-    }
-  };
+      constexpr std::size_t operator()(std::size_t n)
+      {
+        return n - 1;
+      }
+    };
 
   template <character char_t>
   using basic_string_view = span<const char_t, cstring_limit>;

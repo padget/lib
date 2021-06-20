@@ -58,18 +58,18 @@ else
   # ./build/tree.test.out
 
 
-  lib_compile_test \
-    --out build/clon.test.out \
-    --src cpp/test/clon.test.cpp \
-    --flags "$flags" \
-    --libs "$libs"
+  # time lib_compile_test \
+  #   --out build/clon.test.out \
+  #   --src cpp/test/clon.test.cpp \
+  #   --flags "$flags" \
+  #   --libs "$libs"
 
-  lib_file \
-    --path build/clon.test.out \
-    --mode +x \
-    --state file
+  # time lib_file \
+  #   --path build/clon.test.out \
+  #   --mode +x \
+  #   --state file
 
-  ./build/clon.test.out
+  # time ./build/clon.test.out
 
 
 fi

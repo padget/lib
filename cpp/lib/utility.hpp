@@ -11,6 +11,22 @@ namespace lib
   {
     return static_cast<remove_reference<type_t> &&>(t);
   }
+
+  template <
+      unsigned i,
+      typename arg_t,
+      typename... args_t>
+  constexpr auto &get(
+      const arg_t &arg,
+      const args_t &...args)
+  {
+    static_assert(i <= sizeof...(args));
+
+    if constexpr (i == 0)
+      return arg;
+    else
+      return get<i - 1>(args...);
+  }
 }
 
 #endif

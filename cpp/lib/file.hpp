@@ -33,11 +33,11 @@ namespace lib
     }
 
     template <character char_t>
-    inline void push_back(const char_t &c)
+   void push_back(const char_t &c)
     {
       if (fd == nullptr)
         throw null_file_descriptor();
-
+  
       if (std::fputc(c, fd) != c)
         throw opened_file_writing_failed();
     }

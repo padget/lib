@@ -19,21 +19,21 @@ namespace lib
 
   template <typename type_t>
   concept integer =
-      same_as<type_t, short> or 
+      same_as<type_t, short> or
       same_as<type_t, unsigned short> or
-      same_as<type_t, const short> or 
+      same_as<type_t, const short> or
       same_as<type_t, const unsigned short> or
-      same_as<type_t, int> or 
+      same_as<type_t, int> or
       same_as<type_t, unsigned int> or
-      same_as<type_t, const int> or 
+      same_as<type_t, const int> or
       same_as<type_t, const unsigned int> or
-      same_as<type_t, long> or 
+      same_as<type_t, long> or
       same_as<type_t, unsigned long> or
-      same_as<type_t, const long> or 
+      same_as<type_t, const long> or
       same_as<type_t, const unsigned long> or
-      same_as<type_t, long long> or 
+      same_as<type_t, long long> or
       same_as<type_t, unsigned long long> or
-      same_as<type_t, const long long> or 
+      same_as<type_t, const long long> or
       same_as<type_t, const unsigned long long>;
 
   namespace __meta
@@ -59,6 +59,27 @@ namespace lib
 
   template <typename type_t>
   using remove_reference = typename __meta::remove_reference<type_t>::type;
+
+  namespace __meta
+  {
+    template <typename type_t>
+    struct remove_const
+    {
+      using type = type_t;
+    };
+
+    template <typename type_t>
+    struct remove_const<const type_t>
+    {
+      using type = type_t;
+    };
+  }
+
+  template <typename type_t>
+  using remove_const = typename __meta::remove_const<type_t>::type;
+
+  template <typename type_t>
+  using remove_const_ref = remove_const<remove_reference<type_t>>;
 
 }
 

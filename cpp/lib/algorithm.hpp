@@ -4,7 +4,7 @@
 namespace lib
 {
   template <typename iterator>
-  iterator find_if(
+  constexpr iterator find_if(
       iterator b,
       iterator e,
       auto &&pred)
@@ -18,7 +18,7 @@ namespace lib
   template <
       typename iterator,
       typename type_t>
-  iterator find(
+  constexpr iterator find(
       iterator b,
       iterator e,
       type_t &&t)
@@ -30,7 +30,7 @@ namespace lib
   }
 
   template <typename iterator>
-  iterator find_if_not(
+  constexpr iterator find_if_not(
       iterator b,
       iterator e,
       auto &&pred)
@@ -43,7 +43,7 @@ namespace lib
 
   template <
       typename iterator>
-  iterator
+  constexpr iterator
   find_nth_if(
       std::size_t nth,
       iterator b,
@@ -96,7 +96,7 @@ namespace lib
   }
 
   template <typename iterator>
-  std::size_t count_if(
+  constexpr std::size_t count_if(
       iterator b,
       iterator e,
       auto &&pred)
@@ -111,7 +111,7 @@ namespace lib
   template <
       typename iterator,
       typename type_t>
-  std::size_t count(
+  constexpr std::size_t count(
       iterator b,
       iterator e,
       type_t &&o)
@@ -123,7 +123,7 @@ namespace lib
   }
 
   template <typename iterator>
-  bool all_of(
+  constexpr bool all_of(
       iterator b,
       iterator e,
       auto &&pred)
@@ -132,7 +132,7 @@ namespace lib
   }
 
   template <typename iterator>
-  bool none_of(
+  constexpr bool none_of(
       iterator b,
       iterator e,
       auto &&pred)
@@ -141,7 +141,7 @@ namespace lib
   }
 
   template <typename iterator>
-  bool any_of(
+  constexpr bool any_of(
       iterator b,
       iterator e,
       auto &&pred)
@@ -152,7 +152,7 @@ namespace lib
   template <
       typename iterator,
       typename value>
-  void replace_if(
+  constexpr void replace_if(
       iterator b,
       iterator e,
       auto &&pred,
@@ -166,7 +166,7 @@ namespace lib
   template <
       typename iterator1,
       typename iterator2>
-  bool starts_with(
+  constexpr bool starts_with(
       iterator1 b,
       iterator1 e,
       iterator2 bo,
@@ -184,7 +184,7 @@ namespace lib
   template <
       typename iterator1,
       typename iterator2>
-  bool equals(
+  constexpr bool equals(
       iterator1 b,
       iterator1 e,
       iterator2 b2,

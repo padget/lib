@@ -7,14 +7,9 @@
 #include <lib/algorithm.hpp>
 #include <lib/file.hpp>
 #include <lib/array.hpp>
+
 namespace lib
 {
-  template <character char_t, typename buffer_t>
-  class formatter_context;
-
-  ///////////////////////////////////
-  // lib::basic_string_view format //
-  ///////////////////////////////////
   template <character char_t>
   inline std::size_t length_of(
       const lib::basic_string_view<char_t> &v)
@@ -24,16 +19,13 @@ namespace lib
 
   template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
+      buffer_t &buff,
       lib::basic_string_view<char_t> v)
   {
     for (auto &&c : v)
-      ctx.push_back(c);
+      buff.push_back(c);
   }
 
-  ///////////////////////////
-  // literal string format //
-  ///////////////////////////
   template <std::size_t n>
   inline std::size_t length_of(const char (&s)[n])
   {
@@ -42,10 +34,10 @@ namespace lib
 
   template <std::size_t n, typename buffer_t>
   inline void format_of(
-      formatter_context<char, buffer_t> &ctx,
+      buffer_t &buff,
       const char (&s)[n])
   {
-    format_of(ctx, lib::basic_string_view<char>(s));
+    format_of(buff, basic_string_view<char>(s));
   }
 
   template <std::size_t n>
@@ -56,15 +48,11 @@ namespace lib
 
   template <std::size_t n, typename buffer_t>
   inline void format_of(
-      formatter_context<wchar_t, buffer_t> &ctx,
+      buffer_t &buff,
       const wchar_t (&s)[n])
   {
-    format_of(ctx, lib::basic_string_view<wchar_t>(s));
+    format_of(buff, basic_string_view<wchar_t>(s));
   }
-
-  ///////////////////////////
-  // integral types format //
-  ///////////////////////////
 
   template <integer integral_t>
   inline std::size_t length_of(const integral_t &i)
@@ -112,17 +100,19 @@ namespace lib
     else
       return 1;
   }
-  template <character char_t, integer integral_t, typename buffer_t>
+
+  template <integer integral_t,
+            typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
+      buffer_t &buff,
       const integral_t &t)
   {
     if (t == 0)
-      ctx.push_back('0');
+      buff.push_back('0');
     else
     {
-      array<char_t, 100> buff;
-      auto b = buff.begin();
+      array<char, 100> tbuff;
+      auto b = tbuff.begin();
       auto s = b;
       integral_t tmp(t);
 
@@ -133,33 +123,27 @@ namespace lib
         tmp = tmp / 10;
       }
 
-      lib::reverse(s, b);
-      lib::for_each(
-          s, b, [&ctx](char_t c)
-          { ctx.push_back(c); });
+      reverse(s, b);
+      for_each(
+          s, b, [&buff](char c)
+          { buff.push_back(c); });
     }
   }
 
-  //////////////////////////
-  // strings types format //
-  //////////////////////////
   template <character char_t>
-  inline std::size_t length_of(const lib::basic_string<char_t> &s)
+  inline std::size_t length_of(const basic_string<char_t> &s)
   {
-    return length_of(lib::basic_string_view<char_t>(s.begin(), s.end()));
+    return length_of(basic_string_view<char_t>(s.begin(), s.end()));
   }
 
   template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
-      const lib::basic_string<char_t> &v)
+      buffer_t &buff,
+      const basic_string<char_t> &v)
   {
-    format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));
+    format_of(buff, basic_string_view<char_t>(v.begin(), v.end()));
   }
 
-  ////////////////////////
-  // bools types format //
-  ////////////////////////
   inline std::size_t length_of(const bool &s)
   {
     return s ? 4 : 5;
@@ -167,15 +151,13 @@ namespace lib
 
   template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
+      buffer_t &buff,
       const bool &v)
   {
-    format_of(ctx, v ? basic_string_view<char_t>("true")
-                     : basic_string_view<char_t>("false"));
+    format_of(buff, v ? basic_string_view<char_t>("true")
+                      : basic_string_view<char_t>("false"));
   }
-  // //////////////////////////////////
-  // // vector of chars types format //
-  // //////////////////////////////////
+
   template <character char_t>
   inline std::size_t length_of(const lib::vector<char_t> &v)
   {
@@ -184,171 +166,73 @@ namespace lib
 
   template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
+      buffer_t &buff,
       const lib::vector<char_t> &v)
   {
-    format_of(ctx, lib::basic_string_view<char_t>(v.begin(), v.end()));
+    format_of(buff, lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
 }
 
 namespace lib
 {
-  template <character char_t>
-  using view = lib::basic_string_view<char_t>;
-
-  template <
-      character char_t,
-      typename buffer_t>
-  class formatter_context
+  template <typename char_t>
+  struct basic_format
   {
-  private:
-    buffer_t &buff;
+    basic_string_view<char_t> fmt;
 
-  public:
-    explicit formatter_context(
-        buffer_t &_buff)
-        : buff(_buff) {}
-
-  public:
-    inline void
-    push_back(char_t c)
-    {
-      buff.push_back(c);
-    }
+    constexpr basic_format(
+        basic_string_view<char_t> _fmt)
+        : fmt(_fmt) {}
   };
 
-  namespace __fmt
+  template <typename char_t,
+            typename buffer_t>
+  inline void format_of(
+      buffer_t &ctx,
+      basic_format<char_t> &fmt)
   {
-    template <character char_t, char_t sep>
-    class tokenizer
+    auto b = fmt.fmt.begin();
+    auto e = fmt.fmt.end();
+
+    while (b != e and *b != '#')
     {
-      basic_string_view<char_t> data;
-
-    public:
-      tokenizer(
-          basic_string_view<char_t> _data)
-          : data(_data) {}
-
-    public:
-      inline basic_string_view<char_t>
-      next()
-      {
-        basic_string_view<char_t> n(data.begin(), lib::find(data.begin(), data.end(), sep));
-        data = basic_string_view<char_t>(n.end() == data.end() ? n.end() : n.end() + 1, data.end());
-        return n;
-      }
-
-      inline basic_string_view<char_t>
-      tail()
-      {
-        return data;
-      }
-    };
-
-    template <
-        character char_t,
-        typename buffer_t,
-        typename... args_t>
-    inline void
-    format_into(
-        formatter_context<char_t, buffer_t> &ctx,
-        view<char_t> fmt, const args_t &...args)
-    {
-      tokenizer<char_t, '#'> tk(fmt);
-      ((format_of(ctx, tk.next()), format_of(ctx, args)), ...);
-      format_of(ctx, tk.tail());
+      ctx.push_back(*b);
+      ++b;
     }
 
-    template <
-        character char_t,
-        typename... args_t>
-    inline std::size_t
-    all_length_of(
-        view<char_t> fmt,
-        const args_t &...args)
-    {
-      return (fmt.size() + ... + length_of(args));
-    }
+    if (b != e)
+      ++b;
 
-    template <
-        character char_t,
-        typename... args_t>
-    inline lib::basic_string<char_t>
-    format(view<char_t> fmt,
-           const args_t &...args)
-    {
-      basic_string<char_t> buff(all_length_of(fmt, args...));
-      formatter_context<char_t, basic_string<char_t>> ctx{buff};
-      format_into(ctx, fmt, args...);
-      return buff;
-    }
+    fmt.fmt = basic_string_view<char_t>(b, e);
   }
 
   template <typename... args_t>
-  inline lib::basic_string<char>
-  format(
-      view<char> fmt,
+  inline unsigned all_length_of(
       const args_t &...args)
   {
-    return __fmt::format(fmt, args...);
+    return (length_of(args) + ... + 0);
   }
 
-  template <typename... args_t>
-  inline lib::basic_string<wchar_t>
-  format(
-      view<wchar_t> fmt,
+  template <typename char_t,
+            typename... args_t>
+  inline basic_string<char_t>
+  format(basic_string_view<char_t> fmt,
+         const args_t &...args)
+  {
+    basic_string<char_t> buff(all_length_of(fmt, args...));
+    basic_format bfmt(fmt);
+    ((format_of(buff, bfmt), format_of(buff, args)), ..., format_of(buff, bfmt.fmt));
+    return buff;
+  }
+
+  template <typename char_t, typename... args_t>
+  void fformat(
+      file &out,
+      basic_string_view<char_t> fmt,
       const args_t &...args)
   {
-    return __fmt::format(fmt, args...);
-  }
-
-  template <typename... args_t>
-  inline std::size_t
-  all_length_of(
-      view<char> fmt,
-      const args_t &...args)
-  {
-    return __fmt::all_length_of(fmt, args...);
-  }
-
-  template <typename... args_t>
-  inline std::size_t
-  all_length_of(
-      view<wchar_t> fmt,
-      const args_t &...args)
-  {
-    return __fmt::all_length_of(fmt, args...);
-  }
-
-  template <typename buffer_t, typename... args_t>
-  inline void
-  format_into(
-      formatter_context<char, buffer_t> &ctx,
-      view<char> fmt, const args_t &...args)
-  {
-    __fmt::format_into(ctx, fmt, args...);
-  }
-
-  template <typename buffer_t, typename... args_t>
-  inline void format_into(
-      formatter_context<wchar_t, buffer_t> &ctx,
-      view<wchar_t> fmt, const args_t &...args)
-  {
-    __fmt::format_into(ctx, fmt, args...);
-  }
-
-  template <typename... args_t>
-  void format(file &out, string_view fmt, const args_t &...args)
-  {
-    formatter_context<char, file> ctx(out);
-    format_into(ctx, fmt, args...);
-  }
-
-  template <typename... args_t>
-  void format(file &out, wstring_view fmt, const args_t &...args)
-  {
-    formatter_context<wchar_t, file> ctx(out);
-    format_into(ctx, fmt, args...);
+    basic_format<char_t> bfmt(fmt);
+    ((format_of(out, bfmt), format_of(out, args)), ..., format_of(out, bfmt.fmt));
   }
 } // namespace lib
 
