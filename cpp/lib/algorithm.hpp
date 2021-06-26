@@ -45,7 +45,7 @@ namespace lib
       typename iterator>
   constexpr iterator
   find_nth_if(
-      std::size_t nth,
+      unsigned nth,
       iterator b,
       iterator e,
       auto &&pred)
@@ -96,12 +96,12 @@ namespace lib
   }
 
   template <typename iterator>
-  constexpr std::size_t count_if(
+  constexpr unsigned count_if(
       iterator b,
       iterator e,
       auto &&pred)
   {
-    std::size_t cnt = 0;
+    unsigned cnt = 0;
     for (; b != e; ++b)
       if (pred(*b))
         ++cnt;
@@ -111,7 +111,7 @@ namespace lib
   template <
       typename iterator,
       typename type_t>
-  constexpr std::size_t count(
+  constexpr unsigned count(
       iterator b,
       iterator e,
       type_t &&o)

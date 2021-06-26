@@ -9,9 +9,9 @@ namespace std
   template <typename iterator>
   void advance_if_valid(
       iterator &b, const iterator &e,
-      std::size_t nb)
+      unsigned nb)
   {
-    std::size_t stp = 0;
+    unsigned stp = 0;
 
     while (b != e and stp < nb)
     {
@@ -44,7 +44,7 @@ namespace base64::constraint
   concept reservable_container =
       requires(
           type_t &&c,
-          std::size_t size,
+          unsigned size,
           base64::model::uchar_t uc)
   {
     c.reserve(size);

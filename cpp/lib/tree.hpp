@@ -10,9 +10,9 @@ namespace lib
   INHERITED_EXCEPTION(parent_index_doesnt_exist, tree_exception)
   INHERITED_EXCEPTION(previous_index_doesnt_exist, tree_exception)
 
-  constexpr std::size_t no_next = static_cast<std::size_t>(-1);
-  constexpr std::size_t no_child = static_cast<std::size_t>(-1);
-  constexpr std::size_t no_root = static_cast<std::size_t>(-1);
+  constexpr unsigned no_next = static_cast<unsigned>(-1);
+  constexpr unsigned no_child = static_cast<unsigned>(-1);
+  constexpr unsigned no_root = static_cast<unsigned>(-1);
 
   template <
       typename value_t>
@@ -26,8 +26,8 @@ namespace lib
       typename value_t>
   struct child_iterator
   {
-    std::size_t index;
     tree<value_t> *t = nullptr;
+    long unsigned index;
 
     inline tree_node<value_t> &
     operator*()
@@ -79,13 +79,13 @@ namespace lib
   {
     using iterator = child_iterator<value_t>;
 
-    std::size_t index;
+    long unsigned first;
     tree<value_t> *t = nullptr;
 
     iterator
     begin()
     {
-      return {index, t};
+      return {first, t};
     }
 
     iterator
@@ -97,7 +97,7 @@ namespace lib
     const iterator
     begin() const
     {
-      return {index, t};
+      return {first, t};
     }
 
     const iterator
@@ -113,10 +113,10 @@ namespace lib
   {
     value_t value;
     tree<value_t> *tr = nullptr;
-    std::size_t id = 0;
-    std::size_t child = no_child;
-    std::size_t next = no_next;
-    std::size_t last_child = no_child;
+    unsigned id = 0;
+    unsigned child = no_child;
+    unsigned next = no_next;
+    unsigned last_child = no_child;
 
     bool has_child() const
     {
@@ -148,7 +148,7 @@ namespace lib
     vector<tree_node<value_t>> nodes;
 
   public:
-    tree(std::size_t _max)
+    tree(unsigned _max)
         : nodes(_max) {}
 
   public:
@@ -158,7 +158,7 @@ namespace lib
     }
 
   public:
-    inline std::size_t
+    inline unsigned
     push_root(
         const value_t &val)
     {
@@ -168,10 +168,10 @@ namespace lib
       return nodes.back().id;
     }
 
-    inline std::size_t
+    inline unsigned
     push_back_child(
         const value_t &value,
-        std::size_t parent_id)
+        unsigned parent_id)
     {
       if (parent_id == no_root)
         throw parent_index_doesnt_exist();
@@ -183,7 +183,7 @@ namespace lib
       nodes.emplace_back(tree_node<value_t>{value, this});
 
       tree_node<value_t> &nn = nodes.back();
-      std::size_t nnid = nodes.back_index();
+      unsigned nnid = nodes.back_index();
       nn.id = nnid;
 
       if (parent.child == no_child)
@@ -201,28 +201,28 @@ namespace lib
 
     inline const tree_node<value_t> &
     operator[](
-        std::size_t i) const
+        unsigned i) const
     {
       return nodes[i];
     }
 
     inline tree_node<value_t> &
     operator[](
-        std::size_t i)
+        unsigned i)
     {
       return nodes[i];
     }
 
     inline tree_childs<value_t>
     childs(
-        std::size_t index = 0)
+        unsigned index = 0)
     {
       return {nodes[index].child, this};
     }
 
     inline const tree_childs<value_t>
     childs(
-        std::size_t index = 0) const
+        unsigned index = 0) const
     {
       return {nodes[index].child, this};
     }

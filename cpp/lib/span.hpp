@@ -1,7 +1,7 @@
 #ifndef __lib_span_hpp__
 #define __lib_span_hpp__
 
-#include <cstddef>
+
 #include <lib/utility.hpp>
 #include <lib/algorithm.hpp>
 
@@ -9,9 +9,9 @@ namespace lib
 {
   struct normal_limit
   {
-    constexpr std::size_t
+    constexpr unsigned
     operator()(
-        std::size_t n)
+        unsigned n)
     {
       return n;
     }
@@ -45,11 +45,11 @@ namespace lib
 
     constexpr explicit span(
         type_t *_begin,
-        std::size_t _length)
+        unsigned _length)
         : span(_begin,
                _begin + _length) {}
 
-    template <std::size_t n>
+    template <unsigned n>
     constexpr span(
         const type_t (&_begin)[n])
         : span(_begin, end_limit{}(n)) {}
@@ -87,19 +87,19 @@ namespace lib
 
     constexpr const type_t &
     operator[](
-        std::size_t i) const
+        unsigned i) const
     {
       return *(b + i);
     }
 
     constexpr type_t &
     operator[](
-        std::size_t i)
+        unsigned i)
     {
       return *(b + i);
     }
 
-    constexpr std::size_t
+    constexpr unsigned
     size() const
     {
       return e - b;

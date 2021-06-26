@@ -14,12 +14,12 @@ namespace lib
 
   public:
     basic_string() = default;
-    explicit basic_string(std::size_t n) : data(n) {}
+    explicit basic_string(unsigned n) : data(n) {}
     basic_string(const basic_string &) = default;
     basic_string(basic_string &&) = default;
     ~basic_string() = default;
 
-    template <std::size_t n>
+    template <unsigned n>
     basic_string(
         const char_t (&s)[n])
         : data(n - 1)
@@ -64,20 +64,20 @@ namespace lib
 
 
   public:
-    const std::size_t
+    const unsigned
     size() const
     {
       return data.size();
     }
 
     char_t &operator[](
-        std::size_t i)
+        unsigned i)
     {
       return data[i];
     }
 
     const char_t &operator[](
-        std::size_t i) const
+        unsigned i) const
     {
       return data[i];
     }

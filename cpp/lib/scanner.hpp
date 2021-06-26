@@ -10,8 +10,8 @@ namespace lib
   class basic_scanner
   {
     lib::basic_string_view<char_t> data;
-    std::size_t index = 0;
-    std::size_t prev = 0;
+    unsigned index = 0;
+    unsigned prev = 0;
 
   public:
     constexpr explicit basic_scanner(
@@ -53,7 +53,7 @@ namespace lib
       return ((data[index] == c) || ... || false);
     }
 
-    constexpr void advance(std::size_t step = 1)
+    constexpr void advance(unsigned step = 1)
     {
       if (index + step <= data.size())
         index += step;
@@ -64,7 +64,7 @@ namespace lib
     constexpr basic_string_view<char_t> extract()
     {
       const char_t *b = &data[prev];
-      std::size_t l = index - prev;
+      unsigned l = index - prev;
 
       basic_string_view<char_t> ext(b, l);
       prev = index;

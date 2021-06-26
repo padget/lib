@@ -11,7 +11,7 @@ if [ "$1" = "clean" ]; then
   rm -f *.bc *.ii *.s
 else
   cc="g++-10"
-  flags="-std=c++20 -Wall -pedantic -Werror -O3 -save-temps"
+  flags="-std=c++20 -Wall -pedantic -Werror -O3 -save-temps -Wpadded"
   libs="-Icpp"
 
   lib_file \
@@ -43,6 +43,21 @@ else
   #   --state file
 
   # ./build/array.test.out
+
+
+  lib_compile_test \
+    --out build/vector.test.out \
+    --src cpp/test/vector.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
+
+  lib_file \
+    --path build/vector.test.out \
+    --mode +x \
+    --state file
+
+  ./build/vector.test.out
+
 
   # lib_compile_test \
   #   --out build/tree.test.out \

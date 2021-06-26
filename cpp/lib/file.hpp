@@ -4,6 +4,7 @@
 #include <lib/exception.hpp>
 #include <lib/meta.hpp>
 #include <cstdio>
+#include <cassert>
 #include <lib/span.hpp>
 #include <lib/string_view.hpp>
 
@@ -35,19 +36,22 @@ namespace lib
     template <character char_t>
     void push_back(const char_t &c)
     {
-      if (fd == nullptr)
-        throw null_file_descriptor();
+      assert(fd != nullptr);
 
-      std::fputc(c, fd);
+      if (std::fputc(c, fd) != c)
+        throw opened_file_writing_failed();
     }
 
     template <typename type_t, typename limit_t>
     inline void write(span<type_t, limit_t> s)
     {
-      if (fd == nullptr)
-        throw null_file_descriptor();
+      assert(fd != nullptr);
 
-      std::fwrite(s.data(), sizeof(type_t), s.size(), fd);
+      unsigned res = std::fwrite(
+          s.data(), sizeof(type_t), s.size(), fd);
+
+      if (res != s.size() and s.size() != 0)
+        throw opened_file_writing_failed();
     }
   };
 
@@ -63,8 +67,7 @@ namespace lib
 
   inline void fclose(file &f)
   {
-    if (f.fd == nullptr)
-      throw null_file_descriptor();
+    assert(f.fd != nullptr);
 
     if (std::fclose(f.fd) == EOF)
       throw opened_file_closing_failed();

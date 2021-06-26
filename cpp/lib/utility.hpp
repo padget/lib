@@ -5,11 +5,27 @@
 
 namespace lib
 {
+  using size_t = long unsigned;
+
   template <typename type_t>
   constexpr remove_reference<type_t> &&
   move(type_t &&t)
   {
     return static_cast<remove_reference<type_t> &&>(t);
+  }
+
+  template <typename type_t>
+  constexpr void memcpy(
+      type_t *src,
+      type_t *dest,
+      unsigned n)
+  {
+    char *destp = reinterpret_cast<char *>(dest);
+    char *srcp = reinterpret_cast<char *>(src);
+    unsigned np = n * sizeof(type_t);
+
+    while (np--)
+      *destp++ = *srcp++;
   }
 
   template <

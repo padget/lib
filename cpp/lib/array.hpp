@@ -1,16 +1,16 @@
 #ifndef __lib_array_hpp__
 #define __lib_array_hpp__
 
-#include <cstddef>
+
 
 namespace lib
 {
-  template <typename type_t, std::size_t n>
+  template <typename type_t, unsigned n>
   requires(n > 0) struct array
   {
     type_t _data[n];
 
-    constexpr std::size_t size() const { return n; }
+    constexpr unsigned size() const { return n; }
     constexpr bool empty() const { return size() == 0; }
     constexpr type_t *data() { return _data; }
     constexpr const type_t *data() const { return _data; }
@@ -22,8 +22,8 @@ namespace lib
     constexpr const type_t &front() const { return *begin(); }
     constexpr type_t &back() { return *(end() - 1); }
     constexpr const type_t &back() const { return *(end() - 1); }
-    constexpr type_t &operator[](std::size_t i) { return _data[i]; }
-    constexpr const type_t &operator[](std::size_t i) const { return _data[i]; }
+    constexpr type_t &operator[](unsigned i) { return _data[i]; }
+    constexpr const type_t &operator[](unsigned i) const { return _data[i]; }
   };
 }
 

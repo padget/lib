@@ -15,7 +15,7 @@
 
 namespace lib
 {
-  enum class clon_type : unsigned char
+  enum class clon_type : unsigned long
   {
     none = 0,
     boolean = 1,
@@ -28,9 +28,9 @@ namespace lib
       character char_t>
   struct clon_value
   {
-    clon_type type;
     basic_string_view<char_t> name;
     basic_string_view<char_t> val;
+    clon_type type;
   };
 
   template <
@@ -173,11 +173,11 @@ namespace lib
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
         bool is_root,
-        std::size_t parent_id);
+        unsigned parent_id);
 
     template <character char_t>
     inline void parse_list(
-        std::size_t parent_id,
+        unsigned parent_id,
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes)
     {
@@ -193,7 +193,7 @@ namespace lib
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
         bool is_root,
-        std::size_t parent_id)
+        unsigned parent_id)
     {
       scan.ignore_blanks();
 
@@ -229,7 +229,7 @@ namespace lib
       else if (scan.is('('))
         ctype = clon_type::list;
 
-      clon_value<char_t> cval{ctype, name, scanr};
+      clon_value<char_t> cval{name, scanr, ctype};
 
       if (is_root)
         nodes.push_root(cval);
@@ -268,12 +268,12 @@ namespace lib
     struct search_path_step
     {
       basic_string_view<char_t> name;
-      std::size_t min = 0;
-      std::size_t max = 0;
+      unsigned min = 0;
+      unsigned max = 0;
     };
 
     template <
-        std::size_t n,
+        unsigned n,
         character char_t>
     struct search_path
     {
@@ -291,7 +291,7 @@ namespace lib
 
       search_path
       operator()(
-          std::size_t num)
+          unsigned num)
       {
         search_path tmp(*this);
         tmp.steps[n - 1].min = num;
@@ -301,7 +301,7 @@ namespace lib
     };
 
     // template <
-    //   std::size_t n, character char_t>
+    //   unsigned n, character char_t>
     // const clon_node<char_t> *
     // search(
     //      &nodes,
@@ -309,7 +309,7 @@ namespace lib
     // {
     // }
 
-    template <std::size_t n, character char_t>
+    template <unsigned n, character char_t>
     const clon_node_wrapper<char_t>
     search(
         const clon_storage<char_t> &nodes,
@@ -341,7 +341,7 @@ namespace lib
       return clon_node_wrapper<char_t>(root);
     }
 
-    template <std::size_t n, character char_t>
+    template <unsigned n, character char_t>
     clon_node_wrapper<char_t>
     search(
         clon_storage<char_t> &nodes,
@@ -383,7 +383,7 @@ namespace lib
             {__clon::search_path_step<char_t>{name}}};
       }
 
-      template <character char_t, std::size_t n>
+      template <character char_t, unsigned n>
       __clon::search_path<1, char_t>
       operator[](const char_t (&name)[n])
       {
@@ -430,39 +430,39 @@ namespace lib
 
     basic_clon &operator=(basic_clon &&) = default;
 
-    inline std::size_t
+    inline unsigned
     buffsize() const
     {
       return buff.size();
     }
 
-    inline std::size_t
+    inline unsigned
     size() const
     {
       return nodes.size();
     }
 
     inline clon_type
-    type(std::size_t index) const
+    type(unsigned index) const
     {
       return nodes[index].value.type;
     }
 
     template <clon_type ctype>
     inline bool
-    is_(std::size_t id) const
+    is_(unsigned id) const
     {
       return type(id) == ctype;
     }
 
     inline basic_string_view<char_t>
-    name(std::size_t index) const
+    name(unsigned index) const
     {
       return nodes[index].value.name;
     }
 
     inline basic_string_view<char_t>
-    value(std::size_t index) const
+    value(unsigned index) const
     {
       return nodes[index].value.val;
     }
@@ -485,7 +485,7 @@ namespace lib
       return __clon::search_path<1, char_t>{{__clon::search_path_step<char_t>{name}}};
     }
 
-    template <std::size_t n>
+    template <unsigned n>
     const clon_node_wrapper<char_t>
     get_first(
         const __clon::search_path<n, char_t> &pth)
@@ -499,7 +499,7 @@ namespace lib
   using to_clon = __clon::to_clon_tag;
 
   template <character char_t>
-  std::size_t length_of(
+  unsigned length_of(
       const basic_clon<char_t> &c)
   {
     return c.buffsize();
@@ -548,14 +548,14 @@ namespace lib::literals
 {
   clon operator""_clon(
       const char *str,
-      std::size_t len) noexcept
+      long unsigned len) noexcept
   {
     return clon(string_view(str, len));
   }
 
   wclon operator""_wclon(
       const wchar_t *str,
-      std::size_t len) noexcept
+      long unsigned len) noexcept
   {
     return wclon(wstring_view(str, len));
   }

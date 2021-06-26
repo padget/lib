@@ -1,7 +1,6 @@
 #ifndef __lib_vector_hpp__
 #define __lib_vector_hpp__
 
-#include <cstddef>
 #include <lib/utility.hpp>
 
 namespace lib
@@ -10,13 +9,13 @@ namespace lib
   template <typename type_t>
   class vector
   {
-    std::size_t lgth = 0;
-    std::size_t max = 0;
+    unsigned lgth = 0;
+    unsigned max = 0;
     type_t *data = nullptr;
 
   public:
     explicit vector(
-        std::size_t cap = 10)
+        unsigned cap = 10)
         : max(cap),
           data(new type_t[max]) {}
 
@@ -94,27 +93,16 @@ namespace lib
   public:
     inline void
     reserve(
-        std::size_t ns)
+        unsigned ns)
     {
+
       if (ns > max)
       {
         type_t *old_data = data;
-        type_t *oldb = old_data;
-        type_t *olde = old_data + lgth;
-        type_t *new_data = new type_t[ns];
-        type_t *newb = new_data;
-
-        while (oldb != olde)
-        {
-          *newb = move(*oldb);
-          ++newb;
-          ++oldb;
-        }
-
+        data = new type_t[ns];
+        memcpy(old_data, data, lgth);
         delete[] old_data;
-
         max = ns;
-        data = new_data;
       }
       else if (ns < lgth)
         lgth = ns;
@@ -123,20 +111,20 @@ namespace lib
   public:
     inline type_t &
     operator[](
-        std::size_t i)
+        unsigned i)
     {
       return data[i];
     }
 
     inline const type_t &
     operator[](
-        std::size_t i) const
+        unsigned i) const
     {
       return data[i];
     }
 
   public:
-    inline std::size_t
+    inline unsigned
     size() const
     {
       return lgth;
@@ -148,7 +136,7 @@ namespace lib
       return size() == 0;
     }
 
-    inline std::size_t
+    inline unsigned
     capacity() const
     {
       return max;
@@ -204,7 +192,7 @@ namespace lib
       return data + lgth;
     }
 
-    inline std::size_t
+    inline unsigned
     front_index() const
     {
       return 0;
@@ -222,7 +210,7 @@ namespace lib
       return *begin();
     }
 
-    inline std::size_t
+    inline unsigned
     back_index() const
     {
       return size() - 1;

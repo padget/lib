@@ -5,9 +5,9 @@
 
 struct person
 {
+  unsigned age;
   lib::string name;
   lib::string firstname;
-  std::size_t age;
 };
 
 namespace lib
@@ -22,10 +22,11 @@ namespace lib
 
 void should_convert_to_clon()
 {
-  person ben("ben", "afleck", 43);
-  lib::clon cp = lib::ser(ben);
+  person ben(43, "afleck", "ben");
+  
   lib::printfln(format(R"((person (name "#")(firstname "#")(age #)))",
            ben.name, ben.firstname, ben.age));
+  lib::clon cp = lib::ser(ben);
   lib::printfln("#", cp);
   //lib::person = lib::des(cp, lib::to_person);
 }
@@ -43,7 +44,7 @@ void should_parse_clon_string()
       (firstname "cocuou")
       (name "coco")))"_clon;
 
-  lib::printfln("clon : #", c);
+  //lib::printfln("clon : #", c);
   lib::printfln("name '#'", c.get_first(lib::pth["address"]["city"]).value());
 }
 

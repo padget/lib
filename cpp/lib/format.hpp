@@ -11,7 +11,7 @@
 namespace lib
 {
   template <character char_t>
-  inline std::size_t length_of(
+  inline unsigned length_of(
       const lib::basic_string_view<char_t> &v)
   {
     return v.size();
@@ -26,13 +26,13 @@ namespace lib
       buff.push_back(c);
   }
 
-  template <std::size_t n>
-  inline std::size_t length_of(const char (&s)[n])
+  template <unsigned n>
+  inline unsigned length_of(const char (&s)[n])
   {
     return n - 1;
   }
 
-  template <std::size_t n, typename buffer_t>
+  template <unsigned n, typename buffer_t>
   inline void format_of(
       buffer_t &buff,
       const char (&s)[n])
@@ -40,13 +40,13 @@ namespace lib
     format_of(buff, basic_string_view<char>(s));
   }
 
-  template <std::size_t n>
-  inline std::size_t length_of(const wchar_t (&s)[n])
+  template <unsigned n>
+  inline unsigned length_of(const wchar_t (&s)[n])
   {
     return n - 1;
   }
 
-  template <std::size_t n, typename buffer_t>
+  template <unsigned n, typename buffer_t>
   inline void format_of(
       buffer_t &buff,
       const wchar_t (&s)[n])
@@ -54,8 +54,21 @@ namespace lib
     format_of(buff, basic_string_view<wchar_t>(s));
   }
 
+  template <character char_t>
+  inline unsigned length_of(const char_t &c)
+  {
+    return 1;
+  }
+
+  template <typename buffer_t, character char_t>
+  inline void format_of(
+      buffer_t &buff, const char_t &c)
+  {
+    buff.push_back(c);
+  }
+
   template <integer integral_t>
-  inline std::size_t length_of(const integral_t &i)
+  inline unsigned length_of(const integral_t &i)
   {
     const integral_t v = i;
     // const int abs[2] = {i, -i};
@@ -107,19 +120,29 @@ namespace lib
       buffer_t &buff,
       integral_t t)
   {
+    if (t == 0)
+      buff.push_back('0');
+
     array<char, 50> tbuff;
     auto e = tbuff.end();
     auto i = e - 1;
 
-    for (; t; --i, t /= 10)
+    while (t != 0)
+    {
       *i = "0123456789"[t % 10];
+      --i;
+      t /= 10;
+    }
+
+    if (i != e)
+      ++i;
 
     for (; i != e; ++i)
       buff.push_back(*i);
   }
 
   template <character char_t>
-  inline std::size_t length_of(const basic_string<char_t> &s)
+  inline unsigned length_of(const basic_string<char_t> &s)
   {
     return length_of(basic_string_view<char_t>(s.begin(), s.end()));
   }
@@ -132,7 +155,7 @@ namespace lib
     format_of(buff, basic_string_view<char_t>(v.begin(), v.end()));
   }
 
-  inline std::size_t length_of(const bool &s)
+  inline unsigned length_of(const bool &s)
   {
     return s ? 4 : 5;
   }
@@ -147,7 +170,7 @@ namespace lib
   }
 
   template <character char_t>
-  inline std::size_t length_of(const lib::vector<char_t> &v)
+  inline unsigned length_of(const lib::vector<char_t> &v)
   {
     return length_of(lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
@@ -214,7 +237,7 @@ namespace lib::impl
   }
 
   template <typename char_t, typename... args_t>
-  void fformat(
+  inline void fformat(
       file &out,
       basic_string_view<char_t> fmt,
       const args_t &...args)
@@ -242,9 +265,8 @@ namespace lib
     return impl::format(fmt, args...);
   }
 
-
   template <typename... args_t>
-  void fformat(
+  inline void fformat(
       file &out,
       basic_string_view<char> fmt,
       const args_t &...args)
@@ -252,9 +274,8 @@ namespace lib
     impl::fformat(out, fmt, args...);
   }
 
-
   template <typename... args_t>
-  void fformat(
+  inline void fformat(
       file &out,
       basic_string_view<wchar_t> fmt,
       const args_t &...args)
