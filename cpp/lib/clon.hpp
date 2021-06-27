@@ -505,9 +505,10 @@ namespace lib
     return c.buffsize();
   }
 
-  template <character char_t, typename buffer_t>
+  template <character char_t,
+            typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
+      buffer_t &ctx,
       const basic_clon<char_t> &c)
   {
     format_of(ctx, c.root());
@@ -515,7 +516,7 @@ namespace lib
 
   template <character char_t, typename buffer_t>
   inline void format_of(
-      formatter_context<char_t, buffer_t> &ctx,
+      buffer_t &ctx,
       const clon_node<char_t> &nc)
   {
     auto &&name = nc.value.name;
@@ -526,16 +527,16 @@ namespace lib
     {
     case clon_type::boolean:
     case clon_type::number:
-      format_into(ctx, "(# #)", name, val);
+      fformat(ctx, "(# #)", name, val);
       break;
     case clon_type::string:
-      format_into(ctx, "(# \"#\")", name, val);
+      fformat(ctx, "(# \"#\")", name, val);
       break;
     case clon_type::list:
-      format_into(ctx, "(# ", name);
+      fformat(ctx, "(# ", name);
       for (const auto &c : nc.childs())
         format_of(ctx, c);
-      format_into(ctx, ")");
+      fformat(ctx, ")");
       break;
     case clon_type::none:
       break;

@@ -77,7 +77,7 @@ namespace lib
   inline void fprintfln(file &out, wstring_view f, const args_t &...args)
   {
     fprintf(out, f, args...);
-    fprintln(out, "");
+    fprintln(out, "\n");
   }
 
   inline void print(wstring_view s)

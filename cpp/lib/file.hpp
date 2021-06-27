@@ -38,8 +38,7 @@ namespace lib
       if (fd == nullptr)
         throw null_file_descriptor();
 
-      if (std::fputc(c, fd) != c)
-        throw opened_file_writing_failed();
+      std::fputc(c, fd);
     }
 
     template <typename type_t, typename limit_t>
@@ -48,11 +47,7 @@ namespace lib
       if (fd == nullptr)
         throw null_file_descriptor();
 
-      std::size_t res = std::fwrite(
-          s.data(), sizeof(type_t), s.size(), fd);
-
-      if (res != s.size() and s.size() != 0)
-        throw opened_file_writing_failed();
+      std::fwrite(s.data(), sizeof(type_t), s.size(), fd);
     }
   };
 

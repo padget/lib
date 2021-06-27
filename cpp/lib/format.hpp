@@ -161,7 +161,7 @@ namespace lib
   }
 }
 
-namespace lib
+namespace lib::impl
 {
   template <typename char_t>
   struct basic_format
@@ -222,6 +222,45 @@ namespace lib
     basic_format<char_t> bfmt(fmt);
     ((format_of(out, bfmt), format_of(out, args)), ..., format_of(out, bfmt.fmt));
   }
-} // namespace lib
+} // namespace lib::impl
+
+namespace lib
+{
+  template <typename... args_t>
+  inline basic_string<char>
+  format(basic_string_view<char> fmt,
+         const args_t &...args)
+  {
+    return impl::format(fmt, args...);
+  }
+
+  template <typename... args_t>
+  inline basic_string<wchar_t>
+  format(basic_string_view<wchar_t> fmt,
+         const args_t &...args)
+  {
+    return impl::format(fmt, args...);
+  }
+
+
+  template <typename... args_t>
+  void fformat(
+      file &out,
+      basic_string_view<char> fmt,
+      const args_t &...args)
+  {
+    impl::fformat(out, fmt, args...);
+  }
+
+
+  template <typename... args_t>
+  void fformat(
+      file &out,
+      basic_string_view<wchar_t> fmt,
+      const args_t &...args)
+  {
+    impl::fformat(out, fmt, args...);
+  }
+}
 
 #endif
