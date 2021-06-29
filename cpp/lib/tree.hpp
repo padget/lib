@@ -79,31 +79,31 @@ namespace lib
   {
     using iterator = child_iterator<value_t>;
 
-    long unsigned first;
+    size_t first;
     tree<value_t> *t = nullptr;
 
     iterator
     begin()
     {
-      return {first, t};
+      return {t, first};
     }
 
     iterator
     end()
     {
-      return {no_next, t};
+      return {t, no_next};
     }
 
     const iterator
     begin() const
     {
-      return {first, t};
+      return {t, first};
     }
 
     const iterator
     end() const
     {
-      return {no_next, t};
+      return {t, no_next};
     }
   };
 
@@ -113,10 +113,10 @@ namespace lib
   {
     value_t value;
     tree<value_t> *tr = nullptr;
-    unsigned id = 0;
-    unsigned child = no_child;
-    unsigned next = no_next;
-    unsigned last_child = no_child;
+    size_t id = 0;
+    size_t child = no_child;
+    size_t next = no_next;
+    size_t last_child = no_child;
 
     bool has_child() const
     {
@@ -148,7 +148,7 @@ namespace lib
     vector<tree_node<value_t>> nodes;
 
   public:
-    tree(unsigned _max)
+    tree(size_t _max)
         : nodes(_max) {}
 
   public:
@@ -158,7 +158,7 @@ namespace lib
     }
 
   public:
-    inline unsigned
+    inline size_t
     push_root(
         const value_t &val)
     {
@@ -168,10 +168,10 @@ namespace lib
       return nodes.back().id;
     }
 
-    inline unsigned
+    inline size_t
     push_back_child(
         const value_t &value,
-        unsigned parent_id)
+        size_t parent_id)
     {
       if (parent_id == no_root)
         throw parent_index_doesnt_exist();
@@ -183,7 +183,7 @@ namespace lib
       nodes.emplace_back(tree_node<value_t>{value, this});
 
       tree_node<value_t> &nn = nodes.back();
-      unsigned nnid = nodes.back_index();
+      size_t nnid = nodes.back_index();
       nn.id = nnid;
 
       if (parent.child == no_child)
@@ -201,28 +201,28 @@ namespace lib
 
     inline const tree_node<value_t> &
     operator[](
-        unsigned i) const
+        size_t i) const
     {
       return nodes[i];
     }
 
     inline tree_node<value_t> &
     operator[](
-        unsigned i)
+        size_t i)
     {
       return nodes[i];
     }
 
     inline tree_childs<value_t>
     childs(
-        unsigned index = 0)
+        size_t index = 0)
     {
       return {nodes[index].child, this};
     }
 
     inline const tree_childs<value_t>
     childs(
-        unsigned index = 0) const
+        size_t index = 0) const
     {
       return {nodes[index].child, this};
     }

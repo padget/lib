@@ -2,10 +2,12 @@
 #define __lib_utility_hpp__
 
 #include <lib/meta.hpp>
+#define rcast reinterpret_cast
 
 namespace lib
 {
   using size_t = long unsigned;
+  using byte_t = char unsigned;
 
   template <typename type_t>
   constexpr remove_reference<type_t> &&
@@ -16,20 +18,32 @@ namespace lib
 
   template <typename type_t>
   constexpr void memcpy(
-      type_t *src,
-      type_t *dest,
-      unsigned n)
+      const type_t *bsrc,
+      const type_t *esrc,
+      type_t *dest)
   {
-    char *destp = reinterpret_cast<char *>(dest);
-    char *srcp = reinterpret_cast<char *>(src);
-    unsigned np = n * sizeof(type_t);
+    constexpr size_t cpualign = sizeof(size_t);
+    constexpr size_t typealign = sizeof(type_t);
 
-    while (np--)
-      *destp++ = *srcp++;
+    const size_t allbytes = (esrc - bsrc) * typealign;
+    size_t alignedbytes = allbytes / cpualign;
+    size_t tailbytes = allbytes % cpualign;
+
+    const size_t *bsrcs = rcast<const size_t *>(bsrc);
+    size_t *dests = rcast<size_t *>(dest);
+
+    while (alignedbytes--)
+      *dests++ = *bsrcs++;
+
+    const byte_t *bsrcb = rcast<const byte_t *>(bsrcs);
+    byte_t *destb = rcast<byte_t *>(dests);
+
+    while (tailbytes--)
+      *destb++ = *bsrcb++;
   }
 
   template <
-      unsigned i,
+      size_t i,
       typename arg_t,
       typename... args_t>
   constexpr auto &get(

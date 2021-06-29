@@ -8,7 +8,7 @@ namespace lib
 {
     struct cstring_limit
     {
-      constexpr unsigned operator()(unsigned n)
+      constexpr size_t operator()(size_t n)
       {
         return n - 1;
       }

@@ -18,18 +18,31 @@ else
     --path build \
     --state directory
 
+  # lib_compile_test \
+  #   --out build/format.test.out \
+  #   --src cpp/test/format.test.cpp \
+  #   --flags "$flags" \
+  #   --libs "$libs"
+
+  # lib_file \
+  #   --path build/format.test.out \
+  #   --mode +x \
+  #   --state file
+
+  # ./build/format.test.out
+
   lib_compile_test \
-    --out build/format.test.out \
-    --src cpp/test/format.test.cpp \
+    --out build/utility.test.out \
+    --src cpp/test/utility.test.cpp \
     --flags "$flags" \
     --libs "$libs"
 
   lib_file \
-    --path build/format.test.out \
+    --path build/utility.test.out \
     --mode +x \
     --state file
 
-  ./build/format.test.out
+  ./build/utility.test.out
 
   # lib_compile_test \
   #   --out build/array.test.out \
@@ -45,18 +58,18 @@ else
   # ./build/array.test.out
 
 
-  lib_compile_test \
-    --out build/vector.test.out \
-    --src cpp/test/vector.test.cpp \
-    --flags "$flags" \
-    --libs "$libs"
+  # lib_compile_test \
+  #   --out build/vector.test.out \
+  #   --src cpp/test/vector.test.cpp \
+  #   --flags "$flags" \
+  #   --libs "$libs"
 
-  lib_file \
-    --path build/vector.test.out \
-    --mode +x \
-    --state file
+  # lib_file \
+  #   --path build/vector.test.out \
+  #   --mode +x \
+  #   --state file
 
-  ./build/vector.test.out
+  # ./build/vector.test.out
 
 
   # lib_compile_test \
@@ -73,18 +86,18 @@ else
   # ./build/tree.test.out
 
 
-  time lib_compile_test \
-    --out build/clon.test.out \
-    --src cpp/test/clon.test.cpp \
-    --flags "$flags" \
-    --libs "$libs"
+  # lib_compile_test \
+  #   --out build/clon.test.out \
+  #   --src cpp/test/clon.test.cpp \
+  #   --flags "$flags" \
+  #   --libs "$libs"
 
-  time lib_file \
-    --path build/clon.test.out \
-    --mode +x \
-    --state file
+  # lib_file \
+  #   --path build/clon.test.out \
+  #   --mode +x \
+  #   --state file
 
-  time ./build/clon.test.out
+  # ./build/clon.test.out
 
 
 fi

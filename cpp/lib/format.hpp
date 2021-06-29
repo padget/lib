@@ -11,7 +11,7 @@
 namespace lib
 {
   template <character char_t>
-  inline unsigned length_of(
+  inline size_t length_of(
       const lib::basic_string_view<char_t> &v)
   {
     return v.size();
@@ -26,13 +26,13 @@ namespace lib
       buff.push_back(c);
   }
 
-  template <unsigned n>
-  inline unsigned length_of(const char (&s)[n])
+  template <size_t n>
+  inline size_t length_of(const char (&s)[n])
   {
     return n - 1;
   }
 
-  template <unsigned n, typename buffer_t>
+  template <size_t n, typename buffer_t>
   inline void format_of(
       buffer_t &buff,
       const char (&s)[n])
@@ -40,13 +40,13 @@ namespace lib
     format_of(buff, basic_string_view<char>(s));
   }
 
-  template <unsigned n>
-  inline unsigned length_of(const wchar_t (&s)[n])
+  template <size_t n>
+  inline size_t length_of(const wchar_t (&s)[n])
   {
     return n - 1;
   }
 
-  template <unsigned n, typename buffer_t>
+  template <size_t n, typename buffer_t>
   inline void format_of(
       buffer_t &buff,
       const wchar_t (&s)[n])
@@ -55,7 +55,7 @@ namespace lib
   }
 
   template <character char_t>
-  inline unsigned length_of(const char_t &c)
+  inline size_t length_of(const char_t &c)
   {
     return 1;
   }
@@ -142,7 +142,7 @@ namespace lib
   }
 
   template <character char_t>
-  inline unsigned length_of(const basic_string<char_t> &s)
+  inline size_t length_of(const basic_string<char_t> &s)
   {
     return length_of(basic_string_view<char_t>(s.begin(), s.end()));
   }
@@ -155,7 +155,7 @@ namespace lib
     format_of(buff, basic_string_view<char_t>(v.begin(), v.end()));
   }
 
-  inline unsigned length_of(const bool &s)
+  inline size_t length_of(const bool &s)
   {
     return s ? 4 : 5;
   }
@@ -170,7 +170,7 @@ namespace lib
   }
 
   template <character char_t>
-  inline unsigned length_of(const lib::vector<char_t> &v)
+  inline size_t length_of(const lib::vector<char_t> &v)
   {
     return length_of(lib::basic_string_view<char_t>(v.begin(), v.end()));
   }
@@ -218,7 +218,7 @@ namespace lib::impl
   }
 
   template <typename... args_t>
-  inline unsigned all_length_of(
+  inline size_t all_length_of(
       const args_t &...args)
   {
     return (length_of(args) + ... + 0);

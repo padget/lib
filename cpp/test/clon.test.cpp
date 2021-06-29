@@ -5,7 +5,7 @@
 
 struct person
 {
-  unsigned age;
+  size_t age;
   lib::string name;
   lib::string firstname;
 };

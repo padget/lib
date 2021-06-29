@@ -15,7 +15,7 @@
 
 namespace lib
 {
-  enum class clon_type : unsigned long
+  enum class clon_type : size_t
   {
     none = 0,
     boolean = 1,
@@ -173,11 +173,11 @@ namespace lib
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
         bool is_root,
-        unsigned parent_id);
+        size_t parent_id);
 
     template <character char_t>
     inline void parse_list(
-        unsigned parent_id,
+        size_t parent_id,
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes)
     {
@@ -193,7 +193,7 @@ namespace lib
         clon_scanner<char_t> &scan,
         clon_storage<char_t> &nodes,
         bool is_root,
-        unsigned parent_id)
+        size_t parent_id)
     {
       scan.ignore_blanks();
 
@@ -268,12 +268,12 @@ namespace lib
     struct search_path_step
     {
       basic_string_view<char_t> name;
-      unsigned min = 0;
-      unsigned max = 0;
+      size_t min = 0;
+      size_t max = 0;
     };
 
     template <
-        unsigned n,
+        size_t n,
         character char_t>
     struct search_path
     {
@@ -291,7 +291,7 @@ namespace lib
 
       search_path
       operator()(
-          unsigned num)
+          size_t num)
       {
         search_path tmp(*this);
         tmp.steps[n - 1].min = num;
@@ -300,16 +300,7 @@ namespace lib
       }
     };
 
-    // template <
-    //   unsigned n, character char_t>
-    // const clon_node<char_t> *
-    // search(
-    //      &nodes,
-    //     const search_path<n, char_t> &pth)
-    // {
-    // }
-
-    template <unsigned n, character char_t>
+    template <size_t n, character char_t>
     const clon_node_wrapper<char_t>
     search(
         const clon_storage<char_t> &nodes,
@@ -341,7 +332,7 @@ namespace lib
       return clon_node_wrapper<char_t>(root);
     }
 
-    template <unsigned n, character char_t>
+    template <size_t n, character char_t>
     clon_node_wrapper<char_t>
     search(
         clon_storage<char_t> &nodes,
@@ -430,39 +421,39 @@ namespace lib
 
     basic_clon &operator=(basic_clon &&) = default;
 
-    inline unsigned
+    inline size_t
     buffsize() const
     {
       return buff.size();
     }
 
-    inline unsigned
+    inline size_t
     size() const
     {
       return nodes.size();
     }
 
     inline clon_type
-    type(unsigned index) const
+    type(size_t index) const
     {
       return nodes[index].value.type;
     }
 
     template <clon_type ctype>
     inline bool
-    is_(unsigned id) const
+    is_(size_t id) const
     {
       return type(id) == ctype;
     }
 
     inline basic_string_view<char_t>
-    name(unsigned index) const
+    name(size_t index) const
     {
       return nodes[index].value.name;
     }
 
     inline basic_string_view<char_t>
-    value(unsigned index) const
+    value(size_t index) const
     {
       return nodes[index].value.val;
     }
@@ -485,7 +476,7 @@ namespace lib
       return __clon::search_path<1, char_t>{{__clon::search_path_step<char_t>{name}}};
     }
 
-    template <unsigned n>
+    template <size_t n>
     const clon_node_wrapper<char_t>
     get_first(
         const __clon::search_path<n, char_t> &pth)
@@ -548,14 +539,14 @@ namespace lib::literals
 {
   clon operator""_clon(
       const char *str,
-      long unsigned len) noexcept
+      size_t len) noexcept
   {
     return clon(string_view(str, len));
   }
 
   wclon operator""_wclon(
       const wchar_t *str,
-      long unsigned len) noexcept
+      size_t len) noexcept
   {
     return wclon(wstring_view(str, len));
   }

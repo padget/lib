@@ -5,17 +5,16 @@
 
 namespace lib
 {
-
   template <typename type_t>
   class vector
   {
-    unsigned lgth = 0;
-    unsigned max = 0;
+    size_t lgth = 0;
+    size_t max = 0;
     type_t *data = nullptr;
 
   public:
     explicit vector(
-        unsigned cap = 10)
+        size_t cap = 10)
         : max(cap),
           data(new type_t[max]) {}
 
@@ -93,14 +92,14 @@ namespace lib
   public:
     inline void
     reserve(
-        unsigned ns)
+        size_t ns)
     {
 
       if (ns > max)
       {
         type_t *old_data = data;
         data = new type_t[ns];
-        memcpy(old_data, data, lgth);
+        memcpy(old_data, old_data + lgth, data);
         delete[] old_data;
         max = ns;
       }
@@ -111,20 +110,20 @@ namespace lib
   public:
     inline type_t &
     operator[](
-        unsigned i)
+        size_t i)
     {
       return data[i];
     }
 
     inline const type_t &
     operator[](
-        unsigned i) const
+        size_t i) const
     {
       return data[i];
     }
 
   public:
-    inline unsigned
+    inline size_t
     size() const
     {
       return lgth;
@@ -136,7 +135,7 @@ namespace lib
       return size() == 0;
     }
 
-    inline unsigned
+    inline size_t
     capacity() const
     {
       return max;
@@ -192,7 +191,7 @@ namespace lib
       return data + lgth;
     }
 
-    inline unsigned
+    inline size_t
     front_index() const
     {
       return 0;
@@ -210,7 +209,7 @@ namespace lib
       return *begin();
     }
 
-    inline unsigned
+    inline size_t
     back_index() const
     {
       return size() - 1;
