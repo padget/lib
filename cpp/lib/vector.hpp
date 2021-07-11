@@ -146,11 +146,10 @@ namespace lib
     push_back(
         const type_t &t)
     {
-      if (size() == capacity())
-        reserve(capacity() +
-                capacity() / 2);
+      if (lgth == max)
+        reserve(max + max / 2);
 
-      operator[](size()) = t;
+      operator[](lgth) = t;
       ++lgth;
     }
 
@@ -158,11 +157,10 @@ namespace lib
     emplace_back(
         type_t &&t)
     {
-      if (size() == capacity())
-        reserve(capacity() +
-                capacity() / 2);
+      if (lgth == max)
+        reserve(max + max / 2);
 
-      operator[](size()) = move(t);
+      operator[](lgth) = t;
       ++lgth;
     }
 

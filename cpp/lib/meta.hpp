@@ -12,6 +12,9 @@ namespace lib
   template <typename first_t, typename second_t>
   concept same_as = same_v<first_t, second_t>;
 
+  template<typename first_t, typename second_t>
+  concept not_same_as = not same_as<first_t, second_t>;
+
   template <typename char_t>
   concept character =
       same_as<char_t, char> or

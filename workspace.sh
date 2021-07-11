@@ -11,25 +11,25 @@ if [ "$1" = "clean" ]; then
   rm -f *.bc *.ii *.s
 else
   cc="g++-10"
-  flags="-std=c++20 -Wall -pedantic -Werror -O3 -save-temps -Wpadded"
+  flags="-std=c++20 -Wall -pedantic -Werror -O3 -save-temps "
   libs="-Icpp"
 
   lib_file \
     --path build \
     --state directory
 
-  # lib_compile_test \
-  #   --out build/format.test.out \
-  #   --src cpp/test/format.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/format.test.out \
+    --src cpp/test/format.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/format.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/format.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/format.test.out
+  ./build/format.test.out
 
   lib_compile_test \
     --out build/utility.test.out \

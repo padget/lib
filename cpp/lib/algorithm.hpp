@@ -86,7 +86,7 @@ namespace lib
   template <
       typename iterator1,
       typename iterator2>
-  void copy(
+  constexpr void copy(
       iterator1 b,
       iterator1 e,
       iterator2 bc)
