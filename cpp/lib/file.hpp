@@ -21,64 +21,53 @@ namespace lib
   {
     std::FILE *fd = nullptr;
 
-    file(std::FILE *f) : fd(f) {}
+    file(std::FILE *f) noexcept : fd(f) {}
+
+    inline bool opened() const
+    {
+      return fd == nullptr;
+    }
 
     inline bool has_error() const
     {
-      return std::ferror(fd) != 0;
+      return fd == nullptr or
+             std::ferror(fd) != 0;
     }
 
     inline bool eof() const
     {
-      return std::feof(fd) != 0;
+      return fd == nullptr or
+             std::feof(fd) != 0;
     }
 
     template <character char_t>
     void push_back(const char_t &c)
     {
-      assert(fd != nullptr);
-
-      if (std::fputc(c, fd) != c)
-        throw opened_file_writing_failed();
+      std::fputc(c, fd);
     }
 
     template <typename type_t, typename limit_t>
     inline void write(span<type_t, limit_t> s)
     {
-      assert(fd != nullptr);
-
-      unsigned res = std::fwrite(
-          s.data(), sizeof(type_t), s.size(), fd);
-
-      if (res != s.size() and s.size() != 0)
-        throw opened_file_writing_failed();
+      std::fwrite(s.data(), sizeof(type_t), s.size(), fd);
     }
   };
 
   inline file fopen(string_view filename, string_view mode)
   {
     file f(std::fopen(filename.data(), mode.data()));
-
-    if (f.fd == nullptr)
-      throw file_opening_failed();
-
     return f;
   }
 
   inline void fclose(file &f)
   {
-    assert(f.fd != nullptr);
-
-    if (std::fclose(f.fd) == EOF)
-      throw opened_file_closing_failed();
-
+    std::fclose(f.fd);
     f.fd = nullptr;
   }
 
   inline void fflush(file &f)
   {
-    if (std::fflush(f.fd))
-      throw opened_file_flushing_failed();
+    std::fflush(f.fd);
   }
 
   inline file cout(stdout);
