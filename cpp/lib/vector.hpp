@@ -94,17 +94,24 @@ namespace lib
     reserve(
         size_t ns)
     {
-
       if (ns > max)
       {
         type_t *old_data = data;
         data = new type_t[ns];
-        memcpy(old_data, old_data + lgth, data);
+
+        for (size_t i = 0; i < lgth; ++i)
+          data[i] = move(old_data[i]);
+        
         delete[] old_data;
         max = ns;
       }
       else if (ns < lgth)
+      {
+        for (size_t i = ns; i < lgth; ++i)
+          data[i].~type_t();
+
         lgth = ns;
+      }
     }
 
   public:
