@@ -1,6 +1,8 @@
 #ifndef __lib_algorithm_hpp__
 #define __lib_algorithm_hpp__
 
+#include <lib/utility.hpp>
+
 namespace lib
 {
   template <typename iterator>
@@ -94,6 +96,19 @@ namespace lib
     for (; b != e; ++b, ++bc)
       *bc = *b;
   }
+
+  template <
+      typename iterator1,
+      typename iterator2>
+  constexpr void move(
+      iterator1 b,
+      iterator1 e,
+      iterator2 bc)
+  {
+    for (; b != e; ++b, ++bc)
+      *bc = move(*b);
+  }
+
 
   template <typename iterator>
   constexpr unsigned count_if(
