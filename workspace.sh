@@ -99,5 +99,18 @@ else
 
   # ./build/clon.test.out
 
+  lib_compile_test \
+    --out build/evector.test.out \
+    --src cpp/test/evector.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
+
+  lib_file \
+    --path build/evector.test.out \
+    --mode +x \
+    --state file
+
+  ./build/evector.test.out
+
 
 fi

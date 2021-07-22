@@ -6,14 +6,14 @@ int main()
 {
   int src[100000] = {0};
 
-  for (int i = 0; i < 100000; ++i)
+  for (int i = 0; i < 10000; ++i)
     src[i] = i;
 
   int des[100000] = {1};
 
   auto start_time1 = std::chrono::high_resolution_clock::now();
 
-  for (int i = 0; i < 100000; ++i)
+  for (int i = 0; i < 10000; ++i)
     lib::memcpy(src, src + 100000, des);
 
   auto end_time1 = std::chrono::high_resolution_clock::now();

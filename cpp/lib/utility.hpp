@@ -17,6 +17,18 @@ namespace lib
   }
 
   template <typename type_t>
+  const type_t &const_me(type_t &t)
+  {
+    return t;
+  }
+
+  template <typename type_t>
+  type_t &unconst_me(const type_t &t)
+  {
+    return const_cast<type_t &>(t);
+  }
+
+  template <typename type_t>
   constexpr void memcpy(
       const type_t *bsrc,
       const type_t *esrc,
@@ -27,7 +39,6 @@ namespace lib
 
     const size_t allbytes = (esrc - bsrc) * typealign;
     size_t alignedbytes = allbytes / cpualign;
-    size_t tailbytes = allbytes % cpualign;
 
     const size_t *bsrcs = rcast<const size_t *>(bsrc);
     size_t *dests = rcast<size_t *>(dest);
@@ -37,6 +48,7 @@ namespace lib
 
     const byte_t *bsrcb = rcast<const byte_t *>(bsrcs);
     byte_t *destb = rcast<byte_t *>(dests);
+    size_t tailbytes = allbytes % cpualign;
 
     while (tailbytes--)
       *destb++ = *bsrcb++;
