@@ -61,8 +61,7 @@ namespace lib
     {
       if (this != &v)
       {
-        lgth = v.lgth;
-        max = v.max;
+        reserve(0);
         reserve(max);
 
         for (auto &&i : v)
