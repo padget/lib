@@ -61,7 +61,7 @@ namespace lib
     {
       if (this != &v)
       {
-        reserve(0);
+        clear();
         reserve(v.max);
 
         for (auto &&i : v)
@@ -89,6 +89,16 @@ namespace lib
     }
 
   public:
+
+    inline void 
+    clear(size_t beg = 0) 
+    {
+      for (size_t i = beg; i < lgth; ++i)
+          data[i].~type_t();
+
+      lgth = 0;
+    }
+
     inline void
     reserve(
         size_t ns)
@@ -105,12 +115,7 @@ namespace lib
         max = ns;
       }
       else if (ns < lgth)
-      {
-        for (size_t i = ns; i < lgth; ++i)
-          data[i].~type_t();
-
-        lgth = ns;
-      }
+        clear(ns);
     }
 
   public:
