@@ -62,7 +62,7 @@ namespace lib
       if (this != &v)
       {
         reserve(0);
-        reserve(max);
+        reserve(v.max);
 
         for (auto &&i : v)
           push_back(i);
