@@ -7,20 +7,8 @@ int main()
   v.push_back('0');
   v.push_back('0');
   v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
-  v.push_back('0');
 
-  const lib::evector<char>& vref = v;
-
-  for (auto c : vref)
+  for (auto c : v)
     lib::printfln("#", c);
 
   lib::printfln("vector size # #", v.size(), v.index.size());

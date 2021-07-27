@@ -27,7 +27,7 @@ namespace lib
   {
     return find_if(
         b, e,
-        [&t](auto &&o)
+        [&t](const auto &o)
         { return o == t; });
   }
 
@@ -52,11 +52,8 @@ namespace lib
       iterator e,
       auto &&pred)
   {
-    while (b != e and nth > 0)
-    {
+    for (; b != e and nth > 0; --nth)
       b = lib::find_if(b, e, pred);
-      --nth;
-    }
 
     return b;
   }
@@ -66,12 +63,11 @@ namespace lib
       iterator b,
       iterator e)
   {
-    while ((b != e) && (b != --e))
+    for (; (b != e) and (b != --e); b++)
     {
       auto tmp = lib::move(*b);
       *b = lib::move(*e);
       *e = lib::move(tmp);
-      b++;
     }
   }
 
@@ -108,7 +104,6 @@ namespace lib
     for (; b != e; ++b, ++bc)
       *bc = move(*b);
   }
-
 
   template <typename iterator>
   constexpr unsigned count_if(

@@ -1,6 +1,5 @@
 #include <lib/ios.hpp>
 #include <lib/vector.hpp>
-#include <vector>
 
 int main()
 {
@@ -10,8 +9,10 @@ int main()
   v.push_back('0');
   v.push_back('0');
 
-  for (auto c : v)
-    lib::printfln("#", c);
+  const lib::vector<char> v2 = v;
 
-  lib::printfln("vector size #", v.size());
+  for (const char &c : v2)
+  {
+    lib::printf("#", c);
+  }
 }

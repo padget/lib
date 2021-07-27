@@ -14,23 +14,10 @@ namespace lib
   {
     evector<type_t> *ev;
     mutable size_t item;
-    
-    inline type_t &operator*()
+
+    inline type_t &operator*() const
     {
       return (*ev)[item];
-    }
-
-    inline const type_t &operator*() const
-    {
-      return (*ev)[item];
-    }
-
-    inline evector_iterator &operator++()
-    {
-      if (ev != nullptr)
-        item += 1;
-
-      return *this;
     }
 
     inline const evector_iterator &operator++() const
@@ -50,6 +37,39 @@ namespace lib
 
     inline bool operator!=(
         const evector_iterator &o) const
+    {
+      return not operator==(o);
+    }
+  };
+
+  template <typename type_t>
+  struct evector_citerator
+  {
+    const evector<type_t> *ev;
+    mutable size_t item;
+
+    inline const type_t &operator*() const
+    {
+      return (*ev)[item];
+    }
+
+    inline const evector_citerator &operator++() const
+    {
+      if (ev != nullptr)
+        item += 1;
+
+      return *this;
+    }
+
+    inline bool operator==(
+        const evector_citerator &o) const
+    {
+      return ev == o.ev and
+             item == o.item;
+    }
+
+    inline bool operator!=(
+        const evector_citerator &o) const
     {
       return not operator==(o);
     }
@@ -152,12 +172,12 @@ namespace lib
       lgth += 1;
     }
 
-    inline const evector_iterator<type_t> begin() const
+    inline const evector_citerator<type_t> begin() const
     {
       return {this, 0};
     }
 
-    inline const evector_iterator<type_t> end() const
+    inline const evector_citerator<type_t> end() const
     {
       return {this, size()};
     }

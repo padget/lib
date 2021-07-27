@@ -2,6 +2,7 @@
 #define __lib_vector_hpp__
 
 #include <lib/utility.hpp>
+#include <lib/algorithm.hpp>
 
 namespace lib
 {
@@ -61,7 +62,7 @@ namespace lib
     {
       if (this != &v)
       {
-        clear();
+        resize(0);
         reserve(v.max);
 
         for (auto &&i : v)
@@ -89,33 +90,27 @@ namespace lib
     }
 
   public:
-
-    inline void 
-    clear(size_t beg = 0) 
-    {
-      for (size_t i = beg; i < lgth; ++i)
-          data[i].~type_t();
-
-      lgth = 0;
-    }
-
     inline void
     reserve(
         size_t ns)
     {
-      if (ns > max)
-      {
-        type_t *old_data = data;
-        data = new type_t[ns];
+      if (ns < max)
+        return;
 
-        for (size_t i = 0; i < lgth; ++i)
-          data[i] = move(old_data[i]);
-        
-        delete[] old_data;
-        max = ns;
-      }
-      else if (ns < lgth)
-        clear(ns);
+      type_t *od = data;
+      data = new type_t[ns];
+      move(od, od + lgth, data);
+      delete[] od;
+      max = ns;
+    }
+
+    inline void resize(
+        size_t ns)
+    {
+      if (ns > lgth)
+        return;
+
+      lgth = ns;
     }
 
   public:
@@ -171,7 +166,7 @@ namespace lib
       if (lgth == max)
         reserve(max + max / 2);
 
-      operator[](lgth) = t;
+      operator[](lgth) = move(t);
       ++lgth;
     }
 

@@ -58,18 +58,18 @@ else
   # ./build/array.test.out
 
 
-  # lib_compile_test \
-  #   --out build/vector.test.out \
-  #   --src cpp/test/vector.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/vector.test.out \
+    --src cpp/test/vector.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/vector.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/vector.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/vector.test.out
+  ./build/vector.test.out
 
 
   # lib_compile_test \
@@ -86,18 +86,18 @@ else
   # ./build/tree.test.out
 
 
-  # lib_compile_test \
-  #   --out build/clon.test.out \
-  #   --src cpp/test/clon.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/clon.test.out \
+    --src cpp/test/clon.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/clon.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/clon.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/clon.test.out
+  ./build/clon.test.out
 
   lib_compile_test \
     --out build/evector.test.out \
