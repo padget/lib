@@ -1,5 +1,12 @@
 #include <lib/ios.hpp>
 #include <lib/vector.hpp>
+#include <lib/test.hpp>
+
+void should_initialize_empty_vector();
+void should_pushback_2_items();
+void should_reserve_1000_items();
+void should_copy_vector();
+void should_move_vector();
 
 int main()
 {
