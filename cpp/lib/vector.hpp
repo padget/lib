@@ -48,12 +48,7 @@ namespace lib
         push_back(*b);
     }
 
-    ~vector()
-    {
-      delete[] data;
-      lgth = 0;
-      max = 0;
-    }
+    ~vector() { clear(); }
 
   public:
     inline vector<type_t> &
@@ -62,11 +57,10 @@ namespace lib
     {
       if (this != &v)
       {
-        resize(0);
-        reserve(v.max);
-
-        for (auto &&i : v)
-          push_back(i);
+        delete[] data;
+        data = new type_t[v.max];
+        copy(v.begin(), v.end(), begin());
+        lgth = v.lgth;
       }
 
       return *this;
@@ -90,27 +84,57 @@ namespace lib
     }
 
   public:
-    inline void
-    reserve(
-        size_t ns)
-    {
-      if (ns < max)
-        return;
+    inline size_t
+    size() const { return lgth; }
 
-      type_t *od = data;
-      data = new type_t[ns];
-      move(od, od + lgth, data);
-      delete[] od;
-      max = ns;
+    inline bool
+    empty() const { return size() == 0; }
+
+    inline size_t
+    capacity() const { return max; }
+
+  public:
+    inline void
+    increase_capacity(size_t nbadd)
+    {
+      max += nbadd;
+      allocate_data_cap();
     }
 
-    inline void resize(
-        size_t ns)
+    inline void
+    decrease_capacity(size_t nbsub)
     {
-      if (ns > lgth)
-        return;
+      if (max - nbsub >= lgth)
+      {
+        max -= nbsub;
+        allocate_data_cap();
+      }
+    }
 
-      lgth = ns;
+    inline void compress()
+    {
+      decrease_capacity(max - lgth);
+    }
+
+    inline void clear()
+    {
+      delete[] data;
+      data = nullptr;
+      max = 0;
+      lgth = 0;
+    }
+
+  private:
+    void allocate_data_cap()
+    {
+      data = new type_t[max];
+
+      if (data != nullptr)
+      {
+        type_t *od = data;
+        move(od, od + lgth, data);
+        delete[] od;
+      }
     }
 
   public:
@@ -129,107 +153,55 @@ namespace lib
     }
 
   public:
-    inline size_t
-    size() const
-    {
-      return lgth;
-    }
-
-    inline bool
-    empty() const
-    {
-      return size() == 0;
-    }
-
-    inline size_t
-    capacity() const
-    {
-      return max;
-    }
-
-  public:
     inline void
     push_back(
-        const type_t &t)
-    {
-      if (lgth == max)
-        reserve(max + max / 2);
-
-      operator[](lgth) = t;
-      ++lgth;
-    }
-
-    inline void
-    emplace_back(
         type_t &&t)
     {
       if (lgth == max)
-        reserve(max + max / 2);
+        increase_capacity(max / 2 + 10);
 
       operator[](lgth) = move(t);
       ++lgth;
     }
 
+    inline void
+    push_back(
+        const type_t &t)
+    {
+      type_t tmp = t;
+      push_back(move(tmp));
+    }
+
   public:
     inline type_t *
-    begin()
-    {
-      return data;
-    }
+    begin() { return data; }
 
     inline type_t *
-    end()
-    {
-      return data + lgth;
-    }
+    end() { return data + lgth; }
 
     inline const type_t *
-    begin() const
-    {
-      return data;
-    }
+    begin() const { return data; }
 
     inline const type_t *
-    end() const
-    {
-      return data + lgth;
-    }
+    end() const { return data + lgth; }
 
     inline size_t
-    front_index() const
-    {
-      return 0;
-    }
+    front_index() const { return 0; }
 
     inline const type_t &
-    front() const
-    {
-      return *begin();
-    }
+    front() const { return *begin(); }
 
     inline type_t &
-    front()
-    {
-      return *begin();
-    }
+    front() { return *begin(); }
 
     inline size_t
-    back_index() const
-    {
-      return size() - 1;
-    }
+    back_index() const { return size() - 1; }
 
     inline const type_t &
-    back() const
-    {
-      return *(end() - 1);
-    }
+    back() const { return *(end() - 1); }
 
     inline type_t &
-    back()
-    {
-      return *(end() - 1);
-    }
+    back() { return *(end() - 1); }
   };
 }
 

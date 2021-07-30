@@ -12,6 +12,7 @@
 #include <lib/exception.hpp>
 #include <lib/algorithm.hpp>
 #include <lib/format.hpp>
+#include <lib/result.hpp>
 
 namespace lib
 {

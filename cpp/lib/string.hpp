@@ -88,12 +88,6 @@ namespace lib
       data.push_back(c);
     }
 
-    void emplace_back(
-        char_t c)
-    {
-      data.emplace_back(c);
-    }
-
     char_t *begin()
     {
       return data.begin();

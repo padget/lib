@@ -163,7 +163,7 @@ namespace lib
         const value_t &val)
     {
       if (nodes.empty())
-        nodes.emplace_back(tree_node<value_t>{val, this});
+        nodes.push_back(tree_node<value_t>{val, this});
 
       return nodes.back().id;
     }
@@ -180,7 +180,7 @@ namespace lib
         throw parent_index_doesnt_exist();
 
       tree_node<value_t> &parent = nodes[parent_id];
-      nodes.emplace_back(tree_node<value_t>{value, this});
+      nodes.push_back(tree_node<value_t>{value, this});
 
       tree_node<value_t> &nn = nodes.back();
       size_t nnid = nodes.back_index();

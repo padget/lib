@@ -23,7 +23,7 @@ namespace lib
     constexpr explicit result(const type_t &_val)
         : val(_val), has_val(true) {}
 
-    constexpr explicit result(type_t &&val)
+    constexpr explicit result(type_t &&_val)
         : val(move(_val)), has_val(true) {}
 
     constexpr explicit result(const unexpected_t &_unexp)
