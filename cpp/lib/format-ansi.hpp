@@ -41,6 +41,7 @@ namespace lib
   };
 
   constexpr style<char> red{"\u001b[31m"};
+  constexpr style<char> green{"\u001b[32m"};
   constexpr style<char> bold{"\u001b[1m"};
   constexpr style<char> underline{"\u001b[4m"};
   constexpr style<char> end{"\u001b[0m"};

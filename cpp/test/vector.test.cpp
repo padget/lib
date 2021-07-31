@@ -34,7 +34,7 @@ void should_move_vector();
 
 int main()
 {
-  should_initialize_empty_vector();
-  should_pushback_2_items();
-  should_reserve_1000_items();
+  run_test(should_initialize_empty_vector);
+  run_test(should_pushback_2_items);
+  run_test(should_reserve_1000_items);
 }

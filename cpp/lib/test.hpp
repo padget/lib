@@ -2,17 +2,18 @@
 #define __clon_test_hpp__
 
 #include <lib/format.hpp>
+#include <lib/format-ansi.hpp>
 #include <lib/ios.hpp>
 
 #define test_equals(actual, expected)             \
   lib::printfln("===== at l.# test # == # : #",   \
                 __LINE__, (#actual), (#expected), \
-                (((actual) == (expected)) ? "OK" : "KO"));
+                (((actual) == (expected)) ? (lib::bold | lib::green | "OK") : (lib::bold | lib::red | "KO")));
 
 #define test_not_equals(actual, expected)         \
   lib::printfln("===== at l.# test # != # : #",   \
                 __LINE__, (#actual), (#expected), \
-                (((actual) != (expected)) ? "OK" : "KO"));
+                (((actual) != (expected)) ? (lib::bold | lib::green | "OK") : (lib::bold | lib::red | "KO")));
 
 #define test_catch(torun, exception)  \
   try                                 \
