@@ -4,7 +4,11 @@
 #ifndef NDEBUG
   #define contract(expr) ((void) 0)
 #else
-  #define contract(expr) if(not expr) throw error();
+  #define contract(expr) if(not (expr)) throw "assertion failed"#expr;
 #endif
-
+#ifndef NDEBUG
+  #define contract(expr, error) ((void) 0)
+#else
+  #define contract(expr, error) if(not (expr)) throw (error);
+#endif
 #endif
