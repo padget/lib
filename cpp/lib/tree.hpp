@@ -3,6 +3,7 @@
 
 #include <lib/exception.hpp>
 #include <lib/vector.hpp>
+#include <lib/assert.hpp>
 
 namespace lib
 {
@@ -173,12 +174,9 @@ namespace lib
         const value_t &value,
         size_t parent_id)
     {
-      if (parent_id == no_root)
-        throw parent_index_doesnt_exist();
-
-      if (parent_id > nodes.back_index())
-        throw parent_index_doesnt_exist();
-
+      contract(parent_id != no_root);
+      contract(parent_id <= nodes.back_index());
+      
       tree_node<value_t> &parent = nodes[parent_id];
       nodes.push_back(tree_node<value_t>{value, this});
 

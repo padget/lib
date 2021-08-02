@@ -51,6 +51,12 @@ namespace lib
     {
       std::fwrite(s.data(), sizeof(type_t), s.size(), fd);
     }
+
+    // template<typename type_t>
+    // inline void read(basic_string<type_t>& out, lib::size_t nbbytes)
+    // {
+    //   std::fread(out.data(), nbbytes, fd);
+    // }
   };
 
   inline file fopen(string_view filename, string_view mode)
