@@ -40,11 +40,33 @@ namespace lib
     const type_t &obj;
   };
 
+  constexpr style<char> black{"\u001b[30m"};
   constexpr style<char> red{"\u001b[31m"};
   constexpr style<char> green{"\u001b[32m"};
+  constexpr style<char> yellow{"\u001b[33m"};
+  constexpr style<char> blue{"\u001b[34m"};
+  constexpr style<char> magenta{"\u001b[35m"};
+  constexpr style<char> cyan{"\u001b[36m"};
+  constexpr style<char> white{"\u001b[37m"};
+
+  constexpr style<char> bblack{"\u001b[40m"};
+  constexpr style<char> bred{"\u001b[41m"};
+  constexpr style<char> bgreen{"\u001b[42m"};
+  constexpr style<char> byellow{"\u001b[43m"};
+  constexpr style<char> bblue{"\u001b[44m"};
+  constexpr style<char> bmagenta{"\u001b[45m"};
+  constexpr style<char> bcyan{"\u001b[46m"};
+  constexpr style<char> bwhite{"\u001b[47m"};
+
   constexpr style<char> bold{"\u001b[1m"};
   constexpr style<char> underline{"\u001b[4m"};
+  constexpr style<char> reversed{"\u001b[7m"};
   constexpr style<char> end{"\u001b[0m"};
+
+  constexpr style<char> cup{"\u001b[1A"};
+  constexpr style<char> cdown{"\u001b[1B"};
+  constexpr style<char> cright{"\u001b[1C"};
+  constexpr style<char> cleft{"\u001b[1D"};
 
   template <character char_t>
   consteval combined_style<char_t, 2>

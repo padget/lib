@@ -148,7 +148,7 @@ namespace lib
     vector<tree_node<value_t>> nodes;
 
   public:
-    tree(size_t _max)
+    tree(size_t _max = 10)
         : nodes(_max) {}
 
   public:

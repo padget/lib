@@ -44,18 +44,18 @@ else
 
   ./build/utility.test.out
 
-  # lib_compile_test \
-  #   --out build/array.test.out \
-  #   --src cpp/test/array.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/array.test.out \
+    --src cpp/test/array.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/array.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/array.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/array.test.out
+  ./build/array.test.out
 
 
   lib_compile_test \
@@ -72,18 +72,18 @@ else
   ./build/vector.test.out
 
 
-  # lib_compile_test \
-  #   --out build/tree.test.out \
-  #   --src cpp/test/tree.test.cpp \
-  #   --flags "$flags" \
-  #   --libs "$libs"
+  lib_compile_test \
+    --out build/tree.test.out \
+    --src cpp/test/tree.test.cpp \
+    --flags "$flags" \
+    --libs "$libs"
 
-  # lib_file \
-  #   --path build/tree.test.out \
-  #   --mode +x \
-  #   --state file
+  lib_file \
+    --path build/tree.test.out \
+    --mode +x \
+    --state file
 
-  # ./build/tree.test.out
+  ./build/tree.test.out
 
 
   lib_compile_test \

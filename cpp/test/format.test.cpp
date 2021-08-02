@@ -4,5 +4,5 @@
 
 int main()
 {
-  lib::printf("rpouthis is the answer #", lib::red | lib::bold | 42);
+  lib::printf("rpouthis is the answer #", lib::cleft | lib::cleft | lib::bold | 42);
 }

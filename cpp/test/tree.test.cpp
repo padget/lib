@@ -33,7 +33,7 @@ int main()
   t.push_back_child(3, parent);
   t.push_back_child(3, parent);
 
-  lib::printfln("#", (unsigned)&t);
+  lib::printfln("#", (unsigned long long )&t);
 
   print_tree(t);
 
