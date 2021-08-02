@@ -174,8 +174,8 @@ namespace lib
         const value_t &value,
         size_t parent_id)
     {
-      contract(parent_id != no_root);
-      contract(parent_id <= nodes.back_index());
+      contract(parent_id != no_root, parent_index_doesnt_exist());
+      contract(parent_id <= nodes.back_index(), previous_index_doesnt_exist());
       
       tree_node<value_t> &parent = nodes[parent_id];
       nodes.push_back(tree_node<value_t>{value, this});
