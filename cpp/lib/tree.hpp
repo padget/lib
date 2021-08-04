@@ -79,33 +79,22 @@ namespace lib
   struct tree_childs
   {
     using iterator = child_iterator<value_t>;
+    using const_iterator = child_iterator<value_t>;
 
     size_t first;
     tree<value_t> *t = nullptr;
 
     iterator
-    begin()
-    {
-      return {t, first};
-    }
+    begin() { return {t, first}; }
 
     iterator
-    end()
-    {
-      return {t, no_next};
-    }
+    end() { return {t, no_next}; }
 
-    const iterator
-    begin() const
-    {
-      return {t, first};
-    }
+    const_iterator
+    begin() const { return {t, first}; }
 
-    const iterator
-    end() const
-    {
-      return {t, no_next};
-    }
+    const_iterator
+    end() const { return {t, no_next}; }
   };
 
   template <
@@ -130,16 +119,10 @@ namespace lib
     }
 
     tree_childs<value_t>
-    childs()
-    {
-      return {child, tr};
-    }
+    childs() { return {child, tr}; }
 
     const tree_childs<value_t>
-    childs() const
-    {
-      return {child, tr};
-    }
+    childs() const { return {child, tr}; }
   };
 
   template <
@@ -171,14 +154,14 @@ namespace lib
 
     inline size_t
     push_back_child(
-        const value_t &value,
+        value_t &&value,
         size_t parent_id)
     {
       contract(parent_id != no_root);
       contract(parent_id <= nodes.back_index());
-      
+
       tree_node<value_t> &parent = nodes[parent_id];
-      nodes.push_back(tree_node<value_t>{value, this});
+      nodes.push_back(tree_node<value_t>{move(value), this});
 
       tree_node<value_t> &nn = nodes.back();
       size_t nnid = nodes.back_index();
@@ -195,6 +178,15 @@ namespace lib
       parent.last_child = nnid;
 
       return nnid;
+    }
+
+    inline size_t
+    push_back_child(
+        const value_t &value,
+        size_t parent_id)
+    {
+      return push_back_child(
+          move(value_t(value)), parent_id);
     }
 
     inline const tree_node<value_t> &
