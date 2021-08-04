@@ -161,20 +161,12 @@ namespace lib
       contract(parent_id <= nodes.back_index(), previous_index_doesnt_exist());
       
       tree_node<value_t> &parent = nodes[parent_id];
-      nodes.push_back(tree_node<value_t>{move(value), this});
-
-      tree_node<value_t> &nn = nodes.back();
-      size_t nnid = nodes.back_index();
-      nn.id = nnid;
-
-      if (parent.child == no_child)
-        parent.child = nnid;
-      else
-      {
-        tree_node<value_t> &lcn = nodes[parent.last_child];
-        lcn.next = nnid;
-      }
-
+      size_t nnid = nodes.size();
+      nodes.push_back({move(value), this, nnid});
+      size_t& id = parent.child == no_child ?
+                   parent.child :
+                   nodes[parent.last_child].next;
+      id = nnid;
       parent.last_child = nnid;
 
       return nnid;
