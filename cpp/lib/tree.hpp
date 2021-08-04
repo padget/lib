@@ -149,7 +149,7 @@ namespace lib
       if (nodes.empty())
         nodes.push_back(tree_node<value_t>{val, this});
 
-      return nodes.back().id;
+      return 0;
     }
 
     inline size_t
