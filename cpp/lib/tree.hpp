@@ -160,14 +160,14 @@ namespace lib
       contract(parent_id != no_root, parent_index_doesnt_exist());
       contract(parent_id <= nodes.back_index(), previous_index_doesnt_exist());
       
-      tree_node<value_t> &parent = nodes[parent_id];
-      size_t nnid = nodes.size();
-      nodes.push_back({move(value), this, nnid});
-      size_t& id = parent.child == no_child ?
-                   parent.child :
-                   nodes[parent.last_child].next;
+      auto &parent = nodes[parent_id];
+      auto nnid = nodes.size();
+      auto &id = parent.child == no_child ?
+                 parent.child :
+                 nodes[parent.last_child].next;
       id = nnid;
       parent.last_child = nnid;
+      nodes.push_back({move(value), this, nnid}); 
 
       return nnid;
     }
