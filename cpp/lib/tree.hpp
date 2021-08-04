@@ -103,7 +103,6 @@ namespace lib
   {
     value_t value;
     tree<value_t> *tr = nullptr;
-    size_t id = 0;
     size_t child = no_child;
     size_t next = no_next;
     size_t last_child = no_child;
@@ -143,11 +142,10 @@ namespace lib
 
   public:
     inline size_t
-    push_root(
-        const value_t &val)
+    push_root(const value_t &val)
     {
       if (nodes.empty())
-        nodes.push_back(tree_node<value_t>{val, this});
+        nodes.push_back({val, this});
 
       return 0;
     }
@@ -167,7 +165,7 @@ namespace lib
                  nodes[parent.last_child].next;
       id = nnid;
       parent.last_child = nnid;
-      nodes.push_back({move(value), this, nnid}); 
+      nodes.push_back({move(value), this}); 
 
       return nnid;
     }
@@ -182,29 +180,25 @@ namespace lib
     }
 
     inline const tree_node<value_t> &
-    operator[](
-        size_t i) const
+    operator[](size_t i) const
     {
       return nodes[i];
     }
 
     inline tree_node<value_t> &
-    operator[](
-        size_t i)
+    operator[](size_t i)
     {
       return nodes[i];
     }
 
     inline tree_childs<value_t>
-    childs(
-        size_t index = 0)
+    childs(size_t index = 0)
     {
       return {nodes[index].child, this};
     }
 
     inline const tree_childs<value_t>
-    childs(
-        size_t index = 0) const
+    childs(size_t index = 0) const
     {
       return {nodes[index].child, this};
     }
