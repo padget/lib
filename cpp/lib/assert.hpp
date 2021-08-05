@@ -6,6 +6,6 @@
 #else
 #define contract(expr, error) \
   if (not(expr))              \
-    throw(error);
+    throw error();
 #endif
 #endif

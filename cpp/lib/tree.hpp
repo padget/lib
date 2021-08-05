@@ -36,12 +36,6 @@ namespace lib
       return (*t)[index];
     }
 
-    inline const tree_node<value_t> &
-    operator*() const
-    {
-      return (*t)[index];
-    }
-
     inline child_iterator &
     operator++()
     {
@@ -76,10 +70,55 @@ namespace lib
 
   template <
       typename value_t>
+  struct child_const_iterator
+  {
+    const tree<value_t> *t = nullptr;
+    long unsigned index;
+
+    inline const tree_node<value_t> &
+    operator*() const
+    {
+      return (*t)[index];
+    }
+
+    inline child_const_iterator &
+    operator++()
+    {
+      if (index != no_next)
+        index = (*t)[index].next;
+
+      return *this;
+    }
+
+    inline child_const_iterator
+    operator++(int)
+    {
+      child_const_iterator tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+
+    inline bool
+    operator==(
+        const child_const_iterator o) const
+    {
+      return index == o.index;
+    }
+
+    inline bool
+    operator!=(
+        const child_const_iterator o) const
+    {
+      return not operator==(o);
+    }
+  };
+
+  template <
+      typename value_t>
   struct tree_childs
   {
     using iterator = child_iterator<value_t>;
-    using const_iterator = child_iterator<value_t>;
+    using const_iterator = child_const_iterator<value_t>;
 
     size_t first;
     tree<value_t> *t = nullptr;
@@ -155,17 +194,19 @@ namespace lib
         value_t &&value,
         size_t parent_id)
     {
-      contract(parent_id != no_root, parent_index_doesnt_exist());
-      contract(parent_id <= nodes.back_index(), previous_index_doesnt_exist());
-      
+      contract(parent_id != no_root,
+               parent_index_doesnt_exist);
+      contract(parent_id <= nodes.back_index(),
+               previous_index_doesnt_exist);
+
       auto &parent = nodes[parent_id];
       auto nnid = nodes.size();
-      auto &id = parent.child == no_child ?
-                 parent.child :
-                 nodes[parent.last_child].next;
+      auto &id = parent.child == no_child
+                     ? parent.child
+                     : nodes[parent.last_child].next;
       id = nnid;
       parent.last_child = nnid;
-      nodes.push_back({move(value), this}); 
+      nodes.push_back({move(value), this});
 
       return nnid;
     }
